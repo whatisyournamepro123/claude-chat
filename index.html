@@ -19,11 +19,10 @@
       --text:#e9e9ef;
       --muted:#a1a1b3;
       --muted2:#707085;
-      --accent:#d4a574;       /* warm Claude-ish */
+      --accent:#d4a574;
       --accent2:#e6c29a;
       --danger:#ff6b6b;
     }
-
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{
@@ -64,7 +63,6 @@
       color:#141414;
       font-weight:900;
     }
-
     .controls{
       display:flex; align-items:center; gap:10px;
     }
@@ -103,16 +101,8 @@
       border-radius: 18px;
       padding: 22px;
     }
-    .welcome h1{
-      margin: 0 0 10px;
-      font-size: 22px;
-    }
-    .welcome p{
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: 14px;
-    }
+    .welcome h1{ margin: 0 0 10px; font-size: 22px; }
+    .welcome p{ margin: 0; color: var(--muted); line-height: 1.55; font-size: 14px; }
 
     .msg{
       margin: 18px 0;
@@ -137,10 +127,7 @@
       color:#131313;
       border-color: rgba(212,165,116,.35);
     }
-    .bubble{
-      flex: 1 1 auto;
-      min-width: 0;
-    }
+    .bubble{ flex: 1 1 auto; min-width: 0; }
     .meta{
       font-size: 12px;
       color: var(--muted2);
@@ -148,6 +135,7 @@
       display:flex;
       gap: 8px;
       align-items:center;
+      justify-content: space-between;
     }
     .meta .name{
       color: var(--text);
@@ -226,17 +214,10 @@
       border: 1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.03);
     }
-    .preview-item img{
-      width: 100%; height:100%;
-      object-fit: cover;
-      display:block;
-    }
+    .preview-item img{ width: 100%; height:100%; object-fit: cover; display:block; }
     .preview-remove{
-      position:absolute;
-      top: -8px;
-      right:-8px;
-      width: 24px;
-      height: 24px;
+      position:absolute; top: -8px; right:-8px;
+      width: 24px; height: 24px;
       border-radius: 999px;
       border:none;
       background: var(--danger);
@@ -245,11 +226,7 @@
       cursor:pointer;
     }
 
-    .row{
-      display:flex;
-      gap: 10px;
-      align-items:flex-end;
-    }
+    .row{ display:flex; gap: 10px; align-items:flex-end; }
     textarea{
       flex: 1 1 auto;
       background: transparent;
@@ -278,17 +255,13 @@
       user-select:none;
     }
     .btn:hover{ border-color: rgba(212,165,116,.55); }
-
     .btn-send{
       background: linear-gradient(135deg, var(--accent), #b98257);
       border-color: rgba(212,165,116,.50);
       color:#121212;
       font-weight: 900;
     }
-    .btn-send:disabled{
-      opacity: .55;
-      cursor:not-allowed;
-    }
+    .btn-send:disabled{ opacity: .55; cursor:not-allowed; }
 
     .hint{
       margin-top: 10px;
@@ -298,8 +271,23 @@
       justify-content: space-between;
       gap: 10px;
       flex-wrap:wrap;
+      align-items: center;
     }
     .hint b{ color: var(--muted); font-weight:600; }
+
+    /* Small toggle (not “many options”) */
+    .toggle{
+      display:flex;
+      align-items:center;
+      gap: 8px;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      user-select:none;
+    }
+    .toggle input{ accent-color: var(--accent); }
 
     .drop-overlay{
       position: fixed;
@@ -313,14 +301,8 @@
       border: 2px dashed rgba(212,165,116,.45);
     }
     .drop-overlay.active{ display:flex; }
-    .drop-overlay .big{
-      font-size: 44px;
-      margin-bottom: 10px;
-    }
-    .drop-overlay .txt{
-      font-size: 16px;
-      color: var(--muted);
-    }
+    .drop-overlay .big{ font-size: 44px; margin-bottom: 10px; }
+    .drop-overlay .txt{ font-size: 16px; color: var(--muted); }
 
     .modal{
       position: fixed;
@@ -382,10 +364,10 @@
   <div class="wrap">
     <div id="chat" class="chat">
       <div class="welcome" id="welcome">
-        <h1>Upload an image. Ask anything.</h1>
+        <h1>Ultra-detail image understanding</h1>
         <p>
-          Use the <b>Image</b> button, paste (<b>Ctrl/Cmd+V</b>), or drag & drop.
-          I’ll analyze what’s <b>actually</b> in the image and extract text precisely.
+          This version sends <b>the full image + zoomed crops</b> so the model can catch tiny text and small objects.
+          Upload/paste/drag an image, then ask.
         </p>
       </div>
     </div>
@@ -401,8 +383,11 @@
         </div>
 
         <div class="hint">
-          <span><b>Tip:</b> clearer images + zoomed-in crop = better results</span>
-          <span><b>Supported:</b> upload / paste / drag-drop</span>
+          <span><b>Tip:</b> upload the sharpest version you have</span>
+          <label class="toggle" title="Sends full image + zoomed crops (slower but more detailed)">
+            <input id="ultraToggle" type="checkbox" checked />
+            Ultra detail
+          </label>
         </div>
       </div>
     </div>
@@ -421,18 +406,13 @@
   </div>
 
   <script>
-    // ---------------------------
-    // Core state
-    // ---------------------------
     const state = {
-      pendingFiles: [],      // store File objects (best for normalization)
-      pendingPreviews: [],   // objectURLs to revoke later
+      pendingFile: null,          // single image (best for accuracy)
+      pendingPreviewUrl: null,    // objectURL
+      lastVisionDataUrls: null,   // { full, crops: [{label, dataUrl}], displayUrl }
       busy: false
     };
 
-    // ---------------------------
-    // Elements
-    // ---------------------------
     const chatEl = document.getElementById('chat');
     const welcomeEl = document.getElementById('welcome');
     const previewEl = document.getElementById('preview');
@@ -442,45 +422,39 @@
     const fileInputEl = document.getElementById('fileInput');
     const modelSelectEl = document.getElementById('modelSelect');
     const dropOverlayEl = document.getElementById('dropOverlay');
+    const ultraToggleEl = document.getElementById('ultraToggle');
 
     const imgModalEl = document.getElementById('imgModal');
     const modalImgEl = document.getElementById('modalImg');
     const closeModalBtnEl = document.getElementById('closeModalBtn');
 
-    // ---------------------------
-    // Ultra vision instructions (kept strong but not insanely long)
-    // ---------------------------
     const VISION_SYSTEM = `
 You are a highly accurate vision assistant.
 Rules:
-- Describe ONLY what you can actually see in the image(s). If unsure, say "not clear" and ask a question.
-- If text is visible, transcribe it exactly (preserve line breaks).
-- Be specific (objects, locations, colors, counts).
-- If the user asks a direct question, answer it first, then add extra useful observations.
-`;
+- Describe ONLY what you can actually see. If unsure, say "not clear" and ask a question.
+- Use the provided zoomed crops to capture minute details.
+- If text is visible, transcribe it exactly (preserve line breaks). Use [?] for unclear characters.
+- Be specific: counts, colors, locations, small icons, logos, UI labels, tiny objects.
+- Answer the user’s question FIRST, then give extra relevant details.
+`.trim();
 
-    // ---------------------------
-    // Utilities
-    // ---------------------------
-    function autosizeTextarea() {
+    function autosizeTextarea(){
       textInputEl.style.height = 'auto';
       textInputEl.style.height = Math.min(textInputEl.scrollHeight, 180) + 'px';
     }
 
-    function escapeHtml(s) {
+    function escapeHtml(s){
       return s.replace(/[&<>"']/g, c => ({
         '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
       }[c]));
     }
 
-    function formatBasicMarkdownToHtml(text) {
-      // Minimal formatting: code fences + inline code + newlines.
-      // (Keeps it simple + reliable.)
-      let t = escapeHtml(text);
+    function formatBasicMarkdownToHtml(text){
+      let t = escapeHtml(text || '');
 
       // fenced code blocks
       t = t.replace(/```[\s\S]*?```/g, (m) => {
-        const inner = m.slice(3, -3).replace(/^\w+\n/, ''); // strip language if present
+        const inner = m.slice(3, -3).replace(/^\w+\n/, '');
         return `<pre><code>${inner.trim()}</code></pre>`;
       });
 
@@ -492,7 +466,7 @@ Rules:
       return t;
     }
 
-    function addMessage({ role, text, imageUrls = [] }) {
+    function addMessage({ role, text, imageUrls = [] }){
       welcomeEl.style.display = 'none';
 
       const msg = document.createElement('div');
@@ -515,10 +489,10 @@ Rules:
 
       bubble.appendChild(meta);
 
-      if (imageUrls.length) {
+      if (imageUrls.length){
         const row = document.createElement('div');
         row.className = 'images-row';
-        for (const url of imageUrls) {
+        for (const url of imageUrls){
           const img = document.createElement('img');
           img.className = 'thumb';
           img.src = url;
@@ -530,7 +504,6 @@ Rules:
       }
 
       bubble.appendChild(content);
-
       msg.appendChild(avatar);
       msg.appendChild(bubble);
 
@@ -540,69 +513,73 @@ Rules:
       return { msg, contentEl: content };
     }
 
-    function addTyping() {
-      const { msg } = addMessage({ role: 'assistant', text: 'Thinking…' });
-      msg.dataset.typing = '1';
-      return msg;
-    }
-
-    function removeTyping() {
-      const typing = chatEl.querySelector('[data-typing="1"]');
-      if (typing) typing.remove();
-    }
-
-    function openModal(src) {
+    function openModal(src){
       modalImgEl.src = src;
       imgModalEl.classList.add('active');
       imgModalEl.setAttribute('aria-hidden', 'false');
     }
-
-    function closeModal() {
+    function closeModal(){
       imgModalEl.classList.remove('active');
       imgModalEl.setAttribute('aria-hidden', 'true');
       modalImgEl.src = '';
     }
 
-    // ---------------------------
-    // Image normalize: resize + convert to JPEG
-    // This often fixes “it sees the wrong thing”
-    // ---------------------------
-    async function fileToNormalizedJpegDataUrl(file, maxSide = 1600, quality = 0.92) {
-      // Try createImageBitmap (fast + good). Fallback to <img> if needed.
-      let bitmap = null;
-      try {
-        // some browsers support imageOrientation option; harmless if ignored
-        bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
-      } catch (e) {
-        bitmap = null;
+    function renderPreview(){
+      if (state.pendingPreviewUrl){
+        URL.revokeObjectURL(state.pendingPreviewUrl);
+        state.pendingPreviewUrl = null;
       }
 
-      if (!bitmap) {
-        const dataUrl = await fileToDataUrl(file);
-        const img = await dataUrlToImage(dataUrl);
-        bitmap = img; // use as drawable
+      previewEl.innerHTML = '';
+      if (!state.pendingFile){
+        previewEl.classList.remove('active');
+        return;
       }
 
-      const srcW = bitmap.width;
-      const srcH = bitmap.height;
-      const scale = Math.min(1, maxSide / Math.max(srcW, srcH));
-      const w = Math.max(1, Math.round(srcW * scale));
-      const h = Math.max(1, Math.round(srcH * scale));
+      previewEl.classList.add('active');
+      const url = URL.createObjectURL(state.pendingFile);
+      state.pendingPreviewUrl = url;
 
-      const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      const ctx = canvas.getContext('2d', { alpha: false });
+      const item = document.createElement('div');
+      item.className = 'preview-item';
 
-      // draw
-      ctx.drawImage(bitmap, 0, 0, w, h);
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = 'preview';
+      img.addEventListener('click', () => openModal(url));
 
-      // output jpeg
-      const out = canvas.toDataURL('image/jpeg', quality);
-      return out;
+      const rm = document.createElement('button');
+      rm.className = 'preview-remove';
+      rm.textContent = '×';
+      rm.addEventListener('click', () => {
+        state.pendingFile = null;
+        renderPreview();
+      });
+
+      item.appendChild(img);
+      item.appendChild(rm);
+      previewEl.appendChild(item);
     }
 
-    function fileToDataUrl(file) {
+    async function addFile(file){
+      if (!file || !file.type || !file.type.startsWith('image/')) return;
+      state.pendingFile = file; // keep ONE image for max detail
+      renderPreview();
+    }
+
+    // --- Image normalization + cropping ---
+    async function fileToBitmap(file){
+      try {
+        return await createImageBitmap(file, { imageOrientation: 'from-image' });
+      } catch {
+        // fallback
+        const dataUrl = await fileToDataUrl(file);
+        const img = await dataUrlToImage(dataUrl);
+        return img;
+      }
+    }
+
+    function fileToDataUrl(file){
       return new Promise((resolve, reject) => {
         const r = new FileReader();
         r.onload = () => resolve(r.result);
@@ -611,7 +588,7 @@ Rules:
       });
     }
 
-    function dataUrlToImage(dataUrl) {
+    function dataUrlToImage(dataUrl){
       return new Promise((resolve, reject) => {
         const img = new Image();
         img.onload = () => resolve(img);
@@ -620,174 +597,202 @@ Rules:
       });
     }
 
-    function dataUrlToParts(dataUrl) {
+    function canvasToJpegDataUrl(canvas, quality = 0.95){
+      return canvas.toDataURL('image/jpeg', quality);
+    }
+
+    function resizeToCanvas(drawable, maxSide = 2200){
+      const srcW = drawable.width;
+      const srcH = drawable.height;
+      const scale = Math.min(1, maxSide / Math.max(srcW, srcH));
+      const w = Math.max(1, Math.round(srcW * scale));
+      const h = Math.max(1, Math.round(srcH * scale));
+
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d', { alpha:false });
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(drawable, 0, 0, w, h);
+      return canvas;
+    }
+
+    function cropCanvasToDataUrl(srcCanvas, x, y, w, h, quality=0.95){
+      const c = document.createElement('canvas');
+      c.width = w;
+      c.height = h;
+      const ctx = c.getContext('2d', { alpha:false });
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(srcCanvas, x, y, w, h, 0, 0, w, h);
+      return canvasToJpegDataUrl(c, quality);
+    }
+
+    function dataUrlToParts(dataUrl){
       const m = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
       if (!m) throw new Error('Invalid image data URL');
-      return { media_type: m[1], data: m[2] }; // IMPORTANT: raw base64 only
+      return { media_type: m[1], data: m[2] };
     }
 
-    // ---------------------------
-    // Preview UI
-    // ---------------------------
-    function renderPreview() {
-      // cleanup existing preview object URLs
-      for (const u of state.pendingPreviews) URL.revokeObjectURL(u);
-      state.pendingPreviews = [];
+    async function buildUltraVisionPack(file, ultra=true){
+      const bmp = await fileToBitmap(file);
+      const baseCanvas = resizeToCanvas(bmp, 2200);
+      const full = canvasToJpegDataUrl(baseCanvas, 0.95);
 
-      previewEl.innerHTML = '';
-      if (!state.pendingFiles.length) {
-        previewEl.classList.remove('active');
-        return;
+      const W = baseCanvas.width;
+      const H = baseCanvas.height;
+
+      // crops for minute detail: 2x2 + center
+      const crops = [];
+      if (ultra){
+        const halfW = Math.floor(W / 2);
+        const halfH = Math.floor(H / 2);
+
+        crops.push({ label: "CROP TL (top-left)", dataUrl: cropCanvasToDataUrl(baseCanvas, 0, 0, halfW, halfH) });
+        crops.push({ label: "CROP TR (top-right)", dataUrl: cropCanvasToDataUrl(baseCanvas, halfW, 0, W - halfW, halfH) });
+        crops.push({ label: "CROP BL (bottom-left)", dataUrl: cropCanvasToDataUrl(baseCanvas, 0, halfH, halfW, H - halfH) });
+        crops.push({ label: "CROP BR (bottom-right)", dataUrl: cropCanvasToDataUrl(baseCanvas, halfW, halfH, W - halfW, H - halfH) });
+
+        // center crop to catch small central details
+        const cx = Math.floor(W * 0.25);
+        const cy = Math.floor(H * 0.25);
+        const cw = Math.floor(W * 0.5);
+        const ch = Math.floor(H * 0.5);
+        crops.push({ label: "CROP CENTER (zoom)", dataUrl: cropCanvasToDataUrl(baseCanvas, cx, cy, cw, ch) });
       }
 
-      previewEl.classList.add('active');
+      // for display, use the original file objectURL (clearer to user)
+      const displayUrl = URL.createObjectURL(file);
 
-      state.pendingFiles.forEach((file, idx) => {
-        const url = URL.createObjectURL(file);
-        state.pendingPreviews.push(url);
-
-        const item = document.createElement('div');
-        item.className = 'preview-item';
-
-        const img = document.createElement('img');
-        img.src = url;
-        img.alt = file.name || 'image';
-        img.addEventListener('click', () => openModal(url));
-
-        const rm = document.createElement('button');
-        rm.className = 'preview-remove';
-        rm.textContent = '×';
-        rm.addEventListener('click', () => {
-          state.pendingFiles.splice(idx, 1);
-          renderPreview();
-        });
-
-        item.appendChild(img);
-        item.appendChild(rm);
-        previewEl.appendChild(item);
-      });
+      return { full, crops, displayUrl };
     }
 
-    async function addFiles(files) {
-      const arr = Array.from(files || []).filter(f => f && f.type && f.type.startsWith('image/'));
-      if (!arr.length) return;
-
-      // Keep it simple: allow up to 4 images (vision models can handle multiple, but more = more confusion)
-      for (const f of arr) {
-        if (state.pendingFiles.length >= 4) break;
-        state.pendingFiles.push(f);
-      }
-      renderPreview();
+    function makeImageBlock(dataUrl){
+      const parts = dataUrlToParts(dataUrl);
+      return {
+        type: 'image',
+        source: {
+          type: 'base64',
+          media_type: parts.media_type,
+          data: parts.data
+        }
+      };
     }
 
-    // ---------------------------
-    // The IMPORTANT part: send images as content blocks
-    // ---------------------------
-    async function callModelWithImages({ model, userText, files }) {
-      // Normalize each image to JPEG data URL then to base64 parts
+    async function callModelWithVisionPack({ model, userText, pack, ultra }){
       const blocks = [];
 
-      for (const file of files) {
-        const jpegDataUrl = await fileToNormalizedJpegDataUrl(file, 1600, 0.92);
-        const parts = dataUrlToParts(jpegDataUrl);
+      // label + full image
+      blocks.push({ type: 'text', text: "[FULL IMAGE]" });
+      blocks.push(makeImageBlock(pack.full));
 
-        blocks.push({
-          type: 'image',
-          source: {
-            type: 'base64',
-            media_type: parts.media_type,
-            data: parts.data
-          }
-        });
+      // label + crops
+      if (ultra){
+        for (const c of pack.crops){
+          blocks.push({ type: 'text', text: `[${c.label}]` });
+          blocks.push(makeImageBlock(c.dataUrl));
+        }
       }
 
-      const promptText =
-`${VISION_SYSTEM.trim()}
+      const prompt =
+`${VISION_SYSTEM}
 
 USER REQUEST:
-${userText || 'Describe this image.'}
+${userText || "Describe the image in ultra detail."}
 
-When answering, start with a direct answer, then add structured details.`;
+OUTPUT REQUIREMENTS (IMPORTANT):
+1) Answer the user directly first.
+2) Then give a "Minute details" section: tiny objects/icons/logos/UI labels, small background items, subtle features.
+   - When possible, cite where you saw it: FULL / TL / TR / BL / BR / CENTER.
+3) "Text found" section: transcribe all visible text verbatim with line breaks. If unreadable: mark unclear characters as [?].
+4) "Uncertain / needs closer crop" section: list anything you cannot confirm.
 
-      blocks.push({ type: 'text', text: promptText });
+DO NOT GUESS. Use the crops to verify tiny details.`;
+
+      blocks.push({ type: 'text', text: prompt });
 
       const messages = [{ role: 'user', content: blocks }];
-
-      // Stream for better UX
       return await puter.ai.chat(messages, { model, stream: true });
     }
 
-    async function callModelTextOnly({ model, userText }) {
+    async function callModelTextOnly({ model, userText }){
       return await puter.ai.chat(userText, { model, stream: true });
     }
 
-    // ---------------------------
-    // Send
-    // ---------------------------
-    async function send() {
+    async function send(){
       if (state.busy) return;
 
       const userText = (textInputEl.value || '').trim();
-      const hasImages = state.pendingFiles.length > 0;
+      const ultra = !!ultraToggleEl.checked;
 
-      if (!userText && !hasImages) return;
+      const hasNewImage = !!state.pendingFile;
+      const hasLastImage = !!state.lastVisionDataUrls;
+
+      if (!userText && !hasNewImage && !hasLastImage) return;
 
       state.busy = true;
       sendBtnEl.disabled = true;
 
-      // Snapshot current images for sending
-      const filesToSend = state.pendingFiles.slice(0);
+      // Determine which image pack to use:
+      let pack = null;
+      let displayUrl = null;
 
-      // Show user message (use local objectURLs for display)
-      const displayUrls = filesToSend.map(f => URL.createObjectURL(f));
+      if (hasNewImage){
+        pack = await buildUltraVisionPack(state.pendingFile, ultra);
+        // keep for follow-up questions without reupload
+        state.lastVisionDataUrls = pack;
+
+        displayUrl = pack.displayUrl;
+
+        // clear composer image preview
+        state.pendingFile = null;
+        renderPreview();
+      } else if (hasLastImage){
+        pack = state.lastVisionDataUrls;
+        displayUrl = pack.displayUrl; // old display url still valid; if user reloads page, it won’t persist anyway
+      }
+
+      // show user message
       addMessage({
         role: 'user',
-        text: userText || 'Analyze this image.',
-        imageUrls: displayUrls
+        text: userText || (pack ? "Analyze this image in ultra detail." : "Hi"),
+        imageUrls: pack ? [displayUrl] : []
       });
 
-      // clear composer
       textInputEl.value = '';
       autosizeTextarea();
-      state.pendingFiles = [];
-      renderPreview();
-
-      const typingEl = addTyping();
 
       try {
         const model = modelSelectEl.value;
 
-        // Create assistant message container for streaming output
-        removeTyping();
         const assistant = addMessage({ role: 'assistant', text: '' });
-        let full = '';
+        let fullOut = '';
 
-        const stream = hasImages
-          ? await callModelWithImages({ model, userText, files: filesToSend })
+        const stream = pack
+          ? await callModelWithVisionPack({ model, userText, pack, ultra })
           : await callModelTextOnly({ model, userText });
 
-        for await (const part of stream) {
-          if (part?.text) {
-            full += part.text;
-            assistant.contentEl.innerHTML = formatBasicMarkdownToHtml(full);
+        for await (const part of stream){
+          if (part?.text){
+            fullOut += part.text;
+            assistant.contentEl.innerHTML = formatBasicMarkdownToHtml(fullOut);
             chatEl.scrollTop = chatEl.scrollHeight;
           }
         }
 
-        // If model returns nothing (rare but happens), show a hint
-        if (!full.trim()) {
+        if (!fullOut.trim()){
           assistant.contentEl.innerHTML = formatBasicMarkdownToHtml(
-            "I didn’t receive any text output. Try again, or switch models (e.g., GPT-4o backup)."
+            "I didn’t receive text output. Try again or switch models (e.g., GPT-4o backup)."
           );
         }
-      } catch (err) {
-        removeTyping();
+      } catch (err){
         addMessage({
           role: 'assistant',
           text:
 `Error: ${err?.message || err}
 
-If you’re using a Claude model and it still “can’t see” images, switch the dropdown to **GPT-4o (backup)** — some providers temporarily disable vision on some models.`
+If Claude vision is being weird, switch the model dropdown to **GPT-4o (backup)** and retry.`
         });
         console.error(err);
       } finally {
@@ -797,13 +802,12 @@ If you’re using a Claude model and it still “can’t see” images, switch t
       }
     }
 
-    // ---------------------------
-    // Events (NO inline onclick — avoids “buttons don’t work” issues)
-    // ---------------------------
+    // Events
     imageBtnEl.addEventListener('click', () => fileInputEl.click());
 
     fileInputEl.addEventListener('change', async (e) => {
-      await addFiles(e.target.files);
+      const f = e.target.files?.[0];
+      await addFile(f);
       fileInputEl.value = '';
     });
 
@@ -812,24 +816,22 @@ If you’re using a Claude model and it still “can’t see” images, switch t
     textInputEl.addEventListener('input', autosizeTextarea);
 
     textInputEl.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
+      if (e.key === 'Enter' && !e.shiftKey){
         e.preventDefault();
         send();
       }
     });
 
-    // Paste image
+    // Paste images
     document.addEventListener('paste', async (e) => {
       const items = Array.from(e.clipboardData?.items || []);
-      const imgItems = items.filter(it => it.type && it.type.startsWith('image/'));
-      if (!imgItems.length) return;
-
+      const imgItem = items.find(it => it.type && it.type.startsWith('image/'));
+      if (!imgItem) return;
       e.preventDefault();
-      const files = imgItems.map(it => it.getAsFile()).filter(Boolean);
-      await addFiles(files);
+      await addFile(imgItem.getAsFile());
     });
 
-    // Drag/drop overlay
+    // Drag/drop
     let dragCounter = 0;
 
     document.addEventListener('dragenter', (e) => {
@@ -838,9 +840,7 @@ If you’re using a Claude model and it still “can’t see” images, switch t
       dropOverlayEl.classList.add('active');
     });
 
-    document.addEventListener('dragover', (e) => {
-      e.preventDefault();
-    });
+    document.addEventListener('dragover', (e) => e.preventDefault());
 
     document.addEventListener('dragleave', (e) => {
       e.preventDefault();
@@ -852,7 +852,8 @@ If you’re using a Claude model and it still “can’t see” images, switch t
       e.preventDefault();
       dragCounter = 0;
       dropOverlayEl.classList.remove('active');
-      await addFiles(e.dataTransfer?.files);
+      const f = e.dataTransfer?.files?.[0];
+      await addFile(f);
     });
 
     // Modal close
@@ -864,7 +865,6 @@ If you’re using a Claude model and it still “can’t see” images, switch t
       if (e.key === 'Escape') closeModal();
     });
 
-    // initial focus
     textInputEl.focus();
   </script>
 </body>
