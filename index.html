@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Claude Vision (Ultra)</title>
 
   <script src="https://js.puter.com/v2/"></script>
@@ -12,304 +12,245 @@
 
   <style>
     :root{
-      --bg:#0b0b0d;
-      --panel:#111114;
-      --panel2:#15151a;
-      --border:#26262d;
-      --text:#e9e9ef;
-      --muted:#a1a1b3;
-      --muted2:#707085;
-      --accent:#d4a574;
-      --danger:#ff6b6b;
-      --ok:#4ade80;
+      --bg:#0b0b0d; --panel:#111114; --panel2:#15151a; --border:#26262d;
+      --text:#e9e9ef; --muted:#a1a1b3; --muted2:#707085;
+      --accent:#d4a574; --danger:#ff6b6b; --ok:#4ade80;
     }
-    *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+    *{box-sizing:border-box}
+    html,body{height:100%}
     body{
       margin:0;
+      font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+      color:var(--text);
       background:
         radial-gradient(1200px 800px at 30% -10%, rgba(212,165,116,.12), transparent 60%),
         radial-gradient(1200px 800px at 90% 10%, rgba(128,90,213,.12), transparent 60%),
         var(--bg);
-      color:var(--text);
-      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
     }
 
     .topbar{
-      position: sticky; top:0; z-index:10;
+      position:sticky; top:0; z-index:10;
       backdrop-filter: blur(14px);
       background: rgba(11,11,13,.75);
-      border-bottom: 1px solid var(--border);
+      border-bottom:1px solid var(--border);
     }
     .topbar-inner{
-      max-width: 920px; margin: 0 auto;
-      padding: 14px 16px;
+      max-width:920px; margin:0 auto;
+      padding:14px 16px;
       display:flex; align-items:center; justify-content:space-between; gap:12px;
     }
-    .brand{ display:flex; align-items:center; gap:10px; font-weight:700; }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:700}
     .badge{
-      width: 34px; height:34px; border-radius: 10px;
+      width:34px; height:34px; border-radius:10px;
       display:grid; place-items:center;
-      background: linear-gradient(135deg, var(--accent), #b98257);
+      background:linear-gradient(135deg,var(--accent),#b98257);
       color:#141414; font-weight:900;
     }
-    .controls{ display:flex; align-items:center; gap:10px; }
-
     select{
       appearance:none;
-      background: var(--panel2);
-      border: 1px solid var(--border);
-      color: var(--text);
-      padding: 10px 12px;
-      border-radius: 12px;
-      font-size: 13px;
-      outline: none;
+      background:var(--panel2);
+      border:1px solid var(--border);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:13px;
+      outline:none;
     }
-    select:hover{ border-color: rgba(212,165,116,.55); }
+    select:hover{border-color:rgba(212,165,116,.55)}
 
     .wrap{
-      max-width: 920px;
-      margin: 0 auto;
-      padding: 18px 16px 24px;
-      height: calc(100% - 64px);
-      display:flex;
-      flex-direction:column;
-      gap: 12px;
+      max-width:920px; margin:0 auto;
+      padding:18px 16px 24px;
+      height:calc(100% - 64px);
+      display:flex; flex-direction:column; gap:12px;
     }
 
-    .chat{ flex:1; overflow:auto; padding: 6px 0 18px; }
-
+    .chat{flex:1; overflow:auto; padding:6px 0 18px}
     .welcome{
-      margin-top: 40px;
-      border: 1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.02));
-      border-radius: 18px;
-      padding: 22px;
+      margin-top:40px;
+      border:1px solid var(--border);
+      background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.02));
+      border-radius:18px;
+      padding:22px;
     }
-    .welcome h1{ margin:0 0 10px; font-size: 22px; }
-    .welcome p{ margin:0; color: var(--muted); line-height: 1.55; font-size: 14px; }
+    .welcome h1{margin:0 0 10px; font-size:22px}
+    .welcome p{margin:0; color:var(--muted); line-height:1.55; font-size:14px}
 
-    .msg{ margin: 18px 0; display:flex; gap:12px; align-items:flex-start; }
+    .msg{margin:18px 0; display:flex; gap:12px; align-items:flex-start}
     .avatar{
       width:34px; height:34px; border-radius:11px;
       display:grid; place-items:center;
-      flex: 0 0 auto;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.03);
-      font-weight: 800;
-      user-select:none;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.03);
+      font-weight:800; user-select:none; flex:0 0 auto;
     }
     .avatar.assistant{
-      background: linear-gradient(135deg, rgba(212,165,116,.95), rgba(185,130,87,.95));
-      color:#131313;
-      border-color: rgba(212,165,116,.35);
+      background:linear-gradient(135deg,rgba(212,165,116,.95),rgba(185,130,87,.95));
+      color:#131313; border-color:rgba(212,165,116,.35);
     }
-    .bubble{ flex: 1 1 auto; min-width:0; }
-
-    .meta{
-      display:flex; align-items:center; justify-content:space-between;
-      font-size:12px; color: var(--muted2);
-      margin-bottom: 6px;
-    }
-    .meta .name{ color: var(--text); font-weight: 600; font-size: 13px; }
-
-    .content{
-      line-height: 1.75;
-      font-size: 14px;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
+    .bubble{flex:1 1 auto; min-width:0}
+    .meta{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; font-size:12px; color:var(--muted2)}
+    .meta .name{color:var(--text); font-weight:600; font-size:13px}
+    .content{line-height:1.75; font-size:14px; white-space:pre-wrap; word-break:break-word}
     .content code{
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.08);
-      padding: 2px 6px;
-      border-radius: 8px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-      font-size: 13px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.08);
+      padding:2px 6px; border-radius:8px;
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;
+      font-size:13px;
     }
     .content pre{
-      background: rgba(0,0,0,.25);
-      border: 1px solid rgba(255,255,255,.08);
-      padding: 12px;
-      border-radius: 14px;
+      background:rgba(0,0,0,.25);
+      border:1px solid rgba(255,255,255,.08);
+      padding:12px; border-radius:14px;
       overflow:auto;
     }
-
-    .images-row{ display:flex; flex-wrap:wrap; gap:10px; margin:10px 0 8px; }
+    .images-row{display:flex; flex-wrap:wrap; gap:10px; margin:10px 0 8px}
     .thumb{
       width:220px; max-width:100%;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.02);
-      object-fit: cover;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.02);
+      object-fit:cover;
       cursor:pointer;
     }
 
     .composer{
-      position: sticky; bottom:0;
-      padding-top: 10px;
-      background: linear-gradient(180deg, transparent, rgba(11,11,13,.85) 30%, rgba(11,11,13,.95));
+      position:sticky; bottom:0;
+      padding-top:10px;
+      background:linear-gradient(180deg,transparent,rgba(11,11,13,.85) 30%,rgba(11,11,13,.95));
     }
     .composer-box{
-      border: 1px solid var(--border);
-      background: rgba(17,17,20,.9);
-      border-radius: 18px;
-      padding: 14px;
+      border:1px solid var(--border);
+      background:rgba(17,17,20,.9);
+      border-radius:18px;
+      padding:14px;
     }
     .composer-box:focus-within{
-      border-color: rgba(212,165,116,.55);
-      box-shadow: 0 0 0 3px rgba(212,165,116,.10);
+      border-color:rgba(212,165,116,.55);
+      box-shadow:0 0 0 3px rgba(212,165,116,.10);
     }
 
     .preview{
-      display:none;
-      gap:10px;
-      flex-wrap: wrap;
-      padding-bottom: 12px;
-      margin-bottom: 12px;
-      border-bottom: 1px solid var(--border);
+      display:none; gap:10px; flex-wrap:wrap;
+      padding-bottom:12px; margin-bottom:12px;
+      border-bottom:1px solid var(--border);
     }
-    .preview.active{ display:flex; }
+    .preview.active{display:flex}
     .preview-item{
-      position: relative;
-      width: 76px; height: 76px;
-      border-radius: 14px;
-      overflow:hidden;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.03);
+      position:relative; width:76px; height:76px;
+      border-radius:14px; overflow:hidden;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.03);
     }
-    .preview-item img{ width:100%; height:100%; object-fit: cover; display:block; }
+    .preview-item img{width:100%; height:100%; object-fit:cover; display:block}
     .preview-remove{
       position:absolute; top:-8px; right:-8px;
-      width:24px; height:24px;
-      border-radius: 999px;
-      border:none;
-      background: var(--danger);
-      color:#121212;
-      font-weight: 900;
-      cursor:pointer;
+      width:24px; height:24px; border-radius:999px;
+      border:none; background:var(--danger);
+      color:#121212; font-weight:900; cursor:pointer;
     }
 
-    .row{ display:flex; gap:10px; align-items:flex-end; }
+    .row{display:flex; gap:10px; align-items:flex-end}
     textarea{
       flex:1 1 auto;
-      background: transparent;
-      border:none;
-      color: var(--text);
+      background:transparent; border:none; outline:none;
+      color:var(--text);
       resize:none;
-      outline:none;
-      font-size: 14px;
-      line-height: 1.5;
-      min-height: 24px;
-      max-height: 180px;
-      padding: 2px 0;
+      font-size:14px; line-height:1.5;
+      min-height:24px; max-height:180px;
+      padding:2px 0;
     }
-    textarea::placeholder{ color: var(--muted2); }
-
+    textarea::placeholder{color:var(--muted2)}
     .btn{
       width:44px; height:44px;
-      border-radius: 14px;
-      border: 1px solid var(--border);
-      background: rgba(255,255,255,.04);
-      color: var(--text);
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
       cursor:pointer;
-      display:grid;
-      place-items:center;
-      font-size: 14px;
-      user-select:none;
+      display:grid; place-items:center;
+      font-size:14px; user-select:none;
     }
-    .btn:hover{ border-color: rgba(212,165,116,.55); }
-
+    .btn:hover{border-color:rgba(212,165,116,.55)}
     .btn-send{
-      background: linear-gradient(135deg, var(--accent), #b98257);
-      border-color: rgba(212,165,116,.50);
+      background:linear-gradient(135deg,var(--accent),#b98257);
+      border-color:rgba(212,165,116,.50);
       color:#121212;
-      font-weight: 900;
-      font-size: 18px;
+      font-weight:900;
+      font-size:18px;
     }
-    .btn-send:disabled{ opacity:.55; cursor:not-allowed; }
+    .btn-send:disabled{opacity:.55; cursor:not-allowed}
 
     .hint{
-      margin-top: 10px;
-      color: var(--muted2);
-      font-size: 12px;
-      display:flex;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap:wrap;
-      align-items:center;
+      margin-top:10px;
+      color:var(--muted2);
+      font-size:12px;
+      display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;
     }
     .toggle{
       display:flex; align-items:center; gap:8px;
-      padding: 6px 10px;
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 999px;
-      background: rgba(255,255,255,.03);
-      color: var(--muted);
+      padding:6px 10px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:999px;
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
       user-select:none;
     }
-    .toggle input{ accent-color: var(--accent); }
-
-    .status-pill{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      padding: 6px 10px;
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 999px;
-      background: rgba(255,255,255,.03);
-      color: var(--muted);
-      font-size: 12px;
+    .toggle input{accent-color:var(--accent)}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:999px;
+      background:rgba(255,255,255,.03);
+      color:var(--muted);
+      user-select:none;
     }
-    .dot{ width:8px; height:8px; border-radius:99px; background: var(--muted2); }
-    .dot.ok{ background: var(--ok); }
-    .dot.warn{ background: var(--accent); }
+    .dot{width:8px; height:8px; border-radius:99px; background:var(--muted2)}
+    .dot.ok{background:var(--ok)}
+    .dot.warn{background:var(--accent)}
 
     .drop-overlay{
-      position: fixed; inset:0;
-      display:none;
-      align-items:center; justify-content:center;
-      flex-direction:column;
-      background: rgba(11,11,13,.92);
-      z-index: 100;
-      border: 2px dashed rgba(212,165,116,.45);
+      position:fixed; inset:0;
+      display:none; align-items:center; justify-content:center; flex-direction:column;
+      background:rgba(11,11,13,.92);
+      z-index:100;
+      border:2px dashed rgba(212,165,116,.45);
     }
-    .drop-overlay.active{ display:flex; }
-    .drop-overlay .big{ font-size:44px; margin-bottom:10px; }
-    .drop-overlay .txt{ font-size:16px; color: var(--muted); }
+    .drop-overlay.active{display:flex}
+    .drop-overlay .big{font-size:44px; margin-bottom:10px}
+    .drop-overlay .txt{font-size:16px; color:var(--muted)}
 
     .modal{
-      position: fixed; inset:0;
-      display:none;
-      align-items:center; justify-content:center;
-      background: rgba(0,0,0,.92);
-      z-index: 120;
-      padding: 24px;
+      position:fixed; inset:0;
+      display:none; align-items:center; justify-content:center;
+      background:rgba(0,0,0,.92);
+      z-index:120;
+      padding:24px;
     }
-    .modal.active{ display:flex; }
+    .modal.active{display:flex}
     .modal img{
-      max-width:100%;
-      max-height:100%;
-      border-radius: 14px;
-      border: 1px solid rgba(255,255,255,.15);
-      object-fit: contain;
+      max-width:100%; max-height:100%;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.15);
+      object-fit:contain;
     }
     .modal button{
-      position:absolute;
-      top: 18px; right: 18px;
+      position:absolute; top:18px; right:18px;
       width:46px; height:46px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.15);
-      background: rgba(255,255,255,.06);
-      color: var(--text);
-      font-size: 20px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.15);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      font-size:20px;
       cursor:pointer;
     }
 
-    @media (max-width: 700px){
-      .thumb{ width: 100%; }
-      .topbar-inner{ padding: 12px 12px; }
-      .wrap{ padding: 14px 12px 18px; }
+    @media (max-width:700px){
+      .thumb{width:100%}
+      .topbar-inner{padding:12px}
+      .wrap{padding:14px 12px 18px}
     }
   </style>
 </head>
@@ -317,11 +258,7 @@
 <body>
   <div class="topbar">
     <div class="topbar-inner">
-      <div class="brand">
-        <div class="badge">✦</div>
-        <div>Claude Vision</div>
-      </div>
-
+      <div class="brand"><div class="badge">✦</div><div>Claude Vision</div></div>
       <div class="controls">
         <select id="modelSelect" title="Model">
           <option value="claude-opus-4-5">Claude Opus 4.5</option>
@@ -336,10 +273,10 @@
   <div class="wrap">
     <div id="chat" class="chat">
       <div class="welcome" id="welcome">
-        <h1>Ultra-accurate image ID (no web scraping)</h1>
+        <h1>Accurate ID + minute details</h1>
         <p>
-          This version boosts accuracy by sending <b>full image + zoom crops</b> and also doing <b>local OCR</b>
-          to catch tiny text. It will also output a <b>Search query</b> you can click to confirm on the web.
+          This sends the full image + zoomed crops (for tiny details). OCR runs in the background and never blocks Send.
+          If Send “did nothing” before, this fixes it.
         </p>
       </div>
     </div>
@@ -355,12 +292,12 @@
         </div>
 
         <div class="hint">
-          <span class="status-pill" id="ocrPill" title="OCR status (runs locally in your browser)">
-            <span class="dot" id="ocrDot"></span>
+          <span class="pill" title="OCR runs locally in your browser, optional">
+            <span id="ocrDot" class="dot"></span>
             <span id="ocrText">OCR: idle</span>
           </span>
 
-          <label class="toggle" title="Sends zoom crops + runs local OCR (slower but much more accurate)">
+          <label class="toggle" title="Zoom crops + background OCR for more accuracy">
             <input id="boostToggle" type="checkbox" checked />
             Boost accuracy
           </label>
@@ -382,21 +319,18 @@
   </div>
 
   <script>
-    // -------------------------
-    // State
-    // -------------------------
+    // ---------- State ----------
     const state = {
       pendingFile: null,
       pendingPreviewUrl: null,
-      lastPack: null,     // { full, crops:[{label,dataUrl}], displayUrl }
+      lastPack: null,       // { full, crops, displayUrl }
       lastOcrText: "",
-      busy: false,
-      tesseractLoaded: false
+      ocrRunning: false,
+      tesseractLoaded: false,
+      busy: false
     };
 
-    // -------------------------
-    // Elements
-    // -------------------------
+    // ---------- Elements ----------
     const chatEl = document.getElementById('chat');
     const welcomeEl = document.getElementById('welcome');
     const previewEl = document.getElementById('preview');
@@ -412,43 +346,35 @@
     const modalImgEl = document.getElementById('modalImg');
     const closeModalBtnEl = document.getElementById('closeModalBtn');
 
-    const ocrPillEl = document.getElementById('ocrPill');
     const ocrDotEl = document.getElementById('ocrDot');
     const ocrTextEl = document.getElementById('ocrText');
 
-    // -------------------------
-    // Prompts (this is where "ultra" intelligence is forced)
-    // -------------------------
+    // ---------- Prompt (forces structure + non-guessing) ----------
     const VISION_SYSTEM = `
-You are an elite vision + identification assistant.
+You are an elite image identification assistant.
 Rules:
 - DO NOT guess. If unsure, say what is uncertain and what detail is missing.
 - Use the zoomed crops to verify minute details (small text/icons/logos/labels).
-- Use OCR hints as additional evidence, but verify visually when possible.
+- OCR hints are extra evidence, but prefer visual confirmation.
 - If text is visible, transcribe it exactly (preserve line breaks). Use [?] for unclear chars.
-- If the user asks a direct question, answer it first.
 Output format (MUST):
 1) IDENTIFICATION (best guess + short reason)
 2) CONFIDENCE (0-100) + why not 100
-3) MINUTE DETAILS (bullet list)
-4) TEXT FOUND (verbatim transcription)
-5) SEARCH QUERY (a short Google query to confirm the ID)
+3) MINUTE DETAILS (bullets, include tiny things)
+4) TEXT FOUND (verbatim)
+5) SEARCH QUERY (short Google query to confirm)
 `.trim();
 
-    // -------------------------
-    // UI helpers
-    // -------------------------
+    // ---------- UI helpers ----------
     function autosizeTextarea(){
       textInputEl.style.height = 'auto';
       textInputEl.style.height = Math.min(textInputEl.scrollHeight, 180) + 'px';
     }
-
     function escapeHtml(s){
       return (s || '').replace(/[&<>"']/g, c => ({
         '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
       }[c]));
     }
-
     function formatBasicMarkdownToHtml(text){
       let t = escapeHtml(text || '');
       t = t.replace(/```[\s\S]*?```/g, (m) => {
@@ -459,7 +385,6 @@ Output format (MUST):
       t = t.replace(/\n/g, '<br>');
       return t;
     }
-
     function addMessage({ role, text, imageUrls = [] }){
       welcomeEl.style.display = 'none';
 
@@ -498,6 +423,7 @@ Output format (MUST):
       }
 
       bubble.appendChild(content);
+
       msg.appendChild(avatar);
       msg.appendChild(bubble);
 
@@ -525,22 +451,20 @@ Output format (MUST):
       if (kind === 'warn') ocrDotEl.classList.add('warn');
     }
 
-    // -------------------------
-    // Preview
-    // -------------------------
+    // ---------- Preview ----------
     function renderPreview(){
       if (state.pendingPreviewUrl){
         URL.revokeObjectURL(state.pendingPreviewUrl);
         state.pendingPreviewUrl = null;
       }
-
       previewEl.innerHTML = '';
+
       if (!state.pendingFile){
         previewEl.classList.remove('active');
         return;
       }
-
       previewEl.classList.add('active');
+
       const url = URL.createObjectURL(state.pendingFile);
       state.pendingPreviewUrl = url;
 
@@ -558,6 +482,7 @@ Output format (MUST):
       rm.addEventListener('click', () => {
         state.pendingFile = null;
         state.lastOcrText = "";
+        state.ocrRunning = false;
         setOcrStatus('', 'OCR: idle');
         renderPreview();
       });
@@ -572,18 +497,15 @@ Output format (MUST):
       state.pendingFile = file;
       renderPreview();
 
-      // Run OCR in background if boost enabled
-      if (boostToggleEl.checked) {
-        runOcrForPending().catch(console.error);
-      } else {
+      // start OCR in background (DO NOT BLOCK SEND)
+      if (boostToggleEl.checked) startOcrInBackground(file);
+      else {
         state.lastOcrText = "";
         setOcrStatus('', 'OCR: idle');
       }
     }
 
-    // -------------------------
-    // Image processing: normalize + crops
-    // -------------------------
+    // ---------- Image normalize + crops ----------
     async function fileToBitmap(file){
       try {
         return await createImageBitmap(file, { imageOrientation: 'from-image' });
@@ -593,7 +515,6 @@ Output format (MUST):
         return img;
       }
     }
-
     function fileToDataUrl(file){
       return new Promise((resolve, reject) => {
         const r = new FileReader();
@@ -602,7 +523,6 @@ Output format (MUST):
         r.readAsDataURL(file);
       });
     }
-
     function dataUrlToImage(dataUrl){
       return new Promise((resolve, reject) => {
         const img = new Image();
@@ -611,13 +531,12 @@ Output format (MUST):
         img.src = dataUrl;
       });
     }
-
     function resizeToCanvas(drawable, maxSide = 2400){
-      const srcW = drawable.width;
-      const srcH = drawable.height;
+      const srcW = drawable.width, srcH = drawable.height;
       const scale = Math.min(1, maxSide / Math.max(srcW, srcH));
       const w = Math.max(1, Math.round(srcW * scale));
       const h = Math.max(1, Math.round(srcH * scale));
+
       const canvas = document.createElement('canvas');
       canvas.width = w; canvas.height = h;
       const ctx = canvas.getContext('2d', { alpha:false });
@@ -626,11 +545,9 @@ Output format (MUST):
       ctx.drawImage(drawable, 0, 0, w, h);
       return canvas;
     }
-
-    function canvasToJpegDataUrl(canvas, quality = 0.95){
+    function canvasToJpegDataUrl(canvas, quality=0.95){
       return canvas.toDataURL('image/jpeg', quality);
     }
-
     function cropCanvasToDataUrl(srcCanvas, x, y, w, h, quality=0.95){
       const c = document.createElement('canvas');
       c.width = w; c.height = h;
@@ -646,23 +563,27 @@ Output format (MUST):
       const baseCanvas = resizeToCanvas(bmp, 2400);
       const full = canvasToJpegDataUrl(baseCanvas, 0.95);
 
-      const W = baseCanvas.width, H = baseCanvas.height;
       const crops = [];
-
       if (boost){
-        // 2x2 + center zoom
+        const W = baseCanvas.width, H = baseCanvas.height;
         const halfW = Math.floor(W/2), halfH = Math.floor(H/2);
-        crops.push({ label: "TL", dataUrl: cropCanvasToDataUrl(baseCanvas, 0, 0, halfW, halfH) });
-        crops.push({ label: "TR", dataUrl: cropCanvasToDataUrl(baseCanvas, halfW, 0, W-halfW, halfH) });
-        crops.push({ label: "BL", dataUrl: cropCanvasToDataUrl(baseCanvas, 0, halfH, halfW, H-halfH) });
-        crops.push({ label: "BR", dataUrl: cropCanvasToDataUrl(baseCanvas, halfW, halfH, W-halfW, H-halfH) });
+
+        crops.push({ label:"TL", dataUrl: cropCanvasToDataUrl(baseCanvas, 0, 0, halfW, halfH) });
+        crops.push({ label:"TR", dataUrl: cropCanvasToDataUrl(baseCanvas, halfW, 0, W-halfW, halfH) });
+        crops.push({ label:"BL", dataUrl: cropCanvasToDataUrl(baseCanvas, 0, halfH, halfW, H-halfH) });
+        crops.push({ label:"BR", dataUrl: cropCanvasToDataUrl(baseCanvas, halfW, halfH, W-halfW, H-halfH) });
 
         const cx = Math.floor(W*0.25), cy = Math.floor(H*0.25);
         const cw = Math.floor(W*0.5), ch = Math.floor(H*0.5);
-        crops.push({ label: "CENTER", dataUrl: cropCanvasToDataUrl(baseCanvas, cx, cy, cw, ch) });
+        crops.push({ label:"CENTER", dataUrl: cropCanvasToDataUrl(baseCanvas, cx, cy, cw, ch) });
       }
 
+      // Display URL for chat (revoke previous when replacing)
+      if (state.lastPack?.displayUrl) {
+        try { URL.revokeObjectURL(state.lastPack.displayUrl); } catch {}
+      }
       const displayUrl = URL.createObjectURL(file);
+
       return { full, crops, displayUrl };
     }
 
@@ -671,15 +592,12 @@ Output format (MUST):
       if (!m) throw new Error('Invalid image data URL');
       return { media_type: m[1], data: m[2] };
     }
-
     function makeImageBlock(dataUrl){
       const parts = dataUrlToParts(dataUrl);
       return { type:'image', source:{ type:'base64', media_type: parts.media_type, data: parts.data } };
     }
 
-    // -------------------------
-    // OCR (local)
-    // -------------------------
+    // ---------- Background OCR (never blocks sending) ----------
     async function loadTesseractOnce(){
       if (window.Tesseract) return;
       if (state.tesseractLoaded) return;
@@ -689,57 +607,47 @@ Output format (MUST):
         const s = document.createElement('script');
         s.src = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
         s.onload = resolve;
-        s.onerror = () => reject(new Error("Failed to load Tesseract.js"));
+        s.onerror = () => reject(new Error("Failed to load Tesseract.js (blocked?)"));
         document.head.appendChild(s);
       });
     }
 
-    async function runOcrOnDataUrl(dataUrl){
-      await loadTesseractOnce();
-      setOcrStatus('warn', 'OCR: running…');
-
-      const worker = await Tesseract.createWorker({
-        logger: () => {} // silence
-      });
-
-      await worker.loadLanguage('eng');
-      await worker.initialize('eng');
-
-      const { data } = await worker.recognize(dataUrl);
-      await worker.terminate();
-
-      const text = (data?.text || "").trim();
-      return text;
-    }
-
-    async function runOcrForPending(){
-      if (!state.pendingFile) return;
+    async function startOcrInBackground(file){
+      if (state.ocrRunning) return;
+      state.ocrRunning = true;
+      state.lastOcrText = "";
 
       try {
-        // OCR on a slightly smaller normalized image for speed
-        const bmp = await fileToBitmap(state.pendingFile);
+        setOcrStatus('warn', 'OCR: running…');
+
+        await loadTesseractOnce();
+
+        // Small normalized image for OCR speed
+        const bmp = await fileToBitmap(file);
         const ocrCanvas = resizeToCanvas(bmp, 1600);
         const ocrDataUrl = canvasToJpegDataUrl(ocrCanvas, 0.9);
 
-        const text = await runOcrOnDataUrl(ocrDataUrl);
-        state.lastOcrText = text;
+        const worker = await Tesseract.createWorker({ logger: () => {} });
+        await worker.loadLanguage('eng');
+        await worker.initialize('eng');
+        const { data } = await worker.recognize(ocrDataUrl);
+        await worker.terminate();
 
-        if (text) setOcrStatus('ok', 'OCR: ready');
-        else setOcrStatus('ok', 'OCR: ready (no text found)');
+        state.lastOcrText = (data?.text || "").trim();
+        setOcrStatus('ok', state.lastOcrText ? 'OCR: ready' : 'OCR: ready (no text)');
       } catch (e) {
-        state.lastOcrText = "";
-        setOcrStatus('', 'OCR: failed');
         console.error(e);
+        setOcrStatus('', 'OCR: failed');
+      } finally {
+        state.ocrRunning = false;
       }
     }
 
-    // -------------------------
-    // Model call (images + OCR hints)
-    // -------------------------
+    // ---------- Model call ----------
     async function callVision({ model, userText, pack, boost, ocrText }){
       const blocks = [];
 
-      blocks.push({ type:'text', text:'[FULL IMAGE]' });
+      blocks.push({ type:'text', text:'[FULL]' });
       blocks.push(makeImageBlock(pack.full));
 
       if (boost){
@@ -749,38 +657,27 @@ Output format (MUST):
         }
       }
 
-      // Inject OCR text as a hint
-      if (boost && ocrText) {
-        blocks.push({
-          type:'text',
-          text:
-`[OCR HINTS - extracted locally]
-${ocrText}`
-        });
+      if (boost && ocrText){
+        blocks.push({ type:'text', text:`[OCR HINTS]\n${ocrText}` });
       }
 
       const prompt =
 `${VISION_SYSTEM}
 
 USER REQUEST:
-${userText || "What is this image? Identify it with maximum accuracy."}`;
+${userText || "What is this image? Identify it accurately."}`;
 
       blocks.push({ type:'text', text: prompt });
 
-      const messages = [{ role:'user', content: blocks }];
-      return await puter.ai.chat(messages, { model, stream:true });
+      return await puter.ai.chat([{ role:'user', content: blocks }], { model, stream:true });
     }
 
-    function extractSearchQuery(text){
-      // Try to find "SEARCH QUERY:" line
-      const m = text.match(/SEARCH QUERY\s*:\s*(.+)/i);
-      if (!m) return null;
-      return m[1].trim().replace(/\s+/g,' ').slice(0, 200);
+    function extractSearchQuery(out){
+      const m = out.match(/SEARCH QUERY\s*:\s*(.+)/i);
+      return m ? m[1].trim().replace(/\s+/g,' ').slice(0, 200) : null;
     }
 
-    // -------------------------
-    // Send
-    // -------------------------
+    // ---------- Send ----------
     async function send(){
       if (state.busy) return;
 
@@ -795,31 +692,23 @@ ${userText || "What is this image? Identify it with maximum accuracy."}`;
       state.busy = true;
       sendBtnEl.disabled = true;
 
-      let pack = null;
-      let ocrText = "";
-
       try {
-        if (hasNew){
-          // ensure OCR done (if boost)
-          if (boost && !state.lastOcrText) {
-            await runOcrForPending();
-          }
-          ocrText = state.lastOcrText || "";
+        let pack = null;
 
+        if (hasNew){
           pack = await buildPack(state.pendingFile, boost);
           state.lastPack = pack;
 
-          // clear pending
+          // keep OCR result if it finishes later; send uses whatever is ready now
           state.pendingFile = null;
           renderPreview();
         } else {
           pack = state.lastPack;
-          ocrText = state.lastOcrText || "";
         }
 
         addMessage({
           role:'user',
-          text: userText || "What is this image? Please identify it.",
+          text: userText || "Identify this image and describe tiny details.",
           imageUrls: pack ? [pack.displayUrl] : []
         });
 
@@ -832,7 +721,13 @@ ${userText || "What is this image? Identify it with maximum accuracy."}`;
         const model = modelSelectEl.value;
 
         const stream = pack
-          ? await callVision({ model, userText, pack, boost, ocrText })
+          ? await callVision({
+              model,
+              userText,
+              pack,
+              boost,
+              ocrText: state.lastOcrText // whatever is ready now (non-blocking)
+            })
           : await puter.ai.chat(userText, { model, stream:true });
 
         for await (const part of stream){
@@ -843,7 +738,6 @@ ${userText || "What is this image? Identify it with maximum accuracy."}`;
           }
         }
 
-        // Add clickable Google search link if present
         const q = extractSearchQuery(out);
         if (q) {
           const url = "https://www.google.com/search?q=" + encodeURIComponent(q);
@@ -852,13 +746,13 @@ ${userText || "What is this image? Identify it with maximum accuracy."}`;
 
         if (!out.trim()){
           assistant.contentEl.innerHTML = formatBasicMarkdownToHtml(
-            "No output received. Try again or switch models (GPT-4o backup is often strongest for vision)."
+            "No output received. Try switching the model (GPT-4o backup is often strongest for vision)."
           );
         }
       } catch (err){
         addMessage({
           role:'assistant',
-          text: `Error: ${err?.message || err}\n\nTry switching to GPT-4o (backup) if a Claude model is acting weird.`
+          text: `Error: ${err?.message || err}\n\nIf this persists: disable Boost, try a smaller JPG/PNG, or switch to GPT-4o backup.`
         });
         console.error(err);
       } finally {
@@ -868,11 +762,8 @@ ${userText || "What is this image? Identify it with maximum accuracy."}`;
       }
     }
 
-    // -------------------------
-    // Events (no inline onclick)
-    // -------------------------
+    // ---------- Events ----------
     imageBtnEl.addEventListener('click', () => fileInputEl.click());
-
     fileInputEl.addEventListener('change', async (e) => {
       const f = e.target.files?.[0];
       await addFile(f);
@@ -882,7 +773,6 @@ ${userText || "What is this image? Identify it with maximum accuracy."}`;
     sendBtnEl.addEventListener('click', send);
 
     textInputEl.addEventListener('input', autosizeTextarea);
-
     textInputEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey){
         e.preventDefault();
@@ -890,7 +780,7 @@ ${userText || "What is this image? Identify it with maximum accuracy."}`;
       }
     });
 
-    // Paste image
+    // paste image
     document.addEventListener('paste', async (e) => {
       const items = Array.from(e.clipboardData?.items || []);
       const imgItem = items.find(it => it.type && it.type.startsWith('image/'));
@@ -899,7 +789,7 @@ ${userText || "What is this image? Identify it with maximum accuracy."}`;
       await addFile(imgItem.getAsFile());
     });
 
-    // Drag/drop
+    // drag/drop overlay
     let dragCounter = 0;
     document.addEventListener('dragenter', (e) => {
       e.preventDefault();
@@ -920,12 +810,12 @@ ${userText || "What is this image? Identify it with maximum accuracy."}`;
       await addFile(f);
     });
 
-    // Modal close
+    // modal close
     closeModalBtnEl.addEventListener('click', closeModal);
     imgModalEl.addEventListener('click', (e) => { if (e.target === imgModalEl) closeModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
-    // Initial status
+    // initial
     setOcrStatus('', 'OCR: idle');
     textInputEl.focus();
   </script>
