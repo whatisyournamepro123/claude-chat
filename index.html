@@ -69,17 +69,6 @@
             font-size: 18px;
         }
 
-        .model-selector {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .model-selector label {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
         .model-select {
             padding: 10px 16px;
             background: var(--bg-tertiary);
@@ -90,7 +79,6 @@
             font-family: inherit;
             cursor: pointer;
             outline: none;
-            transition: all 0.2s;
         }
 
         .model-select:hover {
@@ -106,7 +94,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            max-width: 900px;
+            max-width: 850px;
             width: 100%;
             margin: 0 auto;
             padding: 24px;
@@ -120,7 +108,7 @@
         }
 
         .message {
-            margin-bottom: 24px;
+            margin-bottom: 32px;
             animation: fadeIn 0.3s ease;
         }
 
@@ -144,7 +132,6 @@
             align-items: center;
             justify-content: center;
             font-size: 16px;
-            flex-shrink: 0;
         }
 
         .message-avatar.user {
@@ -163,21 +150,12 @@
         .message-content {
             padding-left: 44px;
             font-size: 15px;
-            line-height: 1.7;
+            line-height: 1.75;
             color: var(--text-primary);
-        }
-
-        .message-content p {
-            margin-bottom: 12px;
-        }
-
-        .message-content p:last-child {
-            margin-bottom: 0;
         }
 
         .message-content strong {
             color: var(--accent);
-            font-weight: 600;
         }
 
         .message-content code {
@@ -204,32 +182,18 @@
             color: #a5f3fc;
         }
 
-        .message-content ul, .message-content ol {
-            margin: 12px 0;
-            padding-left: 24px;
-        }
-
-        .message-content li {
-            margin-bottom: 8px;
-        }
-
-        .message-content h1, .message-content h2, .message-content h3, .message-content h4 {
-            color: var(--accent);
-            margin: 20px 0 12px;
-        }
-
-        /* Image Preview in Message */
+        /* Image in Message */
         .message-images {
             display: flex;
             flex-wrap: wrap;
             gap: 12px;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             padding-left: 44px;
         }
 
         .message-image {
-            max-width: 300px;
-            max-height: 300px;
+            max-width: 280px;
+            max-height: 280px;
             border-radius: 12px;
             object-fit: cover;
             border: 1px solid var(--border);
@@ -245,10 +209,8 @@
         .typing-indicator {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             padding-left: 44px;
-            color: var(--text-secondary);
-            font-size: 14px;
         }
 
         .typing-dots {
@@ -257,19 +219,19 @@
         }
 
         .typing-dots span {
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             background: var(--accent);
             border-radius: 50%;
-            animation: typing 1.4s infinite ease-in-out;
+            animation: bounce 1.4s infinite ease-in-out;
         }
 
         .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
         .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
 
-        @keyframes typing {
-            0%, 80%, 100% { transform: translateY(0); opacity: 0.5; }
-            40% { transform: translateY(-6px); opacity: 1; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
         }
 
         /* Input Area */
@@ -285,15 +247,14 @@
             border: 1px solid var(--border);
             border-radius: 16px;
             padding: 16px;
-            transition: border-color 0.2s, box-shadow 0.2s;
+            transition: border-color 0.2s;
         }
 
         .input-wrapper:focus-within {
             border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
         }
 
-        /* Image Preview Area */
+        /* Image Preview */
         .image-preview-area {
             display: none;
             flex-wrap: wrap;
@@ -309,7 +270,6 @@
 
         .preview-item {
             position: relative;
-            display: inline-block;
         }
 
         .preview-item img {
@@ -335,14 +295,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: transform 0.2s;
         }
 
         .preview-remove:hover {
             transform: scale(1.1);
         }
 
-        /* Text Input Row */
+        /* Input Row */
         .input-row {
             display: flex;
             align-items: flex-end;
@@ -367,21 +326,19 @@
             color: var(--text-muted);
         }
 
-        /* Action Buttons */
         .input-actions {
             display: flex;
             gap: 8px;
-            align-items: center;
         }
 
         .action-btn {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 10px;
             border: none;
             background: var(--bg-tertiary);
             color: var(--text-secondary);
-            font-size: 18px;
+            font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -391,16 +348,12 @@
 
         .action-btn:hover {
             background: var(--bg-hover);
-            color: var(--text-primary);
-        }
-
-        .action-btn.image-btn:hover {
             color: var(--accent);
         }
 
         .send-btn {
-            width: 40px;
-            height: 40px;
+            width: 42px;
+            height: 42px;
             border-radius: 10px;
             border: none;
             background: var(--accent);
@@ -415,16 +368,13 @@
 
         .send-btn:hover {
             background: var(--accent-hover);
-            transform: scale(1.05);
         }
 
         .send-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
 
-        /* Hidden File Input */
         #fileInput {
             display: none;
         }
@@ -441,64 +391,56 @@
         }
 
         .welcome-icon {
-            font-size: 64px;
+            font-size: 72px;
             margin-bottom: 24px;
         }
 
         .welcome-title {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         .welcome-subtitle {
             font-size: 16px;
             color: var(--text-secondary);
-            max-width: 500px;
+            max-width: 450px;
             line-height: 1.6;
-            margin-bottom: 32px;
+            margin-bottom: 40px;
         }
 
-        .welcome-features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        .welcome-actions {
+            display: flex;
             gap: 16px;
-            width: 100%;
-            max-width: 600px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
-        .feature-card {
+        .welcome-btn {
+            padding: 14px 24px;
             background: var(--bg-secondary);
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 20px;
-            text-align: left;
-            transition: all 0.2s;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
         }
 
-        .feature-card:hover {
+        .welcome-btn:hover {
             border-color: var(--accent);
             transform: translateY(-2px);
         }
 
-        .feature-icon {
-            font-size: 24px;
-            margin-bottom: 12px;
+        .welcome-btn-icon {
+            font-size: 20px;
         }
 
-        .feature-title {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .feature-desc {
-            font-size: 13px;
-            color: var(--text-secondary);
-        }
-
-        /* Fullscreen Image Modal */
+        /* Fullscreen Modal */
         .fullscreen-modal {
             display: none;
             position: fixed;
@@ -531,65 +473,25 @@
             border: none;
             border-radius: 50%;
             color: white;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
-            transition: all 0.2s;
         }
 
         .fullscreen-close:hover {
             background: rgba(255, 255, 255, 0.2);
         }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        /* Error Message */
+        .error-msg {
+            background: rgba(248, 113, 113, 0.1);
+            border: 1px solid var(--error);
+            border-radius: 10px;
+            padding: 16px;
+            color: var(--error);
+            margin-top: 12px;
         }
 
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-muted);
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header {
-                padding: 12px 16px;
-            }
-
-            .main-container {
-                padding: 16px;
-            }
-
-            .model-selector label {
-                display: none;
-            }
-
-            .welcome-features {
-                grid-template-columns: 1fr;
-            }
-
-            .message-content {
-                padding-left: 0;
-            }
-
-            .message-images {
-                padding-left: 0;
-            }
-
-            .typing-indicator {
-                padding-left: 0;
-            }
-        }
-
-        /* Drag & Drop Overlay */
+        /* Drop Overlay */
         .drop-overlay {
             display: none;
             position: fixed;
@@ -607,18 +509,41 @@
         }
 
         .drop-overlay-icon {
-            font-size: 64px;
-            animation: bounce 1s infinite;
+            font-size: 72px;
+            animation: float 2s ease-in-out infinite;
         }
 
-        @keyframes bounce {
+        @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-15px); }
         }
 
         .drop-overlay-text {
             font-size: 24px;
             font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .header {
+                padding: 12px 16px;
+            }
+            .main-container {
+                padding: 16px;
+            }
+            .message-content {
+                padding-left: 0;
+                margin-top: 12px;
+            }
+            .message-images {
+                padding-left: 0;
+            }
+            .typing-indicator {
+                padding-left: 0;
+            }
+            .welcome-title {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
@@ -629,73 +554,57 @@
             <div class="logo-icon">✦</div>
             <span>Claude Vision</span>
         </div>
-        <div class="model-selector">
-            <label>Model:</label>
-            <select class="model-select" id="modelSelect">
-                <option value="claude-opus-4-5">Claude Opus 4.5</option>
-                <option value="claude-sonnet-4-5">Claude Sonnet 4.5</option>
-                <option value="claude-sonnet-4">Claude Sonnet 4</option>
-                <option value="claude-haiku-4-5">Claude Haiku 4.5</option>
-            </select>
-        </div>
+        <select class="model-select" id="modelSelect">
+            <option value="claude-sonnet-4-5">Claude Sonnet 4.5</option>
+            <option value="claude-opus-4-5">Claude Opus 4.5</option>
+            <option value="claude-sonnet-4">Claude Sonnet 4</option>
+            <option value="claude-haiku-4-5">Claude Haiku 4.5</option>
+        </select>
     </header>
 
-    <!-- Main Container -->
+    <!-- Main -->
     <div class="main-container">
-        <!-- Chat Container -->
         <div class="chat-container" id="chatContainer">
             <!-- Welcome Screen -->
             <div class="welcome-screen" id="welcomeScreen">
                 <div class="welcome-icon">✦</div>
                 <h1 class="welcome-title">Claude Vision AI</h1>
                 <p class="welcome-subtitle">
-                    Upload images and I'll analyze them with incredible detail. 
-                    I can read text, understand code, describe scenes, and so much more.
+                    Upload an image and I'll analyze it with incredible detail. I can read text, understand code, describe scenes, and much more.
                 </p>
-                <div class="welcome-features">
-                    <div class="feature-card" onclick="triggerImageUpload()">
-                        <div class="feature-icon">🖼️</div>
-                        <div class="feature-title">Image Analysis</div>
-                        <div class="feature-desc">Upload any image for detailed analysis</div>
-                    </div>
-                    <div class="feature-card" onclick="setPrompt('Extract all text from this image')">
-                        <div class="feature-icon">📝</div>
-                        <div class="feature-title">Text Extraction</div>
-                        <div class="feature-desc">OCR with perfect accuracy</div>
-                    </div>
-                    <div class="feature-card" onclick="setPrompt('Explain this code in detail')">
-                        <div class="feature-icon">💻</div>
-                        <div class="feature-title">Code Analysis</div>
-                        <div class="feature-desc">Understand and explain code</div>
-                    </div>
-                    <div class="feature-card" onclick="setPrompt('Describe everything you see')">
-                        <div class="feature-icon">🔍</div>
-                        <div class="feature-title">Deep Analysis</div>
-                        <div class="feature-desc">Find every detail</div>
-                    </div>
+                <div class="welcome-actions">
+                    <button class="welcome-btn" onclick="document.getElementById('fileInput').click()">
+                        <span class="welcome-btn-icon">📷</span>
+                        Upload Image
+                    </button>
+                    <button class="welcome-btn" onclick="startWithPrompt('Describe this image in detail')">
+                        <span class="welcome-btn-icon">🔍</span>
+                        Analyze Image
+                    </button>
+                    <button class="welcome-btn" onclick="startWithPrompt('Extract all text from this image')">
+                        <span class="welcome-btn-icon">📝</span>
+                        Extract Text
+                    </button>
                 </div>
             </div>
         </div>
 
-        <!-- Input Container -->
+        <!-- Input -->
         <div class="input-container">
             <div class="input-wrapper">
-                <!-- Image Preview Area -->
                 <div class="image-preview-area" id="imagePreviewArea"></div>
-                
-                <!-- Input Row -->
                 <div class="input-row">
                     <textarea 
                         class="text-input" 
                         id="textInput" 
-                        placeholder="Ask about an image or just type a message..."
+                        placeholder="Upload an image and ask anything..."
                         rows="1"
                     ></textarea>
                     <div class="input-actions">
-                        <button class="action-btn image-btn" onclick="triggerImageUpload()" title="Upload Image">
+                        <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="Upload Image">
                             📷
                         </button>
-                        <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send Message">
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send">
                             ➤
                         </button>
                     </div>
@@ -703,29 +612,27 @@
             </div>
         </div>
 
-        <!-- Hidden File Input -->
         <input type="file" id="fileInput" accept="image/*" multiple>
     </div>
 
     <!-- Drop Overlay -->
     <div class="drop-overlay" id="dropOverlay">
         <div class="drop-overlay-icon">📷</div>
-        <div class="drop-overlay-text">Drop your images here</div>
+        <div class="drop-overlay-text">Drop images here</div>
     </div>
 
-    <!-- Fullscreen Modal -->
+    <!-- Fullscreen -->
     <div class="fullscreen-modal" id="fullscreenModal">
         <button class="fullscreen-close" onclick="closeFullscreen()">✕</button>
-        <img id="fullscreenImage" alt="Fullscreen">
+        <img id="fullscreenImage">
     </div>
 
     <script>
-        // ============ STATE ============
+        // ========== STATE ==========
         let pendingImages = [];
         let isProcessing = false;
-        let conversationStarted = false;
 
-        // ============ DOM ELEMENTS ============
+        // ========== ELEMENTS ==========
         const chatContainer = document.getElementById('chatContainer');
         const welcomeScreen = document.getElementById('welcomeScreen');
         const imagePreviewArea = document.getElementById('imagePreviewArea');
@@ -737,93 +644,33 @@
         const fullscreenModal = document.getElementById('fullscreenModal');
         const fullscreenImage = document.getElementById('fullscreenImage');
 
-        // ============ ULTRA VISION PROMPT ============
-        const ULTRA_VISION_PROMPT = `You are Claude, an advanced AI with exceptional vision capabilities. Analyze images with EXTREME precision and detail.
-
-When analyzing images, you MUST:
-
-1. **OBSERVE EVERYTHING**: Notice every single detail, no matter how small. Colors, textures, lighting, shadows, reflections, patterns.
-
-2. **BE SPECIFIC**: Never be vague. Instead of "a person", say "a woman in her mid-30s wearing a navy blue blazer".
-
-3. **SPATIAL AWARENESS**: Describe where things are located (top-left, center, foreground, background).
-
-4. **TEXT EXTRACTION**: If there's ANY text, extract it PERFECTLY and COMPLETELY. Don't miss a single character.
-
-5. **CONTEXT UNDERSTANDING**: Understand what's happening, the mood, the purpose, the story.
-
-6. **TECHNICAL ANALYSIS**: Note image quality, composition, lighting techniques, camera angle.
-
-7. **HIDDEN DETAILS**: Find things others might miss - reflections, shadows, small objects, background elements.
-
-8. **STRUCTURED RESPONSE**: Organize your analysis clearly with sections when appropriate.
-
-9. **CONFIDENCE**: If you're unsure about something, say so, but still provide your best analysis.
-
-10. **HELPFULNESS**: Always aim to be maximally helpful. If the user asks a specific question, answer it directly first, then provide additional relevant insights.
-
-You have superhuman vision capabilities. Use them.`;
-
-        // ============ HELPER FUNCTIONS ============
+        // ========== FILE TO BASE64 ==========
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = () => resolve(reader.result);
-                reader.onerror = reject;
+                reader.onerror = () => reject(new Error('Failed to read file'));
                 reader.readAsDataURL(file);
             });
         }
 
-        function formatMarkdown(text) {
-            if (!text) return '';
-            
-            // Code blocks
-            text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-            
-            // Headers
-            text = text.replace(/^#### (.*$)/gm, '<h4>$1</h4>');
-            text = text.replace(/^### (.*$)/gm, '<h3>$1</h3>');
-            text = text.replace(/^## (.*$)/gm, '<h2>$1</h2>');
-            text = text.replace(/^# (.*$)/gm, '<h1>$1</h1>');
-            
-            // Bold and italic
-            text = text.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
-            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            
-            // Inline code
-            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-            
-            // Lists
-            text = text.replace(/^\- (.*$)/gm, '• $1');
-            text = text.replace(/^\* (.*$)/gm, '• $1');
-            
-            // Line breaks
-            text = text.replace(/\n\n/g, '</p><p>');
-            text = text.replace(/\n/g, '<br>');
-            
-            return '<p>' + text + '</p>';
-        }
-
-        // ============ IMAGE HANDLING ============
-        function triggerImageUpload() {
-            fileInput.click();
-        }
-
+        // ========== HANDLE FILES ==========
         async function handleFiles(files) {
-            for (const file of Array.from(files)) {
+            for (const file of files) {
                 if (file.type.startsWith('image/')) {
-                    const base64 = await fileToBase64(file);
-                    pendingImages.push({
-                        base64: base64,
-                        name: file.name
-                    });
+                    try {
+                        const base64 = await fileToBase64(file);
+                        pendingImages.push(base64);
+                    } catch (err) {
+                        console.error('Error reading file:', err);
+                    }
                 }
             }
-            renderImagePreviews();
+            renderPreviews();
         }
 
-        function renderImagePreviews() {
+        // ========== RENDER PREVIEWS ==========
+        function renderPreviews() {
             if (pendingImages.length === 0) {
                 imagePreviewArea.classList.remove('active');
                 imagePreviewArea.innerHTML = '';
@@ -831,169 +678,189 @@ You have superhuman vision capabilities. Use them.`;
             }
 
             imagePreviewArea.classList.add('active');
-            imagePreviewArea.innerHTML = pendingImages.map((img, index) => `
+            imagePreviewArea.innerHTML = pendingImages.map((img, i) => `
                 <div class="preview-item">
-                    <img src="${img.base64}" alt="${img.name}">
-                    <button class="preview-remove" onclick="removeImage(${index})">✕</button>
+                    <img src="${img}" alt="Preview">
+                    <button class="preview-remove" onclick="removeImage(${i})">✕</button>
                 </div>
             `).join('');
         }
 
+        // ========== REMOVE IMAGE ==========
         function removeImage(index) {
             pendingImages.splice(index, 1);
-            renderImagePreviews();
+            renderPreviews();
         }
 
-        // ============ CHAT FUNCTIONS ============
-        function hideWelcomeScreen() {
-            if (!conversationStarted) {
-                welcomeScreen.style.display = 'none';
-                conversationStarted = true;
-            }
+        // ========== FORMAT TEXT ==========
+        function formatText(text) {
+            if (!text) return '';
+            
+            // Code blocks
+            text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+            
+            // Bold
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Italic
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            // Inline code
+            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            // Line breaks
+            text = text.replace(/\n/g, '<br>');
+            
+            return text;
         }
 
+        // ========== ADD MESSAGE ==========
         function addMessage(role, content, images = []) {
-            hideWelcomeScreen();
+            // Hide welcome screen
+            welcomeScreen.style.display = 'none';
 
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'message';
+            const div = document.createElement('div');
+            div.className = 'message';
 
             const isUser = role === 'user';
-            const avatarEmoji = isUser ? '👤' : '✦';
-            const roleName = isUser ? 'You' : 'Claude';
 
             let imagesHtml = '';
             if (images.length > 0) {
-                imagesHtml = `
-                    <div class="message-images">
-                        ${images.map(img => `<img src="${img}" class="message-image" onclick="openFullscreen('${img}')">`).join('')}
-                    </div>
-                `;
+                imagesHtml = `<div class="message-images">
+                    ${images.map(src => `<img src="${src}" class="message-image" onclick="openFullscreen('${src}')">`).join('')}
+                </div>`;
             }
 
-            messageDiv.innerHTML = `
+            div.innerHTML = `
                 <div class="message-header">
-                    <div class="message-avatar ${role}">${avatarEmoji}</div>
-                    <div class="message-name">${roleName}</div>
+                    <div class="message-avatar ${role}">${isUser ? '👤' : '✦'}</div>
+                    <div class="message-name">${isUser ? 'You' : 'Claude'}</div>
                 </div>
                 ${imagesHtml}
-                <div class="message-content">${formatMarkdown(content)}</div>
+                <div class="message-content">${formatText(content)}</div>
             `;
 
-            chatContainer.appendChild(messageDiv);
+            chatContainer.appendChild(div);
             chatContainer.scrollTop = chatContainer.scrollHeight;
-
-            return messageDiv;
+            return div;
         }
 
-        function addTypingIndicator() {
-            hideWelcomeScreen();
-
-            const typingDiv = document.createElement('div');
-            typingDiv.className = 'message';
-            typingDiv.id = 'typingIndicator';
-
-            typingDiv.innerHTML = `
+        // ========== ADD TYPING ==========
+        function addTyping() {
+            welcomeScreen.style.display = 'none';
+            
+            const div = document.createElement('div');
+            div.className = 'message';
+            div.id = 'typingMessage';
+            div.innerHTML = `
                 <div class="message-header">
                     <div class="message-avatar assistant">✦</div>
                     <div class="message-name">Claude</div>
                 </div>
                 <div class="typing-indicator">
-                    <div class="typing-dots">
-                        <span></span>
-                        <span></span>
-                        <span></span>
-                    </div>
+                    <div class="typing-dots"><span></span><span></span><span></span></div>
                     <span>Analyzing...</span>
                 </div>
             `;
-
-            chatContainer.appendChild(typingDiv);
+            chatContainer.appendChild(div);
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
 
-        function removeTypingIndicator() {
-            const typing = document.getElementById('typingIndicator');
-            if (typing) typing.remove();
+        // ========== REMOVE TYPING ==========
+        function removeTyping() {
+            const el = document.getElementById('typingMessage');
+            if (el) el.remove();
         }
 
-        // ============ SEND MESSAGE ============
+        // ========== SEND MESSAGE ==========
         async function sendMessage() {
             const text = textInput.value.trim();
             const images = [...pendingImages];
 
-            if (!text && images.length === 0) return;
-            if (isProcessing) return;
+            // Need text or images
+            if (!text && images.length === 0) {
+                return;
+            }
 
+            if (isProcessing) return;
             isProcessing = true;
             sendBtn.disabled = true;
 
-            // Clear inputs
+            // Clear input
             textInput.value = '';
             textInput.style.height = 'auto';
             pendingImages = [];
-            renderImagePreviews();
+            renderPreviews();
+
+            // Default prompt if only image
+            const userText = text || 'Analyze this image in detail. Describe everything you see.';
 
             // Show user message
-            const userText = text || 'Analyze this image';
-            addMessage('user', userText, images.map(img => img.base64));
+            addMessage('user', userText, images);
 
-            // Show typing indicator
-            addTypingIndicator();
-
-            // Build API content
-            let content = [];
-
-            // Add images
-            for (const img of images) {
-                const matches = img.base64.match(/^data:(.+);base64,(.+)$/);
-                if (matches) {
-                    content.push({
-                        type: 'image',
-                        source: {
-                            type: 'base64',
-                            media_type: matches[1],
-                            data: matches[2]
-                        }
-                    });
-                }
-            }
-
-            // Add text with ultra prompt if images present
-            const finalPrompt = images.length > 0 
-                ? `${ULTRA_VISION_PROMPT}\n\n---\n\nUSER REQUEST: ${userText}`
-                : userText;
-
-            content.push({ type: 'text', text: finalPrompt });
+            // Show typing
+            addTyping();
 
             try {
-                const response = await puter.ai.chat(
-                    [{ role: 'user', content: content }],
-                    { 
-                        model: modelSelect.value, 
-                        stream: true 
-                    }
-                );
+                // Build the prompt with vision instruction
+                const visionPrompt = images.length > 0 
+                    ? `You are Claude, an AI with exceptional vision capabilities. Analyze the provided image(s) carefully and thoroughly.
 
-                removeTypingIndicator();
+USER REQUEST: ${userText}
 
-                // Create assistant message
-                const assistantMessage = addMessage('assistant', '');
-                const contentDiv = assistantMessage.querySelector('.message-content');
+Instructions:
+- Be extremely detailed and accurate
+- If there's text in the image, extract it completely
+- Describe colors, objects, people, settings
+- Note any important details
+- Structure your response clearly`
+                    : userText;
 
-                let fullResponse = '';
+                let response;
 
-                for await (const part of response) {
-                    if (part?.text) {
-                        fullResponse += part.text;
-                        contentDiv.innerHTML = formatMarkdown(fullResponse);
-                        chatContainer.scrollTop = chatContainer.scrollHeight;
-                    }
+                if (images.length > 0) {
+                    // WITH IMAGES - Use the correct Puter.js format
+                    response = await puter.ai.chat(visionPrompt, {
+                        model: modelSelect.value,
+                        vision: images // Pass images directly to vision parameter
+                    });
+                } else {
+                    // TEXT ONLY
+                    response = await puter.ai.chat(userText, {
+                        model: modelSelect.value
+                    });
                 }
 
+                removeTyping();
+
+                // Handle response
+                let responseText = '';
+                
+                if (typeof response === 'string') {
+                    responseText = response;
+                } else if (response?.message?.content) {
+                    if (Array.isArray(response.message.content)) {
+                        responseText = response.message.content
+                            .filter(block => block.type === 'text')
+                            .map(block => block.text)
+                            .join('\n');
+                    } else {
+                        responseText = response.message.content;
+                    }
+                } else if (response?.content) {
+                    responseText = response.content;
+                } else if (response?.text) {
+                    responseText = response.text;
+                } else {
+                    responseText = JSON.stringify(response);
+                }
+
+                addMessage('assistant', responseText);
+
             } catch (error) {
-                removeTypingIndicator();
-                addMessage('assistant', `❌ **Error:** ${error.message}\n\nPlease try again or select a different model.`);
+                removeTyping();
+                console.error('API Error:', error);
+                addMessage('assistant', `❌ **Error:** ${error.message}\n\nPlease try again. If the error persists, try a different model or smaller image.`);
             }
 
             isProcessing = false;
@@ -1001,7 +868,12 @@ You have superhuman vision capabilities. Use them.`;
             textInput.focus();
         }
 
-        // ============ FULLSCREEN IMAGE ============
+        // ========== HELPER FUNCTIONS ==========
+        function startWithPrompt(prompt) {
+            textInput.value = prompt;
+            document.getElementById('fileInput').click();
+        }
+
         function openFullscreen(src) {
             fullscreenImage.src = src;
             fullscreenModal.classList.add('active');
@@ -1011,28 +883,21 @@ You have superhuman vision capabilities. Use them.`;
             fullscreenModal.classList.remove('active');
         }
 
-        // ============ UTILITY FUNCTIONS ============
-        function setPrompt(prompt) {
-            textInput.value = prompt;
-            textInput.focus();
-            triggerImageUpload();
-        }
+        // ========== EVENT LISTENERS ==========
 
-        // ============ EVENT LISTENERS ============
-
-        // File input change
+        // File input
         fileInput.addEventListener('change', (e) => {
-            handleFiles(e.target.files);
+            handleFiles(Array.from(e.target.files));
             fileInput.value = '';
         });
 
-        // Text input auto-resize
+        // Auto-resize textarea
         textInput.addEventListener('input', () => {
             textInput.style.height = 'auto';
             textInput.style.height = Math.min(textInput.scrollHeight, 200) + 'px';
         });
 
-        // Enter to send (Shift+Enter for new line)
+        // Enter to send
         textInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -1043,49 +908,53 @@ You have superhuman vision capabilities. Use them.`;
         // Paste images
         document.addEventListener('paste', (e) => {
             const items = Array.from(e.clipboardData.items);
-            const imageItems = items.filter(item => item.type.startsWith('image/'));
+            const imageFiles = items
+                .filter(item => item.type.startsWith('image/'))
+                .map(item => item.getAsFile());
             
-            if (imageItems.length > 0) {
+            if (imageFiles.length > 0) {
                 e.preventDefault();
-                const files = imageItems.map(item => item.getAsFile());
-                handleFiles(files);
+                handleFiles(imageFiles);
             }
         });
 
         // Drag and drop
-        document.addEventListener('dragover', (e) => {
+        let dragCounter = 0;
+
+        document.addEventListener('dragenter', (e) => {
             e.preventDefault();
+            dragCounter++;
             dropOverlay.classList.add('active');
         });
 
         document.addEventListener('dragleave', (e) => {
-            if (e.relatedTarget === null) {
+            e.preventDefault();
+            dragCounter--;
+            if (dragCounter === 0) {
                 dropOverlay.classList.remove('active');
             }
         });
 
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+        });
+
         document.addEventListener('drop', (e) => {
             e.preventDefault();
+            dragCounter = 0;
             dropOverlay.classList.remove('active');
-            handleFiles(e.dataTransfer.files);
+            handleFiles(Array.from(e.dataTransfer.files));
         });
 
         // Escape to close fullscreen
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeFullscreen();
-            }
+            if (e.key === 'Escape') closeFullscreen();
         });
 
-        // Click outside fullscreen image to close
+        // Click outside to close
         fullscreenModal.addEventListener('click', (e) => {
-            if (e.target === fullscreenModal) {
-                closeFullscreen();
-            }
+            if (e.target === fullscreenModal) closeFullscreen();
         });
-
-        // Focus input on load
-        textInput.focus();
     </script>
 </body>
 </html>
