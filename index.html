@@ -12,7 +12,7 @@
 
   <style>
     :root{
-      --bg: #0b0b0d;
+      --bg:#0b0b0d;
       --panel:#111114;
       --panel2:#15151a;
       --border:#26262d;
@@ -21,6 +21,7 @@
       --muted2:#707085;
       --accent:#d4a574;
       --danger:#ff6b6b;
+      --ok:#4ade80;
     }
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
@@ -35,7 +36,7 @@
     }
 
     .topbar{
-      position: sticky; top:0; z-index: 10;
+      position: sticky; top:0; z-index:10;
       backdrop-filter: blur(14px);
       background: rgba(11,11,13,.75);
       border-bottom: 1px solid var(--border);
@@ -47,11 +48,13 @@
     }
     .brand{ display:flex; align-items:center; gap:10px; font-weight:700; }
     .badge{
-      width: 34px; height: 34px; border-radius: 10px;
+      width: 34px; height:34px; border-radius: 10px;
       display:grid; place-items:center;
       background: linear-gradient(135deg, var(--accent), #b98257);
       color:#141414; font-weight:900;
     }
+    .controls{ display:flex; align-items:center; gap:10px; }
+
     select{
       appearance:none;
       background: var(--panel2);
@@ -75,6 +78,7 @@
     }
 
     .chat{ flex:1; overflow:auto; padding: 6px 0 18px; }
+
     .welcome{
       margin-top: 40px;
       border: 1px solid var(--border);
@@ -82,8 +86,8 @@
       border-radius: 18px;
       padding: 22px;
     }
-    .welcome h1{ margin: 0 0 10px; font-size: 22px; }
-    .welcome p{ margin: 0; color: var(--muted); line-height: 1.55; font-size: 14px; }
+    .welcome h1{ margin:0 0 10px; font-size: 22px; }
+    .welcome p{ margin:0; color: var(--muted); line-height: 1.55; font-size: 14px; }
 
     .msg{ margin: 18px 0; display:flex; gap:12px; align-items:flex-start; }
     .avatar{
@@ -100,13 +104,15 @@
       color:#131313;
       border-color: rgba(212,165,116,.35);
     }
-    .bubble{ flex:1 1 auto; min-width:0; }
+    .bubble{ flex: 1 1 auto; min-width:0; }
+
     .meta{
       display:flex; align-items:center; justify-content:space-between;
       font-size:12px; color: var(--muted2);
       margin-bottom: 6px;
     }
     .meta .name{ color: var(--text); font-weight: 600; font-size: 13px; }
+
     .content{
       line-height: 1.75;
       font-size: 14px;
@@ -244,6 +250,21 @@
     }
     .toggle input{ accent-color: var(--accent); }
 
+    .status-pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .dot{ width:8px; height:8px; border-radius:99px; background: var(--muted2); }
+    .dot.ok{ background: var(--ok); }
+    .dot.warn{ background: var(--accent); }
+
     .drop-overlay{
       position: fixed; inset:0;
       display:none;
@@ -315,10 +336,10 @@
   <div class="wrap">
     <div id="chat" class="chat">
       <div class="welcome" id="welcome">
-        <h1>Ultra detail + Web lookup</h1>
+        <h1>Ultra-accurate image ID (no web scraping)</h1>
         <p>
-          Upload/paste/drag an image. Ultra mode sends full image + zoomed crops for tiny details.
-          The Web button generates an identifying Google query from the image and opens search.
+          This version boosts accuracy by sending <b>full image + zoom crops</b> and also doing <b>local OCR</b>
+          to catch tiny text. It will also output a <b>Search query</b> you can click to confirm on the web.
         </p>
       </div>
     </div>
@@ -328,17 +349,20 @@
         <div id="preview" class="preview"></div>
 
         <div class="row">
-          <textarea id="textInput" rows="1" placeholder="Ask about your image… (Enter to send, Shift+Enter newline)"></textarea>
+          <textarea id="textInput" rows="1" placeholder="Ask about the image… (Enter to send, Shift+Enter newline)"></textarea>
           <button id="imageBtn" class="btn" title="Image">Image</button>
-          <button id="webBtn" class="btn" title="Web">Web</button>
           <button id="sendBtn" class="btn btn-send" title="Send">➤</button>
         </div>
 
         <div class="hint">
-          <span><b>Tip:</b> If text is tiny, Ultra mode helps a lot</span>
-          <label class="toggle" title="Slower but more detailed (full + crops)">
-            <input id="ultraToggle" type="checkbox" checked />
-            Ultra detail
+          <span class="status-pill" id="ocrPill" title="OCR status (runs locally in your browser)">
+            <span class="dot" id="ocrDot"></span>
+            <span id="ocrText">OCR: idle</span>
+          </span>
+
+          <label class="toggle" title="Sends zoom crops + runs local OCR (slower but much more accurate)">
+            <input id="boostToggle" type="checkbox" checked />
+            Boost accuracy
           </label>
         </div>
       </div>
@@ -358,54 +382,62 @@
   </div>
 
   <script>
-    // ---------- State ----------
+    // -------------------------
+    // State
+    // -------------------------
     const state = {
-      pendingFile: null,          // current upload
-      pendingPreviewUrl: null,    // objectURL for preview
-      lastPack: null,             // { full, crops:[{label,dataUrl}], displayUrl }
-      busy: false
+      pendingFile: null,
+      pendingPreviewUrl: null,
+      lastPack: null,     // { full, crops:[{label,dataUrl}], displayUrl }
+      lastOcrText: "",
+      busy: false,
+      tesseractLoaded: false
     };
 
-    // ---------- Elements ----------
+    // -------------------------
+    // Elements
+    // -------------------------
     const chatEl = document.getElementById('chat');
     const welcomeEl = document.getElementById('welcome');
     const previewEl = document.getElementById('preview');
     const textInputEl = document.getElementById('textInput');
     const imageBtnEl = document.getElementById('imageBtn');
-    const webBtnEl = document.getElementById('webBtn');
     const sendBtnEl = document.getElementById('sendBtn');
     const fileInputEl = document.getElementById('fileInput');
     const modelSelectEl = document.getElementById('modelSelect');
     const dropOverlayEl = document.getElementById('dropOverlay');
-    const ultraToggleEl = document.getElementById('ultraToggle');
+    const boostToggleEl = document.getElementById('boostToggle');
 
     const imgModalEl = document.getElementById('imgModal');
     const modalImgEl = document.getElementById('modalImg');
     const closeModalBtnEl = document.getElementById('closeModalBtn');
 
-    // ---------- Prompts ----------
+    const ocrPillEl = document.getElementById('ocrPill');
+    const ocrDotEl = document.getElementById('ocrDot');
+    const ocrTextEl = document.getElementById('ocrText');
+
+    // -------------------------
+    // Prompts (this is where "ultra" intelligence is forced)
+    // -------------------------
     const VISION_SYSTEM = `
-You are a highly accurate vision assistant.
+You are an elite vision + identification assistant.
 Rules:
-- Describe ONLY what you can actually see. If unsure, say "not clear" and ask a question.
-- Use zoomed crops to capture minute details.
-- If text is visible, transcribe it exactly with line breaks. Use [?] for unclear characters.
-- Be specific: counts, colors, locations, small logos/icons/UI labels.
-- Answer the user's question FIRST, then provide extra relevant details.
+- DO NOT guess. If unsure, say what is uncertain and what detail is missing.
+- Use the zoomed crops to verify minute details (small text/icons/logos/labels).
+- Use OCR hints as additional evidence, but verify visually when possible.
+- If text is visible, transcribe it exactly (preserve line breaks). Use [?] for unclear chars.
+- If the user asks a direct question, answer it first.
+Output format (MUST):
+1) IDENTIFICATION (best guess + short reason)
+2) CONFIDENCE (0-100) + why not 100
+3) MINUTE DETAILS (bullet list)
+4) TEXT FOUND (verbatim transcription)
+5) SEARCH QUERY (a short Google query to confirm the ID)
 `.trim();
 
-    const WEB_QUERY_PROMPT = `
-You are generating a reverse-image-search style query.
-Given the image(s), output ONE concise Google query that would identify it.
-Include:
-- exact text visible (brand/model/product name)
-- distinctive attributes (color, shape, logo, packaging, character name, UI app name)
-Rules:
-- Output ONLY the query text. No quotes, no markdown, no explanations.
-- Keep it under 12 words if possible.
-`.trim();
-
-    // ---------- Helpers ----------
+    // -------------------------
+    // UI helpers
+    // -------------------------
     function autosizeTextarea(){
       textInputEl.style.height = 'auto';
       textInputEl.style.height = Math.min(textInputEl.scrollHeight, 180) + 'px';
@@ -480,13 +512,22 @@ Rules:
       imgModalEl.classList.add('active');
       imgModalEl.setAttribute('aria-hidden', 'false');
     }
-
     function closeModal(){
       imgModalEl.classList.remove('active');
       imgModalEl.setAttribute('aria-hidden', 'true');
       modalImgEl.src = '';
     }
 
+    function setOcrStatus(kind, text){
+      ocrTextEl.textContent = text;
+      ocrDotEl.classList.remove('ok','warn');
+      if (kind === 'ok') ocrDotEl.classList.add('ok');
+      if (kind === 'warn') ocrDotEl.classList.add('warn');
+    }
+
+    // -------------------------
+    // Preview
+    // -------------------------
     function renderPreview(){
       if (state.pendingPreviewUrl){
         URL.revokeObjectURL(state.pendingPreviewUrl);
@@ -516,6 +557,8 @@ Rules:
       rm.textContent = '×';
       rm.addEventListener('click', () => {
         state.pendingFile = null;
+        state.lastOcrText = "";
+        setOcrStatus('', 'OCR: idle');
         renderPreview();
       });
 
@@ -526,11 +569,21 @@ Rules:
 
     async function addFile(file){
       if (!file || !file.type || !file.type.startsWith('image/')) return;
-      state.pendingFile = file; // keep single image for max detail
+      state.pendingFile = file;
       renderPreview();
+
+      // Run OCR in background if boost enabled
+      if (boostToggleEl.checked) {
+        runOcrForPending().catch(console.error);
+      } else {
+        state.lastOcrText = "";
+        setOcrStatus('', 'OCR: idle');
+      }
     }
 
-    // ---------- Image processing (full + crops) ----------
+    // -------------------------
+    // Image processing: normalize + crops
+    // -------------------------
     async function fileToBitmap(file){
       try {
         return await createImageBitmap(file, { imageOrientation: 'from-image' });
@@ -559,7 +612,7 @@ Rules:
       });
     }
 
-    function resizeToCanvas(drawable, maxSide = 2200){
+    function resizeToCanvas(drawable, maxSide = 2400){
       const srcW = drawable.width;
       const srcH = drawable.height;
       const scale = Math.min(1, maxSide / Math.max(srcW, srcH));
@@ -588,29 +641,16 @@ Rules:
       return canvasToJpegDataUrl(c, quality);
     }
 
-    function dataUrlToParts(dataUrl){
-      const m = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
-      if (!m) throw new Error('Invalid image data URL');
-      return { media_type: m[1], data: m[2] };
-    }
-
-    function makeImageBlock(dataUrl){
-      const parts = dataUrlToParts(dataUrl);
-      return {
-        type: 'image',
-        source: { type:'base64', media_type: parts.media_type, data: parts.data }
-      };
-    }
-
-    async function buildPack(file, ultra=true){
+    async function buildPack(file, boost=true){
       const bmp = await fileToBitmap(file);
-      const baseCanvas = resizeToCanvas(bmp, 2200);
+      const baseCanvas = resizeToCanvas(bmp, 2400);
       const full = canvasToJpegDataUrl(baseCanvas, 0.95);
 
       const W = baseCanvas.width, H = baseCanvas.height;
       const crops = [];
 
-      if (ultra){
+      if (boost){
+        // 2x2 + center zoom
         const halfW = Math.floor(W/2), halfH = Math.floor(H/2);
         crops.push({ label: "TL", dataUrl: cropCanvasToDataUrl(baseCanvas, 0, 0, halfW, halfH) });
         crops.push({ label: "TR", dataUrl: cropCanvasToDataUrl(baseCanvas, halfW, 0, W-halfW, halfH) });
@@ -626,30 +666,104 @@ Rules:
       return { full, crops, displayUrl };
     }
 
-    // ---------- Model calls ----------
-    async function callVision({ model, userText, pack, ultra }){
+    function dataUrlToParts(dataUrl){
+      const m = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+      if (!m) throw new Error('Invalid image data URL');
+      return { media_type: m[1], data: m[2] };
+    }
+
+    function makeImageBlock(dataUrl){
+      const parts = dataUrlToParts(dataUrl);
+      return { type:'image', source:{ type:'base64', media_type: parts.media_type, data: parts.data } };
+    }
+
+    // -------------------------
+    // OCR (local)
+    // -------------------------
+    async function loadTesseractOnce(){
+      if (window.Tesseract) return;
+      if (state.tesseractLoaded) return;
+      state.tesseractLoaded = true;
+
+      await new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = "https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js";
+        s.onload = resolve;
+        s.onerror = () => reject(new Error("Failed to load Tesseract.js"));
+        document.head.appendChild(s);
+      });
+    }
+
+    async function runOcrOnDataUrl(dataUrl){
+      await loadTesseractOnce();
+      setOcrStatus('warn', 'OCR: running…');
+
+      const worker = await Tesseract.createWorker({
+        logger: () => {} // silence
+      });
+
+      await worker.loadLanguage('eng');
+      await worker.initialize('eng');
+
+      const { data } = await worker.recognize(dataUrl);
+      await worker.terminate();
+
+      const text = (data?.text || "").trim();
+      return text;
+    }
+
+    async function runOcrForPending(){
+      if (!state.pendingFile) return;
+
+      try {
+        // OCR on a slightly smaller normalized image for speed
+        const bmp = await fileToBitmap(state.pendingFile);
+        const ocrCanvas = resizeToCanvas(bmp, 1600);
+        const ocrDataUrl = canvasToJpegDataUrl(ocrCanvas, 0.9);
+
+        const text = await runOcrOnDataUrl(ocrDataUrl);
+        state.lastOcrText = text;
+
+        if (text) setOcrStatus('ok', 'OCR: ready');
+        else setOcrStatus('ok', 'OCR: ready (no text found)');
+      } catch (e) {
+        state.lastOcrText = "";
+        setOcrStatus('', 'OCR: failed');
+        console.error(e);
+      }
+    }
+
+    // -------------------------
+    // Model call (images + OCR hints)
+    // -------------------------
+    async function callVision({ model, userText, pack, boost, ocrText }){
       const blocks = [];
-      blocks.push({ type:'text', text:'[FULL]' });
+
+      blocks.push({ type:'text', text:'[FULL IMAGE]' });
       blocks.push(makeImageBlock(pack.full));
 
-      if (ultra){
+      if (boost){
         for (const c of pack.crops){
           blocks.push({ type:'text', text:`[CROP ${c.label}]` });
           blocks.push(makeImageBlock(c.dataUrl));
         }
       }
 
+      // Inject OCR text as a hint
+      if (boost && ocrText) {
+        blocks.push({
+          type:'text',
+          text:
+`[OCR HINTS - extracted locally]
+${ocrText}`
+        });
+      }
+
       const prompt =
 `${VISION_SYSTEM}
 
 USER REQUEST:
-${userText || "Describe the image in ultra detail."}
-
-OUTPUT:
-1) Direct answer first.
-2) Minute details (cite FULL/TL/TR/BL/BR/CENTER when possible).
-3) Text found (verbatim).
-4) Uncertain items (no guessing).`;
+${userText || "What is this image? Identify it with maximum accuracy."}`;
 
       blocks.push({ type:'text', text: prompt });
 
@@ -657,44 +771,22 @@ OUTPUT:
       return await puter.ai.chat(messages, { model, stream:true });
     }
 
-    async function callVisionForQuery({ model, pack, ultra }){
-      const blocks = [];
-      blocks.push({ type:'text', text:'[FULL]' });
-      blocks.push(makeImageBlock(pack.full));
-
-      // For query generation, sending CENTER crop helps a lot.
-      if (ultra && pack.crops?.length){
-        const center = pack.crops.find(x => x.label === "CENTER") || pack.crops[pack.crops.length - 1];
-        blocks.push({ type:'text', text:'[CROP CENTER]' });
-        blocks.push(makeImageBlock(center.dataUrl));
-      }
-
-      blocks.push({ type:'text', text: WEB_QUERY_PROMPT });
-
-      const messages = [{ role:'user', content: blocks }];
-      return await puter.ai.chat(messages, { model, stream:true });
+    function extractSearchQuery(text){
+      // Try to find "SEARCH QUERY:" line
+      const m = text.match(/SEARCH QUERY\s*:\s*(.+)/i);
+      if (!m) return null;
+      return m[1].trim().replace(/\s+/g,' ').slice(0, 200);
     }
 
-    // Wikipedia OpenSearch (free, CORS allowed)
-    async function wikiSearch(query){
-      const url =
-        "https://en.wikipedia.org/w/api.php?action=opensearch&format=json&origin=*&limit=5&search=" +
-        encodeURIComponent(query);
-      const r = await fetch(url);
-      if (!r.ok) return null;
-      const data = await r.json();
-      // data = [query, titles[], desc[], links[]]
-      return data;
-    }
-
-    // ---------- Send message ----------
+    // -------------------------
+    // Send
+    // -------------------------
     async function send(){
       if (state.busy) return;
 
       const userText = (textInputEl.value || '').trim();
-      const ultra = !!ultraToggleEl.checked;
+      const boost = !!boostToggleEl.checked;
 
-      // Use newly uploaded image if present, else reuse last image for follow-ups
       const hasNew = !!state.pendingFile;
       const hasLast = !!state.lastPack;
 
@@ -704,20 +796,30 @@ OUTPUT:
       sendBtnEl.disabled = true;
 
       let pack = null;
+      let ocrText = "";
 
       try {
         if (hasNew){
-          pack = await buildPack(state.pendingFile, ultra);
+          // ensure OCR done (if boost)
+          if (boost && !state.lastOcrText) {
+            await runOcrForPending();
+          }
+          ocrText = state.lastOcrText || "";
+
+          pack = await buildPack(state.pendingFile, boost);
           state.lastPack = pack;
+
+          // clear pending
           state.pendingFile = null;
           renderPreview();
         } else {
           pack = state.lastPack;
+          ocrText = state.lastOcrText || "";
         }
 
         addMessage({
           role:'user',
-          text: userText || (pack ? "Analyze this image in ultra detail." : "Hi"),
+          text: userText || "What is this image? Please identify it.",
           imageUrls: pack ? [pack.displayUrl] : []
         });
 
@@ -728,8 +830,9 @@ OUTPUT:
         let out = '';
 
         const model = modelSelectEl.value;
+
         const stream = pack
-          ? await callVision({ model, userText, pack, ultra })
+          ? await callVision({ model, userText, pack, boost, ocrText })
           : await puter.ai.chat(userText, { model, stream:true });
 
         for await (const part of stream){
@@ -740,9 +843,16 @@ OUTPUT:
           }
         }
 
+        // Add clickable Google search link if present
+        const q = extractSearchQuery(out);
+        if (q) {
+          const url = "https://www.google.com/search?q=" + encodeURIComponent(q);
+          assistant.contentEl.innerHTML += `<br><br><span style="color:var(--muted2)">Confirm on web:</span><br><a href="${url}" target="_blank" rel="noopener noreferrer" style="color:var(--accent)">${escapeHtml(url)}</a>`;
+        }
+
         if (!out.trim()){
           assistant.contentEl.innerHTML = formatBasicMarkdownToHtml(
-            "No output received. Try again or switch models (e.g., GPT-4o backup)."
+            "No output received. Try again or switch models (GPT-4o backup is often strongest for vision)."
           );
         }
       } catch (err){
@@ -758,103 +868,11 @@ OUTPUT:
       }
     }
 
-    // ---------- Web lookup (Google open + Wikipedia hints) ----------
-    async function webLookup(){
-      if (state.busy) return;
-
-      const ultra = !!ultraToggleEl.checked;
-      const hasNew = !!state.pendingFile;
-      const hasLast = !!state.lastPack;
-
-      if (!hasNew && !hasLast){
-        addMessage({ role:'assistant', text: "Upload an image first, then press Web." });
-        return;
-      }
-
-      state.busy = true;
-      webBtnEl.disabled = true;
-
-      try {
-        let pack;
-        if (hasNew){
-          pack = await buildPack(state.pendingFile, ultra);
-          state.lastPack = pack;
-          state.pendingFile = null;
-          renderPreview();
-
-          addMessage({
-            role:'user',
-            text: "Web lookup this image.",
-            imageUrls: [pack.displayUrl]
-          });
-        } else {
-          pack = state.lastPack;
-          addMessage({
-            role:'user',
-            text: "Web lookup this image (reuse last).",
-            imageUrls: [pack.displayUrl]
-          });
-        }
-
-        const assistant = addMessage({ role:'assistant', text: "Generating a search query from the image…" });
-        const model = modelSelectEl.value;
-
-        // Stream query
-        let query = "";
-        const stream = await callVisionForQuery({ model, pack, ultra });
-
-        for await (const part of stream){
-          if (part?.text){
-            query += part.text;
-            assistant.contentEl.innerHTML = formatBasicMarkdownToHtml("Query:\n" + query.trim());
-          }
-        }
-
-        query = (query || "").trim().replace(/\s+/g, " ").slice(0, 120);
-        if (!query){
-          assistant.contentEl.innerHTML = formatBasicMarkdownToHtml(
-            "Could not generate a query. Try switching to GPT-4o (backup) and press Web again."
-          );
-          return;
-        }
-
-        // Wikipedia quick results
-        let wikiBlock = "";
-        try {
-          const data = await wikiSearch(query);
-          if (data && Array.isArray(data) && data.length >= 4){
-            const titles = data[1] || [];
-            const descs  = data[2] || [];
-            const links  = data[3] || [];
-            if (titles.length){
-              wikiBlock += "\n\nWikipedia quick matches:\n";
-              for (let i=0; i<titles.length; i++){
-                wikiBlock += `- ${titles[i]} — ${descs[i] || ""}\n  ${links[i] || ""}\n`;
-              }
-            }
-          }
-        } catch {}
-
-        const googleUrl = "https://www.google.com/search?q=" + encodeURIComponent(query);
-
-        assistant.contentEl.innerHTML = formatBasicMarkdownToHtml(
-          `Query:\n${query}\n\nOpen Google:\n${googleUrl}${wikiBlock}\n\nTip: Open the results and paste the best match URL/title back here, and I’ll confirm.`
-        );
-
-        // Open Google in a new tab (user gesture from button click, so usually allowed)
-        window.open(googleUrl, "_blank", "noopener,noreferrer");
-      } catch (err){
-        addMessage({ role:'assistant', text: `Error: ${err?.message || err}` });
-        console.error(err);
-      } finally {
-        state.busy = false;
-        webBtnEl.disabled = false;
-        textInputEl.focus();
-      }
-    }
-
-    // ---------- Events ----------
+    // -------------------------
+    // Events (no inline onclick)
+    // -------------------------
     imageBtnEl.addEventListener('click', () => fileInputEl.click());
+
     fileInputEl.addEventListener('change', async (e) => {
       const f = e.target.files?.[0];
       await addFile(f);
@@ -862,9 +880,9 @@ OUTPUT:
     });
 
     sendBtnEl.addEventListener('click', send);
-    webBtnEl.addEventListener('click', webLookup);
 
     textInputEl.addEventListener('input', autosizeTextarea);
+
     textInputEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey){
         e.preventDefault();
@@ -872,7 +890,7 @@ OUTPUT:
       }
     });
 
-    // Paste images
+    // Paste image
     document.addEventListener('paste', async (e) => {
       const items = Array.from(e.clipboardData?.items || []);
       const imgItem = items.find(it => it.type && it.type.startsWith('image/'));
@@ -881,7 +899,7 @@ OUTPUT:
       await addFile(imgItem.getAsFile());
     });
 
-    // Drag/drop overlay
+    // Drag/drop
     let dragCounter = 0;
     document.addEventListener('dragenter', (e) => {
       e.preventDefault();
@@ -907,6 +925,8 @@ OUTPUT:
     imgModalEl.addEventListener('click', (e) => { if (e.target === imgModalEl) closeModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
 
+    // Initial status
+    setOcrStatus('', 'OCR: idle');
     textInputEl.focus();
   </script>
 </body>
