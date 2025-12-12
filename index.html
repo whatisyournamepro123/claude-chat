@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Claude Vision AI</title>
     <script src="https://js.puter.com/v2/"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,25 +12,10 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --bg-main: #0d0d0d;
-            --bg-secondary: #171717;
-            --bg-tertiary: #1e1e1e;
-            --bg-hover: #2a2a2a;
-            --accent: #d4a574;
-            --accent-hover: #e0b88a;
-            --text-primary: #ececec;
-            --text-secondary: #a0a0a0;
-            --text-muted: #666;
-            --border: #2a2a2a;
-            --success: #4ade80;
-            --error: #f87171;
-        }
-
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--bg-main);
-            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d0d0d;
+            color: #e0e0e0;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -39,233 +23,150 @@
 
         /* Header */
         .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
             padding: 16px 24px;
-            border-bottom: 1px solid var(--border);
-            background: var(--bg-main);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            border-bottom: 1px solid #2a2a2a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
             font-size: 20px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .logo-icon {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, var(--accent), #c9956c);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .model-select {
-            padding: 10px 16px;
-            background: var(--bg-tertiary);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            color: var(--text-primary);
-            font-size: 14px;
-            font-family: inherit;
-            cursor: pointer;
-            outline: none;
-        }
-
-        .model-select:hover {
-            border-color: var(--accent);
-        }
-
-        .model-select option {
-            background: var(--bg-secondary);
-        }
-
-        /* Main Container */
-        .main-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            max-width: 850px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 24px;
-        }
-
-        /* Chat Messages */
-        .chat-container {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 24px;
-        }
-
-        .message {
-            margin-bottom: 32px;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .message-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
-        }
-
-        .message-avatar {
             width: 32px;
             height: 32px;
+            background: linear-gradient(135deg, #d4a574, #c9956c);
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
         }
 
-        .message-avatar.user {
-            background: var(--bg-tertiary);
-        }
-
-        .message-avatar.assistant {
-            background: linear-gradient(135deg, var(--accent), #c9956c);
-        }
-
-        .message-name {
-            font-weight: 600;
+        select {
+            padding: 10px 16px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #fff;
             font-size: 14px;
-        }
-
-        .message-content {
-            padding-left: 44px;
-            font-size: 15px;
-            line-height: 1.75;
-            color: var(--text-primary);
-        }
-
-        .message-content strong {
-            color: var(--accent);
-        }
-
-        .message-content code {
-            background: var(--bg-tertiary);
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-family: 'SF Mono', 'Consolas', monospace;
-            font-size: 13px;
-            color: #f0abfc;
-        }
-
-        .message-content pre {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
-        }
-
-        .message-content pre code {
-            background: none;
-            padding: 0;
-            color: #a5f3fc;
-        }
-
-        /* Image in Message */
-        .message-images {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 16px;
-            padding-left: 44px;
-        }
-
-        .message-image {
-            max-width: 280px;
-            max-height: 280px;
-            border-radius: 12px;
-            object-fit: cover;
-            border: 1px solid var(--border);
             cursor: pointer;
-            transition: transform 0.2s;
         }
 
-        .message-image:hover {
-            transform: scale(1.02);
+        /* Main */
+        .main {
+            flex: 1;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Typing Indicator */
-        .typing-indicator {
+        /* Messages */
+        .messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .message {
+            margin-bottom: 24px;
+        }
+
+        .message-role {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message-role.user { color: #a0a0a0; }
+        .message-role.assistant { color: #d4a574; }
+
+        .message-body {
+            line-height: 1.7;
+            font-size: 15px;
+            white-space: pre-wrap;
+        }
+
+        .message-body img {
+            max-width: 300px;
+            max-height: 300px;
+            border-radius: 12px;
+            margin: 12px 0;
+            display: block;
+        }
+
+        /* Welcome */
+        .welcome {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .welcome h1 {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .welcome p {
+            color: #888;
+            margin-bottom: 32px;
+            max-width: 400px;
+        }
+
+        .welcome-btn {
+            padding: 14px 28px;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 12px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 10px;
-            padding-left: 44px;
         }
 
-        .typing-dots {
-            display: flex;
-            gap: 4px;
-        }
-
-        .typing-dots span {
-            width: 8px;
-            height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: bounce 1.4s infinite ease-in-out;
-        }
-
-        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes bounce {
-            0%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-8px); }
+        .welcome-btn:hover {
+            border-color: #d4a574;
         }
 
         /* Input Area */
-        .input-container {
-            position: sticky;
-            bottom: 0;
-            background: var(--bg-main);
-            padding-top: 16px;
-        }
-
-        .input-wrapper {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
+        .input-area {
+            background: #1a1a1a;
+            border: 1px solid #333;
             border-radius: 16px;
             padding: 16px;
-            transition: border-color 0.2s;
         }
 
-        .input-wrapper:focus-within {
-            border-color: var(--accent);
+        .input-area:focus-within {
+            border-color: #d4a574;
         }
 
-        /* Image Preview */
-        .image-preview-area {
+        /* Preview */
+        .preview-area {
+            margin-bottom: 12px;
             display: none;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 16px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
         }
 
-        .image-preview-area.active {
+        .preview-area.active {
             display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #333;
         }
 
         .preview-item {
@@ -273,23 +174,22 @@
         }
 
         .preview-item img {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             object-fit: cover;
-            border-radius: 10px;
-            border: 2px solid var(--border);
+            border-radius: 8px;
         }
 
         .preview-remove {
             position: absolute;
-            top: -8px;
-            right: -8px;
-            width: 24px;
-            height: 24px;
-            background: var(--error);
+            top: -6px;
+            right: -6px;
+            width: 22px;
+            height: 22px;
+            background: #e74c3c;
             border: none;
             border-radius: 50%;
-            color: white;
+            color: #fff;
             font-size: 14px;
             cursor: pointer;
             display: flex;
@@ -297,80 +197,62 @@
             justify-content: center;
         }
 
-        .preview-remove:hover {
-            transform: scale(1.1);
-        }
-
         /* Input Row */
         .input-row {
             display: flex;
-            align-items: flex-end;
             gap: 12px;
+            align-items: flex-end;
         }
 
-        .text-input {
+        textarea {
             flex: 1;
             background: transparent;
             border: none;
-            color: var(--text-primary);
+            color: #fff;
             font-size: 15px;
             font-family: inherit;
             resize: none;
             outline: none;
             min-height: 24px;
-            max-height: 200px;
-            line-height: 1.5;
+            max-height: 150px;
         }
 
-        .text-input::placeholder {
-            color: var(--text-muted);
+        textarea::placeholder {
+            color: #555;
         }
 
-        .input-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .action-btn {
-            width: 42px;
-            height: 42px;
+        .btn {
+            width: 44px;
+            height: 44px;
             border-radius: 10px;
             border: none;
-            background: var(--bg-tertiary);
-            color: var(--text-secondary);
             font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
         }
 
-        .action-btn:hover {
-            background: var(--bg-hover);
-            color: var(--accent);
+        .btn-upload {
+            background: #252525;
+            color: #888;
         }
 
-        .send-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            border: none;
-            background: var(--accent);
-            color: var(--bg-main);
-            font-size: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
+        .btn-upload:hover {
+            background: #333;
+            color: #d4a574;
         }
 
-        .send-btn:hover {
-            background: var(--accent-hover);
+        .btn-send {
+            background: #d4a574;
+            color: #000;
         }
 
-        .send-btn:disabled {
+        .btn-send:hover {
+            background: #e0b88a;
+        }
+
+        .btn-send:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
@@ -379,581 +261,340 @@
             display: none;
         }
 
-        /* Welcome Screen */
-        .welcome-screen {
-            flex: 1;
+        /* Typing */
+        .typing {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 40px;
-        }
-
-        .welcome-icon {
-            font-size: 72px;
-            margin-bottom: 24px;
-        }
-
-        .welcome-title {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 16px;
-        }
-
-        .welcome-subtitle {
-            font-size: 16px;
-            color: var(--text-secondary);
-            max-width: 450px;
-            line-height: 1.6;
-            margin-bottom: 40px;
-        }
-
-        .welcome-actions {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .welcome-btn {
-            padding: 14px 24px;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            color: var(--text-primary);
+            gap: 8px;
+            color: #888;
             font-size: 14px;
-            font-family: inherit;
-            cursor: pointer;
+        }
+
+        .typing-dots {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.2s;
+            gap: 4px;
         }
 
-        .welcome-btn:hover {
-            border-color: var(--accent);
-            transform: translateY(-2px);
-        }
-
-        .welcome-btn-icon {
-            font-size: 20px;
-        }
-
-        /* Fullscreen Modal */
-        .fullscreen-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 40px;
-        }
-
-        .fullscreen-modal.active {
-            display: flex;
-        }
-
-        .fullscreen-modal img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-
-        .fullscreen-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 48px;
-            height: 48px;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            background: #d4a574;
             border-radius: 50%;
-            color: white;
-            font-size: 28px;
-            cursor: pointer;
+            animation: bounce 1.2s infinite;
         }
 
-        .fullscreen-close:hover {
-            background: rgba(255, 255, 255, 0.2);
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-6px); }
         }
 
-        /* Error Message */
-        .error-msg {
-            background: rgba(248, 113, 113, 0.1);
-            border: 1px solid var(--error);
-            border-radius: 10px;
-            padding: 16px;
-            color: var(--error);
+        /* Debug */
+        .debug {
             margin-top: 12px;
-        }
-
-        /* Drop Overlay */
-        .drop-overlay {
+            padding: 12px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #888;
             display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(13, 13, 13, 0.95);
-            z-index: 999;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            gap: 16px;
         }
 
-        .drop-overlay.active {
-            display: flex;
-        }
-
-        .drop-overlay-icon {
-            font-size: 72px;
-            animation: float 2s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        .drop-overlay-text {
-            font-size: 24px;
-            font-weight: 600;
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .header {
-                padding: 12px 16px;
-            }
-            .main-container {
-                padding: 16px;
-            }
-            .message-content {
-                padding-left: 0;
-                margin-top: 12px;
-            }
-            .message-images {
-                padding-left: 0;
-            }
-            .typing-indicator {
-                padding-left: 0;
-            }
-            .welcome-title {
-                font-size: 24px;
-            }
+        .debug.active {
+            display: block;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="logo">
             <div class="logo-icon">✦</div>
-            <span>Claude Vision</span>
+            Claude Vision
         </div>
-        <select class="model-select" id="modelSelect">
+        <select id="model">
             <option value="claude-sonnet-4-5">Claude Sonnet 4.5</option>
             <option value="claude-opus-4-5">Claude Opus 4.5</option>
-            <option value="claude-sonnet-4">Claude Sonnet 4</option>
             <option value="claude-haiku-4-5">Claude Haiku 4.5</option>
+            <option value="gpt-4o">GPT-4o (Backup)</option>
         </select>
     </header>
 
-    <!-- Main -->
-    <div class="main-container">
-        <div class="chat-container" id="chatContainer">
-            <!-- Welcome Screen -->
-            <div class="welcome-screen" id="welcomeScreen">
-                <div class="welcome-icon">✦</div>
-                <h1 class="welcome-title">Claude Vision AI</h1>
-                <p class="welcome-subtitle">
-                    Upload an image and I'll analyze it with incredible detail. I can read text, understand code, describe scenes, and much more.
-                </p>
-                <div class="welcome-actions">
-                    <button class="welcome-btn" onclick="document.getElementById('fileInput').click()">
-                        <span class="welcome-btn-icon">📷</span>
-                        Upload Image
-                    </button>
-                    <button class="welcome-btn" onclick="startWithPrompt('Describe this image in detail')">
-                        <span class="welcome-btn-icon">🔍</span>
-                        Analyze Image
-                    </button>
-                    <button class="welcome-btn" onclick="startWithPrompt('Extract all text from this image')">
-                        <span class="welcome-btn-icon">📝</span>
-                        Extract Text
-                    </button>
-                </div>
+    <div class="main">
+        <div class="messages" id="messages">
+            <div class="welcome" id="welcome">
+                <h1>✦ Claude Vision</h1>
+                <p>Upload an image and I'll analyze it in detail. I can read text, describe scenes, understand diagrams, and more.</p>
+                <button class="welcome-btn" onclick="document.getElementById('fileInput').click()">
+                    <span>📷</span> Upload Image
+                </button>
             </div>
         </div>
 
-        <!-- Input -->
-        <div class="input-container">
-            <div class="input-wrapper">
-                <div class="image-preview-area" id="imagePreviewArea"></div>
-                <div class="input-row">
-                    <textarea 
-                        class="text-input" 
-                        id="textInput" 
-                        placeholder="Upload an image and ask anything..."
-                        rows="1"
-                    ></textarea>
-                    <div class="input-actions">
-                        <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="Upload Image">
-                            📷
-                        </button>
-                        <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send">
-                            ➤
-                        </button>
-                    </div>
-                </div>
+        <div class="input-area">
+            <div class="preview-area" id="previewArea"></div>
+            <div class="input-row">
+                <textarea id="input" placeholder="Describe what you want to know about the image..." rows="1"></textarea>
+                <button class="btn btn-upload" onclick="document.getElementById('fileInput').click()">📷</button>
+                <button class="btn btn-send" id="sendBtn" onclick="send()">➤</button>
             </div>
         </div>
 
-        <input type="file" id="fileInput" accept="image/*" multiple>
-    </div>
+        <div class="debug" id="debug"></div>
 
-    <!-- Drop Overlay -->
-    <div class="drop-overlay" id="dropOverlay">
-        <div class="drop-overlay-icon">📷</div>
-        <div class="drop-overlay-text">Drop images here</div>
-    </div>
-
-    <!-- Fullscreen -->
-    <div class="fullscreen-modal" id="fullscreenModal">
-        <button class="fullscreen-close" onclick="closeFullscreen()">✕</button>
-        <img id="fullscreenImage">
+        <input type="file" id="fileInput" accept="image/*">
     </div>
 
     <script>
-        // ========== STATE ==========
-        let pendingImages = [];
-        let isProcessing = false;
+        // State
+        let currentImage = null;
+        let isLoading = false;
 
-        // ========== ELEMENTS ==========
-        const chatContainer = document.getElementById('chatContainer');
-        const welcomeScreen = document.getElementById('welcomeScreen');
-        const imagePreviewArea = document.getElementById('imagePreviewArea');
-        const textInput = document.getElementById('textInput');
+        // Elements
+        const messagesEl = document.getElementById('messages');
+        const welcomeEl = document.getElementById('welcome');
+        const previewArea = document.getElementById('previewArea');
+        const inputEl = document.getElementById('input');
         const sendBtn = document.getElementById('sendBtn');
         const fileInput = document.getElementById('fileInput');
-        const modelSelect = document.getElementById('modelSelect');
-        const dropOverlay = document.getElementById('dropOverlay');
-        const fullscreenModal = document.getElementById('fullscreenModal');
-        const fullscreenImage = document.getElementById('fullscreenImage');
+        const modelEl = document.getElementById('model');
+        const debugEl = document.getElementById('debug');
 
-        // ========== FILE TO BASE64 ==========
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = () => reject(new Error('Failed to read file'));
-                reader.readAsDataURL(file);
-            });
+        // Debug helper
+        function debug(msg) {
+            console.log(msg);
+            debugEl.classList.add('active');
+            debugEl.textContent = typeof msg === 'object' ? JSON.stringify(msg, null, 2) : msg;
         }
 
-        // ========== HANDLE FILES ==========
-        async function handleFiles(files) {
-            for (const file of files) {
-                if (file.type.startsWith('image/')) {
-                    try {
-                        const base64 = await fileToBase64(file);
-                        pendingImages.push(base64);
-                    } catch (err) {
-                        console.error('Error reading file:', err);
-                    }
-                }
-            }
-            renderPreviews();
-        }
+        // File handling
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        // ========== RENDER PREVIEWS ==========
-        function renderPreviews() {
-            if (pendingImages.length === 0) {
-                imagePreviewArea.classList.remove('active');
-                imagePreviewArea.innerHTML = '';
+            debug('Reading file: ' + file.name + ' (' + file.type + ')');
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                currentImage = event.target.result;
+                debug('Image loaded, length: ' + currentImage.length);
+                showPreview();
+            };
+            reader.onerror = () => {
+                debug('Error reading file');
+            };
+            reader.readAsDataURL(file);
+            
+            fileInput.value = '';
+        });
+
+        function showPreview() {
+            if (!currentImage) {
+                previewArea.classList.remove('active');
+                previewArea.innerHTML = '';
                 return;
             }
 
-            imagePreviewArea.classList.add('active');
-            imagePreviewArea.innerHTML = pendingImages.map((img, i) => `
+            previewArea.classList.add('active');
+            previewArea.innerHTML = `
                 <div class="preview-item">
-                    <img src="${img}" alt="Preview">
-                    <button class="preview-remove" onclick="removeImage(${i})">✕</button>
+                    <img src="${currentImage}" alt="Preview">
+                    <button class="preview-remove" onclick="removeImage()">✕</button>
                 </div>
-            `).join('');
+            `;
         }
 
-        // ========== REMOVE IMAGE ==========
-        function removeImage(index) {
-            pendingImages.splice(index, 1);
-            renderPreviews();
+        function removeImage() {
+            currentImage = null;
+            showPreview();
         }
 
-        // ========== FORMAT TEXT ==========
-        function formatText(text) {
-            if (!text) return '';
-            
-            // Code blocks
-            text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-            
-            // Bold
-            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            
-            // Italic
-            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            
-            // Inline code
-            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-            
-            // Line breaks
-            text = text.replace(/\n/g, '<br>');
-            
-            return text;
-        }
+        // Auto resize textarea
+        inputEl.addEventListener('input', () => {
+            inputEl.style.height = 'auto';
+            inputEl.style.height = Math.min(inputEl.scrollHeight, 150) + 'px';
+        });
 
-        // ========== ADD MESSAGE ==========
-        function addMessage(role, content, images = []) {
-            // Hide welcome screen
-            welcomeScreen.style.display = 'none';
+        // Enter to send
+        inputEl.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                send();
+            }
+        });
+
+        // Add message to UI
+        function addMessage(role, content, imageUrl = null) {
+            welcomeEl.style.display = 'none';
 
             const div = document.createElement('div');
             div.className = 'message';
 
-            const isUser = role === 'user';
-
-            let imagesHtml = '';
-            if (images.length > 0) {
-                imagesHtml = `<div class="message-images">
-                    ${images.map(src => `<img src="${src}" class="message-image" onclick="openFullscreen('${src}')">`).join('')}
-                </div>`;
+            let imageHtml = '';
+            if (imageUrl) {
+                imageHtml = `<img src="${imageUrl}" alt="Uploaded image">`;
             }
 
             div.innerHTML = `
-                <div class="message-header">
-                    <div class="message-avatar ${role}">${isUser ? '👤' : '✦'}</div>
-                    <div class="message-name">${isUser ? 'You' : 'Claude'}</div>
-                </div>
-                ${imagesHtml}
-                <div class="message-content">${formatText(content)}</div>
+                <div class="message-role ${role}">${role === 'user' ? '👤 You' : '✦ Claude'}</div>
+                <div class="message-body">${imageHtml}${content}</div>
             `;
 
-            chatContainer.appendChild(div);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            messagesEl.appendChild(div);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
             return div;
         }
 
-        // ========== ADD TYPING ==========
+        // Add typing indicator
         function addTyping() {
-            welcomeScreen.style.display = 'none';
+            welcomeEl.style.display = 'none';
             
             const div = document.createElement('div');
             div.className = 'message';
-            div.id = 'typingMessage';
+            div.id = 'typingMsg';
             div.innerHTML = `
-                <div class="message-header">
-                    <div class="message-avatar assistant">✦</div>
-                    <div class="message-name">Claude</div>
-                </div>
-                <div class="typing-indicator">
+                <div class="message-role assistant">✦ Claude</div>
+                <div class="typing">
                     <div class="typing-dots"><span></span><span></span><span></span></div>
-                    <span>Analyzing...</span>
+                    Analyzing image...
                 </div>
             `;
-            chatContainer.appendChild(div);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+            messagesEl.appendChild(div);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
         }
 
-        // ========== REMOVE TYPING ==========
         function removeTyping() {
-            const el = document.getElementById('typingMessage');
+            const el = document.getElementById('typingMsg');
             if (el) el.remove();
         }
 
-        // ========== SEND MESSAGE ==========
-        async function sendMessage() {
-            const text = textInput.value.trim();
-            const images = [...pendingImages];
+        // Main send function
+        async function send() {
+            if (isLoading) return;
+            if (!currentImage && !inputEl.value.trim()) return;
 
-            // Need text or images
-            if (!text && images.length === 0) {
-                return;
-            }
-
-            if (isProcessing) return;
-            isProcessing = true;
+            isLoading = true;
             sendBtn.disabled = true;
 
-            // Clear input
-            textInput.value = '';
-            textInput.style.height = 'auto';
-            pendingImages = [];
-            renderPreviews();
+            const userText = inputEl.value.trim() || 'Analyze this image in detail. Describe everything you see.';
+            const imageToSend = currentImage;
 
-            // Default prompt if only image
-            const userText = text || 'Analyze this image in detail. Describe everything you see.';
+            // Clear
+            inputEl.value = '';
+            inputEl.style.height = 'auto';
+            currentImage = null;
+            showPreview();
 
             // Show user message
-            addMessage('user', userText, images);
+            addMessage('user', userText, imageToSend);
 
             // Show typing
             addTyping();
 
             try {
-                // Build the prompt with vision instruction
-                const visionPrompt = images.length > 0 
-                    ? `You are Claude, an AI with exceptional vision capabilities. Analyze the provided image(s) carefully and thoroughly.
+                debug('Sending to model: ' + modelEl.value);
+                debug('Image present: ' + (imageToSend ? 'Yes, length: ' + imageToSend.length : 'No'));
 
-USER REQUEST: ${userText}
+                let result;
 
-Instructions:
-- Be extremely detailed and accurate
-- If there's text in the image, extract it completely
-- Describe colors, objects, people, settings
-- Note any important details
-- Structure your response clearly`
-                    : userText;
+                if (imageToSend) {
+                    // ========== THE CORRECT WAY TO SEND IMAGES ==========
+                    // According to Puter.js docs, we use the vision parameter
+                    
+                    const prompt = `You are an advanced AI with vision capabilities. 
 
-                let response;
+The user has uploaded an image and asks: "${userText}"
 
-                if (images.length > 0) {
-                    // WITH IMAGES - Use the correct Puter.js format
-                    response = await puter.ai.chat(visionPrompt, {
-                        model: modelSelect.value,
-                        vision: images // Pass images directly to vision parameter
+Please analyze the image thoroughly and respond to their request. Be detailed and accurate. If there is text in the image, extract it precisely. Describe what you actually see.`;
+
+                    debug('Calling puter.ai.chat with vision...');
+                    
+                    result = await puter.ai.chat(prompt, {
+                        model: modelEl.value,
+                        vision: [imageToSend]
                     });
+
+                    debug('Response received: ' + typeof result);
+
                 } else {
-                    // TEXT ONLY
-                    response = await puter.ai.chat(userText, {
-                        model: modelSelect.value
+                    // Text only
+                    result = await puter.ai.chat(userText, {
+                        model: modelEl.value
                     });
                 }
 
                 removeTyping();
 
-                // Handle response
-                let responseText = '';
-                
-                if (typeof response === 'string') {
-                    responseText = response;
-                } else if (response?.message?.content) {
-                    if (Array.isArray(response.message.content)) {
-                        responseText = response.message.content
-                            .filter(block => block.type === 'text')
-                            .map(block => block.text)
+                // Parse response
+                let text = '';
+
+                if (typeof result === 'string') {
+                    text = result;
+                } else if (result?.message?.content) {
+                    const content = result.message.content;
+                    if (Array.isArray(content)) {
+                        text = content
+                            .filter(c => c.type === 'text')
+                            .map(c => c.text)
                             .join('\n');
-                    } else {
-                        responseText = response.message.content;
+                    } else if (typeof content === 'string') {
+                        text = content;
                     }
-                } else if (response?.content) {
-                    responseText = response.content;
-                } else if (response?.text) {
-                    responseText = response.text;
+                } else if (result?.text) {
+                    text = result.text;
+                } else if (result?.content) {
+                    text = result.content;
                 } else {
-                    responseText = JSON.stringify(response);
+                    text = JSON.stringify(result, null, 2);
                 }
 
-                addMessage('assistant', responseText);
+                debug('Final response text length: ' + text.length);
+                addMessage('assistant', text);
 
-            } catch (error) {
+            } catch (err) {
                 removeTyping();
-                console.error('API Error:', error);
-                addMessage('assistant', `❌ **Error:** ${error.message}\n\nPlease try again. If the error persists, try a different model or smaller image.`);
+                debug('Error: ' + err.message);
+                addMessage('assistant', '❌ Error: ' + err.message + '\n\nTry selecting a different model (GPT-4o works well as backup).');
             }
 
-            isProcessing = false;
+            isLoading = false;
             sendBtn.disabled = false;
-            textInput.focus();
+            inputEl.focus();
         }
 
-        // ========== HELPER FUNCTIONS ==========
-        function startWithPrompt(prompt) {
-            textInput.value = prompt;
-            document.getElementById('fileInput').click();
-        }
-
-        function openFullscreen(src) {
-            fullscreenImage.src = src;
-            fullscreenModal.classList.add('active');
-        }
-
-        function closeFullscreen() {
-            fullscreenModal.classList.remove('active');
-        }
-
-        // ========== EVENT LISTENERS ==========
-
-        // File input
-        fileInput.addEventListener('change', (e) => {
-            handleFiles(Array.from(e.target.files));
-            fileInput.value = '';
-        });
-
-        // Auto-resize textarea
-        textInput.addEventListener('input', () => {
-            textInput.style.height = 'auto';
-            textInput.style.height = Math.min(textInput.scrollHeight, 200) + 'px';
-        });
-
-        // Enter to send
-        textInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        // Paste images
-        document.addEventListener('paste', (e) => {
+        // Paste support
+        document.addEventListener('paste', async (e) => {
             const items = Array.from(e.clipboardData.items);
-            const imageFiles = items
-                .filter(item => item.type.startsWith('image/'))
-                .map(item => item.getAsFile());
-            
-            if (imageFiles.length > 0) {
-                e.preventDefault();
-                handleFiles(imageFiles);
+            for (const item of items) {
+                if (item.type.startsWith('image/')) {
+                    e.preventDefault();
+                    const file = item.getAsFile();
+                    
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        currentImage = event.target.result;
+                        showPreview();
+                    };
+                    reader.readAsDataURL(file);
+                    break;
+                }
             }
         });
 
         // Drag and drop
-        let dragCounter = 0;
-
-        document.addEventListener('dragenter', (e) => {
-            e.preventDefault();
-            dragCounter++;
-            dropOverlay.classList.add('active');
-        });
-
-        document.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            dragCounter--;
-            if (dragCounter === 0) {
-                dropOverlay.classList.remove('active');
-            }
-        });
-
-        document.addEventListener('dragover', (e) => {
-            e.preventDefault();
-        });
-
+        document.addEventListener('dragover', (e) => e.preventDefault());
         document.addEventListener('drop', (e) => {
             e.preventDefault();
-            dragCounter = 0;
-            dropOverlay.classList.remove('active');
-            handleFiles(Array.from(e.dataTransfer.files));
-        });
-
-        // Escape to close fullscreen
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeFullscreen();
-        });
-
-        // Click outside to close
-        fullscreenModal.addEventListener('click', (e) => {
-            if (e.target === fullscreenModal) closeFullscreen();
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    currentImage = event.target.result;
+                    showPreview();
+                };
+                reader.readAsDataURL(file);
+            }
         });
     </script>
 </body>
