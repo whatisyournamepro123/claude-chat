@@ -1,149 +1,342 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Advanced Claude Vision Analyzer</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔬 Ultra Vision AI - Advanced Image Analysis</title>
     <script src="https://js.puter.com/v2/"></script>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
-            --dark: #1e1b4b;
-            --darker: #0f0d24;
-            --light: #f5f5ff;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a25;
+            --bg-card: #1e1e2a;
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.4);
             --success: #10b981;
             --warning: #f59e0b;
             --danger: #ef4444;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --border: rgba(255,255,255,0.08);
+            --border-accent: rgba(99, 102, 241, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
-            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+            animation: bgMove 20s ease-in-out infinite;
+        }
+        @keyframes bgMove {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, 2%) rotate(1deg); }
+            66% { transform: translate(-1%, 1%) rotate(-1deg); }
         }
 
         /* Header */
         .header {
-            background: rgba(0,0,0,0.3);
-            padding: 15px 20px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-        .header h1 {
-            font-size: 22px;
+        .logo {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
         }
         .header-controls {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
         }
         .model-select {
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.1);
-            color: #fff;
+            padding: 10px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
             font-size: 14px;
             cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .model-select:hover {
+            border-color: var(--accent);
         }
         .model-select option {
-            background: var(--dark);
-            color: #fff;
+            background: var(--bg-secondary);
+        }
+        .header-btn {
+            padding: 10px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .header-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
         }
 
         /* Main Layout */
-        .main-container {
+        .main-layout {
             display: grid;
-            grid-template-columns: 350px 1fr;
-            height: calc(100vh - 70px);
+            grid-template-columns: 320px 1fr 380px;
+            height: calc(100vh - 65px);
         }
 
-        /* Sidebar */
-        .sidebar {
-            background: rgba(0,0,0,0.2);
-            border-right: 1px solid rgba(255,255,255,0.1);
+        /* Left Panel - Upload & Tools */
+        .left-panel {
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
-        .sidebar-section {
-            padding: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+
+        .panel-section {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
         }
-        .sidebar-section h3 {
-            font-size: 12px;
+        .panel-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .panel-section-title {
+            font-size: 11px;
+            font-weight: 600;
             text-transform: uppercase;
-            color: rgba(255,255,255,0.5);
-            margin-bottom: 10px;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            color: var(--text-muted);
         }
 
-        /* Upload Area */
+        /* Upload Zone */
         .upload-zone {
-            border: 2px dashed rgba(255,255,255,0.3);
-            border-radius: 12px;
+            border: 2px dashed var(--border);
+            border-radius: 16px;
             padding: 30px 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
             background: rgba(255,255,255,0.02);
+            position: relative;
+            overflow: hidden;
+        }
+        .upload-zone::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--accent-glow), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
         }
         .upload-zone:hover, .upload-zone.dragover {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--accent);
+            transform: scale(1.01);
         }
-        .upload-zone .icon {
-            font-size: 40px;
-            margin-bottom: 10px;
+        .upload-zone:hover::before, .upload-zone.dragover::before {
+            opacity: 1;
         }
-        .upload-zone p {
-            color: rgba(255,255,255,0.7);
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            position: relative;
+        }
+        .upload-text {
             font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            position: relative;
         }
-        .upload-zone .formats {
+        .upload-subtext {
             font-size: 11px;
-            color: rgba(255,255,255,0.4);
-            margin-top: 8px;
+            color: var(--text-muted);
+            position: relative;
+        }
+        .upload-methods {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            position: relative;
+        }
+        .upload-method-btn {
+            flex: 1;
+            padding: 10px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .upload-method-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* URL Input */
+        .url-input-container {
+            display: none;
+            margin-top: 12px;
+            position: relative;
+        }
+        .url-input-container.active {
+            display: block;
+        }
+        .url-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 13px;
+            outline: none;
+        }
+        .url-input:focus {
+            border-color: var(--accent);
+        }
+        .url-submit {
+            position: absolute;
+            right: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 8px 16px;
+            background: var(--accent);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Analysis Modes Grid */
+        .modes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .mode-btn {
+            padding: 14px 8px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            font-size: 11px;
+        }
+        .mode-btn:hover {
+            background: rgba(99, 102, 241, 0.1);
+            border-color: var(--border-accent);
+            color: var(--text-primary);
+        }
+        .mode-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+        .mode-btn-icon {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 6px;
         }
 
         /* Image Queue */
         .image-queue {
             flex: 1;
             overflow-y: auto;
-            padding: 10px;
+            padding: 8px;
+        }
+        .queue-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
         }
         .queue-item {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
+            gap: 12px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border: 2px solid transparent;
+            border-radius: 12px;
             margin-bottom: 8px;
             cursor: pointer;
             transition: all 0.2s;
-            border: 2px solid transparent;
         }
         .queue-item:hover {
-            background: rgba(255,255,255,0.1);
+            background: rgba(99, 102, 241, 0.08);
         }
         .queue-item.selected {
-            border-color: var(--primary);
-            background: rgba(99, 102, 241, 0.15);
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.12);
         }
-        .queue-item img {
-            width: 50px;
-            height: 50px;
+        .queue-item-thumb {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
             object-fit: cover;
-            border-radius: 8px;
         }
         .queue-item-info {
             flex: 1;
@@ -151,337 +344,483 @@
         }
         .queue-item-name {
             font-size: 13px;
+            font-weight: 500;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            margin-bottom: 4px;
         }
-        .queue-item-size {
+        .queue-item-meta {
             font-size: 11px;
-            color: rgba(255,255,255,0.5);
+            color: var(--text-muted);
+        }
+        .queue-item-status {
+            font-size: 10px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: var(--bg-secondary);
+        }
+        .queue-item-status.analyzed {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
         }
         .queue-item-remove {
-            background: rgba(239, 68, 68, 0.2);
+            background: transparent;
             border: none;
-            color: #ef4444;
-            width: 28px;
-            height: 28px;
-            border-radius: 6px;
+            color: var(--text-muted);
             cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
             font-size: 16px;
         }
         .queue-item-remove:hover {
-            background: rgba(239, 68, 68, 0.4);
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
         }
 
-        /* Analysis Modes */
-        .analysis-modes {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-        }
-        .mode-btn {
-            padding: 12px 10px;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 10px;
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-            cursor: pointer;
-            font-size: 12px;
-            text-align: center;
-            transition: all 0.2s;
-        }
-        .mode-btn:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.3);
-        }
-        .mode-btn.active {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-        .mode-btn .mode-icon {
-            font-size: 20px;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        /* Main Content */
-        .content {
+        /* Center Panel - Image Viewer */
+        .center-panel {
             display: flex;
             flex-direction: column;
+            background: var(--bg-primary);
             overflow: hidden;
         }
 
         /* Image Viewer */
         .image-viewer {
             flex: 1;
-            background: rgba(0,0,0,0.3);
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
+            background: 
+                radial-gradient(circle at center, rgba(99, 102, 241, 0.03) 0%, transparent 70%),
+                repeating-linear-gradient(0deg, transparent, transparent 20px, rgba(255,255,255,0.02) 20px, rgba(255,255,255,0.02) 21px),
+                repeating-linear-gradient(90deg, transparent, transparent 20px, rgba(255,255,255,0.02) 20px, rgba(255,255,255,0.02) 21px);
             overflow: hidden;
-            min-height: 300px;
         }
-        .image-viewer-placeholder {
+        .viewer-placeholder {
             text-align: center;
-            color: rgba(255,255,255,0.4);
+            color: var(--text-muted);
         }
-        .image-viewer-placeholder .icon {
-            font-size: 60px;
-            margin-bottom: 15px;
+        .viewer-placeholder-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+        .viewer-placeholder-text {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .viewer-placeholder-hint {
+            font-size: 13px;
+            opacity: 0.7;
+        }
+
+        .main-image-container {
+            position: relative;
+            display: none;
+            max-width: 100%;
+            max-height: 100%;
+        }
+        .main-image-container.active {
+            display: block;
         }
         #mainImage {
             max-width: 100%;
-            max-height: 100%;
+            max-height: calc(100vh - 250px);
             object-fit: contain;
-            transition: transform 0.2s;
+            border-radius: 8px;
+            transition: transform 0.2s, filter 0.2s;
         }
-        .image-controls {
+
+        /* Image Toolbar */
+        .image-toolbar {
             position: absolute;
-            bottom: 15px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            background: rgba(0,0,0,0.7);
-            padding: 8px 12px;
-            border-radius: 10px;
+            display: none;
+            gap: 6px;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
         }
-        .img-ctrl-btn {
-            background: rgba(255,255,255,0.1);
+        .image-toolbar.active {
+            display: flex;
+        }
+        .toolbar-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.08);
             border: none;
-            color: #fff;
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
+            border-radius: 10px;
+            color: var(--text-primary);
             cursor: pointer;
             font-size: 16px;
             transition: all 0.2s;
-        }
-        .img-ctrl-btn:hover {
-            background: rgba(255,255,255,0.2);
-        }
-        .zoom-level {
-            color: rgba(255,255,255,0.7);
-            font-size: 12px;
             display: flex;
             align-items: center;
+            justify-content: center;
+        }
+        .toolbar-btn:hover {
+            background: var(--accent);
+        }
+        .toolbar-separator {
+            width: 1px;
+            background: var(--border);
+            margin: 0 6px;
+        }
+        .toolbar-zoom {
+            display: flex;
+            align-items: center;
+            gap: 8px;
             padding: 0 10px;
+            color: var(--text-secondary);
+            font-size: 12px;
         }
 
-        /* Chat Area */
-        .chat-container {
-            height: 300px;
+        /* Image Enhancement Panel */
+        .enhance-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
+            padding: 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            display: none;
+            min-width: 220px;
+        }
+        .enhance-panel.active {
+            display: block;
+        }
+        .enhance-title {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+        }
+        .enhance-slider {
+            margin-bottom: 12px;
+        }
+        .enhance-slider label {
             display: flex;
-            flex-direction: column;
-            background: rgba(0,0,0,0.2);
-            border-top: 1px solid rgba(255,255,255,0.1);
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
         }
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px;
+        .enhance-slider input {
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: var(--bg-tertiary);
+            outline: none;
+            -webkit-appearance: none;
         }
-        .message {
-            margin-bottom: 15px;
-            max-width: 90%;
-        }
-        .message.user {
-            margin-left: auto;
-        }
-        .message-content {
-            padding: 12px 16px;
-            border-radius: 12px;
-            line-height: 1.6;
-            font-size: 14px;
-        }
-        .message.user .message-content {
-            background: var(--primary);
-            border-bottom-right-radius: 4px;
-        }
-        .message.assistant .message-content {
-            background: rgba(255,255,255,0.1);
-            border-bottom-left-radius: 4px;
-        }
-        .message-images {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
-        }
-        .message-images img {
-            height: 60px;
-            width: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-        }
-        .typing-indicator {
-            display: flex;
-            gap: 4px;
-            padding: 15px;
-        }
-        .typing-indicator span {
-            width: 8px;
-            height: 8px;
-            background: rgba(255,255,255,0.5);
+        .enhance-slider input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            animation: typing 1.4s infinite;
-        }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-10px); }
+            background: var(--accent);
+            cursor: pointer;
         }
 
-        /* Input Area */
-        .input-area {
-            padding: 15px;
-            background: rgba(0,0,0,0.2);
-            border-top: 1px solid rgba(255,255,255,0.1);
-        }
-        .input-row {
+        /* Quick Analyze Button */
+        .quick-analyze-bar {
+            padding: 16px 20px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border);
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            align-items: center;
         }
-        #chatInput {
+        .quick-input {
             flex: 1;
             padding: 14px 18px;
-            border: 1px solid rgba(255,255,255,0.2);
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
             border-radius: 12px;
-            background: rgba(255,255,255,0.05);
-            color: #fff;
+            color: var(--text-primary);
             font-size: 14px;
             outline: none;
+            transition: all 0.2s;
         }
-        #chatInput:focus {
-            border-color: var(--primary);
-            background: rgba(255,255,255,0.08);
+        .quick-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
         }
-        #chatInput::placeholder {
-            color: rgba(255,255,255,0.4);
+        .quick-input::placeholder {
+            color: var(--text-muted);
         }
-        .send-btn {
+        .analyze-btn {
             padding: 14px 28px;
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
             border: none;
             border-radius: 12px;
-            color: #fff;
+            color: white;
             font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s;
+            white-space: nowrap;
         }
-        .send-btn:hover {
-            background: var(--primary-dark);
-            transform: scale(1.02);
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--accent-glow);
         }
-        .send-btn:disabled {
+        .analyze-btn:disabled {
             opacity: 0.5;
             transform: none;
+            box-shadow: none;
+        }
+        .analyze-btn:active {
+            transform: translateY(0);
         }
 
-        /* Quick Actions */
-        .quick-actions {
+        /* Right Panel - Results */
+        .right-panel {
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border);
             display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
-        }
-        .quick-btn {
-            padding: 8px 14px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 20px;
-            color: rgba(255,255,255,0.8);
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .quick-btn:hover {
-            background: rgba(255,255,255,0.15);
-            border-color: var(--primary);
-        }
-
-        /* Results Panel */
-        .results-panel {
-            display: none;
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 450px;
-            height: 100vh;
-            background: var(--dark);
-            border-left: 1px solid rgba(255,255,255,0.1);
-            z-index: 100;
             flex-direction: column;
+            overflow: hidden;
         }
-        .results-panel.open {
-            display: flex;
-        }
+
+        /* Results Header */
         .results-header {
-            padding: 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        .results-header h3 {
-            font-size: 16px;
+        .results-title {
+            font-size: 14px;
+            font-weight: 600;
         }
-        .results-body {
+        .results-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .results-action-btn {
+            padding: 8px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .results-action-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .quick-action-btn {
+            padding: 8px 14px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .quick-action-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-primary);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Results Content */
+        .results-content {
             flex: 1;
             overflow-y: auto;
             padding: 20px;
         }
-        .results-actions {
-            padding: 15px 20px;
-            border-top: 1px solid rgba(255,255,255,0.1);
+        .results-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+        }
+        .results-empty-icon {
+            font-size: 50px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Analysis Result */
+        .analysis-result {
+            margin-bottom: 24px;
+        }
+        .result-section {
+            margin-bottom: 20px;
+        }
+        .result-section-header {
             display: flex;
+            align-items: center;
             gap: 10px;
+            margin-bottom: 12px;
         }
-        .result-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
+        .result-section-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(99, 102, 241, 0.15);
             border-radius: 8px;
-            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+        .result-section-title {
+            font-size: 13px;
             font-weight: 600;
-            transition: all 0.2s;
+            color: var(--accent);
         }
-        .result-btn.primary {
-            background: var(--primary);
-            color: #fff;
+        .result-section-content {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-secondary);
         }
-        .result-btn.secondary {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
+        .result-section-content p {
+            margin-bottom: 12px;
         }
-        .close-btn {
+        .result-section-content strong {
+            color: var(--text-primary);
+        }
+        .result-section-content code {
+            background: var(--bg-tertiary);
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            font-size: 13px;
+            color: #a5f3fc;
+        }
+        .result-section-content pre {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+        .result-section-content pre code {
             background: none;
-            border: none;
-            color: #fff;
-            font-size: 24px;
-            cursor: pointer;
-            opacity: 0.7;
+            padding: 0;
         }
-        .close-btn:hover {
-            opacity: 1;
+        .result-section-content ul, .result-section-content ol {
+            margin: 12px 0;
+            padding-left: 24px;
+        }
+        .result-section-content li {
+            margin-bottom: 8px;
+        }
+
+        /* Tags */
+        .result-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .result-tag {
+            padding: 6px 12px;
+            background: rgba(99, 102, 241, 0.15);
+            border-radius: 20px;
+            font-size: 12px;
+            color: var(--accent);
+        }
+
+        /* Confidence Meter */
+        .confidence-meter {
+            margin-top: 16px;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+        }
+        .confidence-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .confidence-bar {
+            height: 6px;
+            background: var(--bg-primary);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        /* Streaming Indicator */
+        .streaming-indicator {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+        .streaming-indicator.active {
+            display: flex;
+        }
+        .streaming-dots {
+            display: flex;
+            gap: 4px;
+        }
+        .streaming-dots span {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: bounce 1.4s ease-in-out infinite;
+        }
+        .streaming-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .streaming-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-8px); }
+        }
+        .streaming-text {
+            font-size: 13px;
+            color: var(--text-secondary);
         }
 
         /* Fullscreen Modal */
         .fullscreen-modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0,0,0,0.95);
             z-index: 1000;
             align-items: center;
             justify-content: center;
         }
-        .fullscreen-modal.open {
+        .fullscreen-modal.active {
             display: flex;
         }
         .fullscreen-modal img {
@@ -493,400 +832,998 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: #fff;
             width: 50px;
             height: 50px;
+            background: rgba(255,255,255,0.1);
+            border: none;
             border-radius: 50%;
+            color: white;
             font-size: 24px;
             cursor: pointer;
+            transition: all 0.2s;
+        }
+        .fullscreen-close:hover {
+            background: var(--danger);
         }
 
-        /* Code Blocks */
-        pre {
-            background: rgba(0,0,0,0.4);
-            padding: 15px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 10px 0;
-            font-size: 13px;
+        /* Camera Modal */
+        .camera-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 20px;
         }
-        code {
-            font-family: 'Fira Code', 'Consolas', monospace;
-            color: #a5f3fc;
-        }
-
-        /* Status Bar */
-        .status-bar {
-            padding: 8px 15px;
-            background: rgba(0,0,0,0.3);
-            font-size: 12px;
-            color: rgba(255,255,255,0.5);
+        .camera-modal.active {
             display: flex;
-            justify-content: space-between;
+        }
+        #cameraFeed {
+            max-width: 90%;
+            max-height: 70vh;
+            border-radius: 16px;
+        }
+        .camera-controls {
+            display: flex;
+            gap: 16px;
+        }
+        .camera-btn {
+            padding: 16px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .camera-capture {
+            background: var(--accent);
+            color: white;
+        }
+        .camera-cancel {
+            background: rgba(255,255,255,0.1);
+            color: white;
         }
 
-        /* Responsive */
-        @media (max-width: 900px) {
-            .main-container {
-                grid-template-columns: 1fr;
-            }
-            .sidebar {
-                display: none;
-            }
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 14px 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            z-index: 1001;
+            opacity: 0;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--danger); }
 
         /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.2);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255,255,255,0.2);
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255,255,255,0.3);
-        }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
 
-        /* Analysis Result Sections */
-        .analysis-section {
-            margin-bottom: 20px;
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-layout {
+                grid-template-columns: 280px 1fr 320px;
+            }
         }
-        .analysis-section h4 {
-            color: var(--primary);
-            margin-bottom: 10px;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .analysis-section p {
-            color: rgba(255,255,255,0.8);
-            line-height: 1.7;
-        }
-        .tag {
-            display: inline-block;
-            padding: 4px 10px;
-            background: rgba(99, 102, 241, 0.2);
-            color: var(--primary);
-            border-radius: 15px;
-            font-size: 12px;
-            margin: 3px;
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+            .left-panel, .right-panel {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+
     <!-- Header -->
     <header class="header">
-        <h1>🔬 Advanced Claude Vision</h1>
+        <div class="logo">
+            <div class="logo-icon">🔬</div>
+            <span>Ultra Vision AI</span>
+        </div>
         <div class="header-controls">
             <select class="model-select" id="modelSelect">
-                <option value="claude-opus-4-5">🏆 Claude Opus 4.5</option>
+                <option value="claude-opus-4-5">🏆 Claude Opus 4.5 (Best)</option>
                 <option value="claude-sonnet-4-5">Claude Sonnet 4.5</option>
                 <option value="claude-sonnet-4">Claude Sonnet 4</option>
+                <option value="claude-opus-4">Claude Opus 4</option>
                 <option value="claude-haiku-4-5">⚡ Haiku 4.5 (Fast)</option>
             </select>
+            <button class="header-btn" onclick="clearAll()">🗑️ Clear All</button>
         </div>
     </header>
 
     <!-- Main Layout -->
-    <div class="main-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
+    <div class="main-layout">
+        <!-- Left Panel -->
+        <aside class="left-panel">
             <!-- Upload Section -->
-            <div class="sidebar-section">
-                <h3>📁 Upload Images</h3>
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title">📁 Upload Image</span>
+                </div>
                 <div class="upload-zone" id="uploadZone">
-                    <div class="icon">📷</div>
-                    <p>Drop images here or click to upload</p>
-                    <p class="formats">PNG, JPG, GIF, WebP supported</p>
+                    <div class="upload-icon">🖼️</div>
+                    <div class="upload-text">Drop image here or click</div>
+                    <div class="upload-subtext">PNG, JPG, GIF, WebP • Max 20MB</div>
+                    <div class="upload-methods">
+                        <button class="upload-method-btn" onclick="event.stopPropagation(); toggleUrlInput()">🔗 URL</button>
+                        <button class="upload-method-btn" onclick="event.stopPropagation(); openCamera()">📷 Camera</button>
+                    </div>
+                </div>
+                <div class="url-input-container" id="urlInputContainer">
+                    <input type="text" class="url-input" id="urlInput" placeholder="Paste image URL...">
+                    <button class="url-submit" onclick="loadImageFromUrl()">Load</button>
                 </div>
                 <input type="file" id="fileInput" accept="image/*" multiple hidden>
             </div>
 
             <!-- Analysis Modes -->
-            <div class="sidebar-section">
-                <h3>🎯 Analysis Mode</h3>
-                <div class="analysis-modes">
-                    <button class="mode-btn active" data-mode="detailed">
-                        <span class="mode-icon">🔍</span>
-                        Detailed
+            <div class="panel-section">
+                <div class="panel-section-header">
+                    <span class="panel-section-title">🎯 Analysis Mode</span>
+                </div>
+                <div class="modes-grid">
+                    <button class="mode-btn active" data-mode="ultra">
+                        <span class="mode-btn-icon">🧠</span>Ultra
                     </button>
                     <button class="mode-btn" data-mode="ocr">
-                        <span class="mode-icon">📝</span>
-                        OCR/Text
+                        <span class="mode-btn-icon">📝</span>OCR
                     </button>
                     <button class="mode-btn" data-mode="code">
-                        <span class="mode-icon">💻</span>
-                        Code
+                        <span class="mode-btn-icon">💻</span>Code
+                    </button>
+                    <button class="mode-btn" data-mode="objects">
+                        <span class="mode-btn-icon">🏷️</span>Objects
+                    </button>
+                    <button class="mode-btn" data-mode="faces">
+                        <span class="mode-btn-icon">👤</span>Faces
+                    </button>
+                    <button class="mode-btn" data-mode="colors">
+                        <span class="mode-btn-icon">🎨</span>Colors
                     </button>
                     <button class="mode-btn" data-mode="art">
-                        <span class="mode-icon">🎨</span>
-                        Art/Design
+                        <span class="mode-btn-icon">🖼️</span>Art
                     </button>
                     <button class="mode-btn" data-mode="technical">
-                        <span class="mode-icon">⚙️</span>
-                        Technical
-                    </button>
-                    <button class="mode-btn" data-mode="medical">
-                        <span class="mode-icon">🏥</span>
-                        Medical*
+                        <span class="mode-btn-icon">⚙️</span>Technical
                     </button>
                     <button class="mode-btn" data-mode="document">
-                        <span class="mode-icon">📄</span>
-                        Document
+                        <span class="mode-btn-icon">📄</span>Document
+                    </button>
+                    <button class="mode-btn" data-mode="medical">
+                        <span class="mode-btn-icon">🏥</span>Medical
+                    </button>
+                    <button class="mode-btn" data-mode="food">
+                        <span class="mode-btn-icon">🍕</span>Food
+                    </button>
+                    <button class="mode-btn" data-mode="nature">
+                        <span class="mode-btn-icon">🌿</span>Nature
+                    </button>
+                    <button class="mode-btn" data-mode="product">
+                        <span class="mode-btn-icon">📦</span>Product
+                    </button>
+                    <button class="mode-btn" data-mode="meme">
+                        <span class="mode-btn-icon">😂</span>Meme
                     </button>
                     <button class="mode-btn" data-mode="compare">
-                        <span class="mode-icon">⚖️</span>
-                        Compare
+                        <span class="mode-btn-icon">⚖️</span>Compare
                     </button>
                 </div>
             </div>
 
             <!-- Image Queue -->
-            <div class="sidebar-section" style="flex:1; overflow:hidden; display:flex; flex-direction:column;">
-                <h3>🖼️ Image Queue (<span id="queueCount">0</span>)</h3>
+            <div class="panel-section" style="flex: 1; overflow: hidden; display: flex; flex-direction: column;">
+                <div class="panel-section-header">
+                    <span class="panel-section-title">🖼️ Images (<span id="queueCount">0</span>)</span>
+                </div>
                 <div class="image-queue" id="imageQueue">
-                    <!-- Images will be added here -->
+                    <div class="queue-empty">
+                        <p>No images uploaded yet</p>
+                    </div>
                 </div>
             </div>
         </aside>
 
-        <!-- Main Content -->
-        <main class="content">
+        <!-- Center Panel -->
+        <main class="center-panel">
             <!-- Image Viewer -->
             <div class="image-viewer" id="imageViewer">
-                <div class="image-viewer-placeholder" id="viewerPlaceholder">
-                    <div class="icon">🖼️</div>
-                    <p>Upload an image to start analyzing</p>
+                <div class="viewer-placeholder" id="viewerPlaceholder">
+                    <div class="viewer-placeholder-icon">🔬</div>
+                    <div class="viewer-placeholder-text">Upload an image to analyze</div>
+                    <div class="viewer-placeholder-hint">Drag & drop, paste, or click to upload</div>
                 </div>
-                <img id="mainImage" style="display:none;">
-                <div class="image-controls" id="imageControls" style="display:none;">
-                    <button class="img-ctrl-btn" onclick="zoomImage(-0.25)">➖</button>
-                    <span class="zoom-level" id="zoomLevel">100%</span>
-                    <button class="img-ctrl-btn" onclick="zoomImage(0.25)">➕</button>
-                    <button class="img-ctrl-btn" onclick="resetZoom()">↺</button>
-                    <button class="img-ctrl-btn" onclick="rotateImage()">🔄</button>
-                    <button class="img-ctrl-btn" onclick="openFullscreen()">⛶</button>
+                <div class="main-image-container" id="mainImageContainer">
+                    <img id="mainImage" alt="Main Image">
                 </div>
-            </div>
-
-            <!-- Chat Area -->
-            <div class="chat-container">
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message assistant">
-                        <div class="message-content">
-                            👋 Welcome to Advanced Claude Vision! Upload an image and select an analysis mode to get started. I can:
-                            <br><br>
-                            🔍 <strong>Detailed Analysis</strong> - Complete description<br>
-                            📝 <strong>OCR</strong> - Extract all text<br>
-                            💻 <strong>Code Analysis</strong> - Read & explain code<br>
-                            🎨 <strong>Art Critique</strong> - Style & composition<br>
-                            ⚙️ <strong>Technical</strong> - Diagrams & schematics<br>
-                            📄 <strong>Documents</strong> - Summarize & extract<br>
-                            ⚖️ <strong>Compare</strong> - Multiple images
-                        </div>
+                <div class="image-toolbar" id="imageToolbar">
+                    <button class="toolbar-btn" onclick="zoomImage(-0.2)" title="Zoom Out">➖</button>
+                    <div class="toolbar-zoom">
+                        <span id="zoomLevel">100%</span>
                     </div>
+                    <button class="toolbar-btn" onclick="zoomImage(0.2)" title="Zoom In">➕</button>
+                    <div class="toolbar-separator"></div>
+                    <button class="toolbar-btn" onclick="rotateImage(-90)" title="Rotate Left">↪️</button>
+                    <button class="toolbar-btn" onclick="rotateImage(90)" title="Rotate Right">↩️</button>
+                    <div class="toolbar-separator"></div>
+                    <button class="toolbar-btn" onclick="toggleEnhance()" title="Enhance">✨</button>
+                    <button class="toolbar-btn" onclick="openFullscreen()" title="Fullscreen">⛶</button>
                 </div>
 
-                <!-- Input Area -->
-                <div class="input-area">
-                    <div class="quick-actions" id="quickActions">
-                        <button class="quick-btn" data-prompt="Describe this image in detail">🔍 Describe</button>
-                        <button class="quick-btn" data-prompt="Extract all text from this image">📝 Extract Text</button>
-                        <button class="quick-btn" data-prompt="What objects can you identify?">🏷️ Identify Objects</button>
-                        <button class="quick-btn" data-prompt="Analyze the colors and composition">🎨 Analyze Style</button>
-                        <button class="quick-btn" data-prompt="Is there anything unusual or notable?">❓ Find Unusual</button>
+                <!-- Enhancement Panel -->
+                <div class="enhance-panel" id="enhancePanel">
+                    <div class="enhance-title">🎨 Image Adjustments</div>
+                    <div class="enhance-slider">
+                        <label><span>Brightness</span><span id="brightnessVal">100%</span></label>
+                        <input type="range" min="50" max="150" value="100" id="brightness" oninput="applyEnhance()">
                     </div>
-                    <div class="input-row">
-                        <input type="text" id="chatInput" placeholder="Ask anything about the image...">
-                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">Analyze 🚀</button>
+                    <div class="enhance-slider">
+                        <label><span>Contrast</span><span id="contrastVal">100%</span></label>
+                        <input type="range" min="50" max="150" value="100" id="contrast" oninput="applyEnhance()">
+                    </div>
+                    <div class="enhance-slider">
+                        <label><span>Saturation</span><span id="saturationVal">100%</span></label>
+                        <input type="range" min="0" max="200" value="100" id="saturation" oninput="applyEnhance()">
+                    </div>
+                    <div class="enhance-slider">
+                        <label><span>Sharpness</span><span id="sharpnessVal">0%</span></label>
+                        <input type="range" min="0" max="100" value="0" id="sharpness" oninput="applyEnhance()">
                     </div>
                 </div>
             </div>
 
-            <!-- Status Bar -->
-            <div class="status-bar">
-                <span id="statusText">Ready</span>
-                <span id="modelStatus">Model: Claude Opus 4.5</span>
+            <!-- Quick Analyze Bar -->
+            <div class="quick-analyze-bar">
+                <input type="text" class="quick-input" id="customPrompt" placeholder="Ask anything about this image... (or just hit Analyze)">
+                <button class="analyze-btn" id="analyzeBtn" onclick="analyze()">
+                    🚀 Analyze
+                </button>
             </div>
         </main>
+
+        <!-- Right Panel -->
+        <aside class="right-panel">
+            <div class="results-header">
+                <span class="results-title">📊 Analysis Results</span>
+                <div class="results-actions">
+                    <button class="results-action-btn" onclick="copyResults()" title="Copy">📋</button>
+                    <button class="results-action-btn" onclick="downloadResults()" title="Download">💾</button>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions" id="quickActions">
+                <button class="quick-action-btn" data-prompt="Describe everything in extreme detail">🔍 Ultra Detail</button>
+                <button class="quick-action-btn" data-prompt="Extract all text with perfect accuracy">📝 Extract Text</button>
+                <button class="quick-action-btn" data-prompt="List every object with locations">🏷️ All Objects</button>
+                <button class="quick-action-btn" data-prompt="Analyze colors, composition, and style">🎨 Visual Style</button>
+            </div>
+
+            <!-- Results Content -->
+            <div class="results-content" id="resultsContent">
+                <!-- Streaming Indicator -->
+                <div class="streaming-indicator" id="streamingIndicator">
+                    <div class="streaming-dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <span class="streaming-text">Analyzing image...</span>
+                </div>
+
+                <div class="results-empty" id="resultsEmpty">
+                    <div class="results-empty-icon">📊</div>
+                    <p>Analysis results will appear here</p>
+                </div>
+
+                <div class="analysis-result" id="analysisResult" style="display: none;">
+                    <!-- Results will be inserted here -->
+                </div>
+            </div>
+        </aside>
     </div>
 
     <!-- Fullscreen Modal -->
     <div class="fullscreen-modal" id="fullscreenModal">
         <button class="fullscreen-close" onclick="closeFullscreen()">✕</button>
-        <img id="fullscreenImage">
+        <img id="fullscreenImage" alt="Fullscreen">
     </div>
 
-    <!-- Results Panel -->
-    <div class="results-panel" id="resultsPanel">
-        <div class="results-header">
-            <h3>📊 Analysis Results</h3>
-            <button class="close-btn" onclick="closeResults()">✕</button>
-        </div>
-        <div class="results-body" id="resultsBody">
-            <!-- Results will appear here -->
-        </div>
-        <div class="results-actions">
-            <button class="result-btn secondary" onclick="copyResults()">📋 Copy</button>
-            <button class="result-btn primary" onclick="downloadResults()">💾 Download</button>
+    <!-- Camera Modal -->
+    <div class="camera-modal" id="cameraModal">
+        <video id="cameraFeed" autoplay playsinline></video>
+        <div class="camera-controls">
+            <button class="camera-btn camera-capture" onclick="capturePhoto()">📸 Capture</button>
+            <button class="camera-btn camera-cancel" onclick="closeCamera()">Cancel</button>
         </div>
     </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
 
     <script>
-        // ============ State ============
+        // ==================== STATE ====================
         let images = [];
-        let selectedImageIndex = -1;
-        let currentMode = 'detailed';
-        let conversationHistory = [];
+        let selectedIndex = -1;
+        let currentMode = 'ultra';
         let currentZoom = 1;
         let currentRotation = 0;
-        let lastAnalysis = '';
+        let lastResult = '';
+        let cameraStream = null;
+        let isAnalyzing = false;
 
-        // ============ DOM Elements ============
-        const uploadZone = document.getElementById('uploadZone');
-        const fileInput = document.getElementById('fileInput');
-        const imageQueue = document.getElementById('imageQueue');
-        const queueCount = document.getElementById('queueCount');
-        const mainImage = document.getElementById('mainImage');
-        const viewerPlaceholder = document.getElementById('viewerPlaceholder');
-        const imageControls = document.getElementById('imageControls');
-        const chatMessages = document.getElementById('chatMessages');
-        const chatInput = document.getElementById('chatInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const modelSelect = document.getElementById('modelSelect');
-        const statusText = document.getElementById('statusText');
-        const modelStatus = document.getElementById('modelStatus');
-        const zoomLevel = document.getElementById('zoomLevel');
-        const fullscreenModal = document.getElementById('fullscreenModal');
-        const fullscreenImage = document.getElementById('fullscreenImage');
-        const resultsPanel = document.getElementById('resultsPanel');
-        const resultsBody = document.getElementById('resultsBody');
-        const quickActions = document.getElementById('quickActions');
+        // ==================== DOM ====================
+        const $ = id => document.getElementById(id);
+        const uploadZone = $('uploadZone');
+        const fileInput = $('fileInput');
+        const imageQueue = $('imageQueue');
+        const queueCount = $('queueCount');
+        const mainImage = $('mainImage');
+        const mainImageContainer = $('mainImageContainer');
+        const viewerPlaceholder = $('viewerPlaceholder');
+        const imageToolbar = $('imageToolbar');
+        const zoomLevel = $('zoomLevel');
+        const customPrompt = $('customPrompt');
+        const analyzeBtn = $('analyzeBtn');
+        const resultsContent = $('resultsContent');
+        const resultsEmpty = $('resultsEmpty');
+        const analysisResult = $('analysisResult');
+        const streamingIndicator = $('streamingIndicator');
+        const modelSelect = $('modelSelect');
+        const enhancePanel = $('enhancePanel');
 
-        // ============ Analysis Mode Prompts ============
-        const modePrompts = {
-            detailed: `Analyze this image in comprehensive detail. Include:
-1. **Overview**: What is the main subject/scene?
-2. **Objects & Elements**: List all visible objects, people, text, etc.
-3. **Colors & Lighting**: Describe the color palette and lighting conditions
-4. **Composition**: How is the image composed? What's the focal point?
-5. **Context & Setting**: Where/when might this be? What's the environment?
-6. **Notable Details**: Any interesting or unusual elements?
-7. **Quality Assessment**: Image quality, resolution, any issues?
+        // ==================== ULTRA PROMPTS ====================
+        const ULTRA_PROMPTS = {
+            ultra: `You are an ULTRA ADVANCED vision AI. Analyze this image with MAXIMUM detail and accuracy.
 
-Be thorough and precise.`,
+## COMPREHENSIVE ANALYSIS REQUIRED:
 
-            ocr: `Extract ALL text from this image with maximum accuracy:
+### 1. 🔍 OVERVIEW
+- Main subject/scene identification
+- Image type (photo, screenshot, illustration, etc.)
+- Overall context and setting
 
-1. **Full Text Extraction**: Transcribe every piece of text visible, maintaining original formatting where possible
-2. **Text Location**: Indicate where text appears (headers, body, labels, signs, etc.)
-3. **Languages**: Identify any languages present
-4. **Handwriting vs Printed**: Note if text is handwritten or printed
-5. **Confidence Level**: Indicate if any text is unclear
-6. **Text Hierarchy**: Show headings, subheadings, paragraphs structure
+### 2. 🏷️ DETAILED OBJECT DETECTION
+List EVERY visible object with:
+- Object name
+- Location (top-left, center, bottom-right, etc.)
+- Size (small, medium, large relative to image)
+- Color/appearance
+- Condition/state
 
-Format the extracted text clearly with proper line breaks.`,
+### 3. 👤 PEOPLE/FACES (if present)
+- Number of people
+- Approximate ages
+- Gender presentation
+- Expressions/emotions
+- Clothing description
+- Activities/poses
+- Relationships between people
 
-            code: `Analyze this code/programming image:
+### 4. 📝 TEXT EXTRACTION (if any)
+- Extract ALL visible text verbatim
+- Note text location, size, font style
+- Translate if not English
 
-1. **Language Detection**: What programming language(s) is this?
-2. **Full Code Transcription**: Extract all code exactly as shown
-3. **Code Explanation**: What does this code do?
-4. **Key Functions/Classes**: List and explain main components
-5. **Potential Issues**: Any bugs, errors, or improvements?
-6. **Best Practices**: Does it follow coding standards?
-7. **Dependencies**: Any imports or external libraries used?
+### 5. 🎨 VISUAL ANALYSIS
+- Color palette (list dominant colors with hex codes if possible)
+- Lighting (natural, artificial, direction, quality)
+- Composition (rule of thirds, symmetry, leading lines)
+- Depth of field and focus
+- Image quality assessment
 
-Provide the extracted code in a proper code block.`,
+### 6. 🌍 CONTEXT & METADATA
+- Estimated location/setting
+- Time of day (if determinable)
+- Season/weather (if outdoor)
+- Cultural context
+- Era/time period
 
-            art: `Provide an art critique and design analysis:
+### 7. 💡 INSIGHTS & OBSERVATIONS
+- Unusual or notable elements
+- Hidden details others might miss
+- Possible story/narrative
+- Mood/atmosphere
 
-1. **Style Classification**: What art style/movement does this represent?
-2. **Medium & Technique**: What materials/techniques were likely used?
-3. **Color Theory**: Analyze the color palette, harmony, contrast
-4. **Composition Analysis**: Rule of thirds, balance, focal points, flow
-5. **Mood & Emotion**: What feelings does this evoke?
-6. **Symbolism**: Any symbolic elements or deeper meanings?
-7. **Influences**: What artists or movements might have influenced this?
-8. **Critique**: Strengths, areas for improvement, overall assessment
+### 8. 🏷️ AUTO-TAGS
+Generate 10-15 relevant tags for this image.
 
-Be insightful and detailed like a professional art critic.`,
+### 9. 📊 CONFIDENCE SCORE
+Rate your confidence in this analysis (0-100%).
 
-            technical: `Analyze this technical image/diagram:
+BE EXTREMELY THOROUGH. MISS NOTHING.`,
 
-1. **Type Identification**: What kind of diagram/schematic is this?
-2. **Component Identification**: List all components, labels, symbols
-3. **System Description**: What system or process does this represent?
-4. **Connections/Flow**: Explain how components are connected
-5. **Technical Specifications**: Any values, measurements, specifications shown
-6. **Standards**: Does this follow any technical standards?
-7. **Function Explanation**: How does this system work?
-8. **Applications**: Where would this be used?
+            ocr: `You are an EXPERT OCR AI. Extract ALL text from this image with PERFECT accuracy.
 
-Be precise and technically accurate.`,
+## TEXT EXTRACTION REQUIREMENTS:
 
-            medical: `⚠️ DISCLAIMER: This is for educational purposes only, not medical diagnosis.
+### 1. COMPLETE TEXT EXTRACTION
+- Extract EVERY piece of text visible
+- Maintain original formatting (line breaks, spacing)
+- Preserve capitalization exactly
+- Include punctuation
 
-Analyze this medical/health-related image:
+### 2. TEXT ORGANIZATION
+Present text in this format:
+- **Headers/Titles**: [text]
+- **Body Text**: [text]
+- **Labels/Captions**: [text]
+- **Small Print**: [text]
+- **Watermarks**: [text]
+- **Handwritten**: [text]
 
-1. **Image Type**: What type of medical image is this (X-ray, MRI, photo, diagram)?
-2. **Anatomical Region**: What body part/system is shown?
-3. **Visible Structures**: Identify anatomical structures visible
-4. **Observations**: What notable features can be observed?
-5. **Image Quality**: Is the image quality sufficient for analysis?
-6. **Educational Context**: What would this typically be used to demonstrate?
+### 3. TEXT PROPERTIES
+For each text block note:
+- Font style (serif, sans-serif, handwritten, etc.)
+- Size (large, medium, small)
+- Color
+- Location in image
+- Orientation (horizontal, vertical, angled)
 
-REMINDER: Always consult qualified healthcare professionals for medical advice.`,
+### 4. LANGUAGE DETECTION
+- Identify all languages present
+- Provide translation to English if needed
 
-            document: `Analyze this document:
+### 5. CONFIDENCE LEVEL
+- Mark any uncertain characters with [?]
+- Rate overall OCR confidence
 
-1. **Document Type**: What kind of document is this?
-2. **Full Text Extraction**: Extract all text content
-3. **Structure Analysis**: Headers, sections, formatting
-4. **Key Information**: What are the main points/data?
-5. **Summary**: Provide a concise summary
-6. **Metadata**: Any dates, names, reference numbers?
-7. **Purpose**: What is this document's purpose?
-8. **Action Items**: Any tasks or next steps mentioned?
+BE 100% ACCURATE. MISS NO TEXT.`,
 
-Format the analysis clearly with sections.`,
+            code: `You are an EXPERT CODE ANALYZER. Analyze this code image with MAXIMUM detail.
 
-            compare: `Compare and contrast the provided images:
+## CODE ANALYSIS REQUIREMENTS:
 
-1. **Similarities**: What do the images have in common?
-2. **Differences**: How do they differ?
-3. **Quality Comparison**: Which has better quality/composition?
-4. **Subject Analysis**: How do subjects compare?
-5. **Style/Mood**: Compare the styles and moods
-6. **Timeline**: Could these be before/after or related?
-7. **Recommendation**: Which is better for what purpose?
+### 1. FULL CODE EXTRACTION
+\`\`\`[detected_language]
+[Extract complete code exactly as shown]
+\`\`\`
 
-Provide a detailed comparative analysis.`
+### 2. LANGUAGE & FRAMEWORK
+- Programming language(s) detected
+- Frameworks/libraries used
+- Version indicators if visible
+
+### 3. CODE EXPLANATION
+- Purpose of the code
+- Step-by-step logic explanation
+- Key functions/methods explained
+- Data structures used
+
+### 4. CODE QUALITY ASSESSMENT
+- Syntax correctness
+- Best practices followed/violated
+- Potential bugs or issues
+- Performance considerations
+- Security concerns
+
+### 5. IMPROVEMENTS
+- Suggested fixes for any issues
+- Optimization recommendations
+- Better alternatives if applicable
+
+### 6. RELATED INFO
+- What this code might be part of
+- Common use cases
+- Dependencies needed
+
+EXTRACT EVERY CHARACTER PERFECTLY.`,
+
+            objects: `You are an EXPERT OBJECT DETECTION AI. Identify EVERY object in this image.
+
+## OBJECT DETECTION REQUIREMENTS:
+
+Create a comprehensive list of ALL objects:
+
+| # | Object | Location | Size | Color | Details |
+|---|--------|----------|------|-------|---------|
+| 1 | [name] | [position] | [size] | [color] | [details] |
+
+### FOR EACH OBJECT PROVIDE:
+1. **Identification**: Specific name (not just "furniture" but "oak dining chair")
+2. **Location**: Position in image (top-left, center, etc.)
+3. **Bounding Box**: Approximate % of image
+4. **Primary Color**: Main color
+5. **Material**: If identifiable (wood, metal, plastic, etc.)
+6. **Condition**: New, used, damaged, etc.
+7. **Brand/Model**: If visible
+8. **Quantity**: How many of this object
+9. **Relationship**: Near what other objects
+
+### CATEGORIES TO CHECK:
+- Furniture
+- Electronics
+- Clothing/Accessories
+- Food/Beverages
+- Plants/Nature
+- Vehicles
+- Buildings/Architecture
+- People/Body parts
+- Animals
+- Text/Signs
+- Tools/Equipment
+- Art/Decorations
+
+DETECT EVERYTHING. MISS NOTHING.`,
+
+            faces: `You are an EXPERT FACE ANALYSIS AI. Analyze all faces in this image.
+
+## FACE ANALYSIS REQUIREMENTS:
+
+### FOR EACH PERSON:
+
+**Person 1:**
+- **Position**: Location in image
+- **Age Estimate**: Approximate age range
+- **Gender Presentation**: How they present
+- **Expression**: Detailed emotion analysis
+  - Primary emotion
+  - Secondary emotions
+  - Intensity (subtle, moderate, strong)
+- **Eye Details**:
+  - Color
+  - Direction of gaze
+  - Open/closed
+- **Facial Features**:
+  - Face shape
+  - Distinctive features
+- **Hair**:
+  - Color
+  - Style
+  - Length
+- **Skin**:
+  - Complexion
+  - Any visible details
+- **Accessories**:
+  - Glasses
+  - Jewelry
+  - Makeup
+- **Pose**: Head angle and position
+
+### GROUP DYNAMICS (if multiple people):
+- Relationships between individuals
+- Group mood
+- Interactions
+
+ANALYZE IN MAXIMUM DETAIL.`,
+
+            colors: `You are an EXPERT COLOR ANALYST. Analyze the color palette of this image.
+
+## COLOR ANALYSIS REQUIREMENTS:
+
+### 1. DOMINANT COLORS
+List top 10 colors:
+| Rank | Color Name | Hex Code | RGB | % of Image | Location |
+|------|------------|----------|-----|------------|----------|
+
+### 2. COLOR HARMONY
+- Type (complementary, analogous, triadic, etc.)
+- Effectiveness
+- Emotional impact
+
+### 3. COLOR PSYCHOLOGY
+- Mood conveyed by colors
+- Emotional associations
+- Cultural significance
+
+### 4. LIGHTING ANALYSIS
+- Color temperature (warm/cool)
+- Light source color
+- Shadow colors
+
+### 5. SATURATION & VALUE
+- Overall saturation level
+- Value distribution (lights/darks)
+- Contrast ratio
+
+### 6. COLOR RECOMMENDATIONS
+- Colors that would complement
+- Alternative palettes
+- Adjustments for improvement
+
+PROVIDE PRECISE HEX CODES.`,
+
+            art: `You are an EXPERT ART CRITIC & ANALYST. Provide a professional critique.
+
+## ART ANALYSIS REQUIREMENTS:
+
+### 1. ARTWORK IDENTIFICATION
+- Art form (painting, digital, photo, etc.)
+- Style/movement
+- Medium (oil, watercolor, digital, etc.)
+- Estimated era/period
+
+### 2. COMPOSITION ANALYSIS
+- Rule of thirds adherence
+- Focal points
+- Visual flow/movement
+- Balance (symmetrical/asymmetrical)
+- Negative space usage
+
+### 3. TECHNICAL EXECUTION
+- Skill level apparent
+- Technique mastery
+- Brushwork/strokes (if applicable)
+- Precision vs. looseness
+
+### 4. COLOR & LIGHT
+- Palette choices
+- Color theory application
+- Light source and rendering
+- Atmosphere created
+
+### 5. SYMBOLISM & MEANING
+- Apparent themes
+- Hidden symbols
+- Cultural references
+- Emotional narrative
+
+### 6. ARTISTIC INFLUENCES
+- Similar artists/works
+- Movement connections
+- Historical context
+
+### 7. PROFESSIONAL CRITIQUE
+- Strengths
+- Areas for improvement
+- Overall assessment
+- Gallery/market viability
+
+ANALYZE LIKE A MUSEUM CURATOR.`,
+
+            technical: `You are an EXPERT TECHNICAL DIAGRAM ANALYZER.
+
+## TECHNICAL ANALYSIS REQUIREMENTS:
+
+### 1. DIAGRAM TYPE
+- Schematic/circuit
+- Flowchart
+- UML diagram
+- Architecture diagram
+- Mechanical drawing
+- Other technical drawing
+
+### 2. COMPONENT IDENTIFICATION
+List all components:
+| Symbol | Name | Function | Connections |
+|--------|------|----------|-------------|
+
+### 3. SYSTEM EXPLANATION
+- Overall purpose
+- How it works step-by-step
+- Input → Processing → Output
+
+### 4. TECHNICAL SPECIFICATIONS
+- Any values/measurements shown
+- Units used
+- Standards followed
+
+### 5. CONNECTIONS & FLOW
+- How components connect
+- Data/signal/power flow
+- Dependencies
+
+### 6. APPLICATIONS
+- What this system is used for
+- Industry/field
+- Common implementations
+
+EXPLAIN FOR BOTH EXPERTS AND BEGINNERS.`,
+
+            document: `You are an EXPERT DOCUMENT ANALYZER.
+
+## DOCUMENT ANALYSIS REQUIREMENTS:
+
+### 1. DOCUMENT TYPE
+- Form, letter, contract, receipt, etc.
+- Official or informal
+- Template or custom
+
+### 2. COMPLETE TEXT EXTRACTION
+[Extract ALL text maintaining structure]
+
+### 3. KEY INFORMATION
+- **Parties involved**: Names, organizations
+- **Dates**: All dates mentioned
+- **Numbers**: Amounts, IDs, references
+- **Addresses**: Any locations
+- **Signatures**: Present or missing
+
+### 4. STRUCTURE ANALYSIS
+- Sections identified
+- Headers and organization
+- Important vs. fine print
+
+### 5. SUMMARY
+- Main purpose of document
+- Key points (bullet list)
+- Action items if any
+
+### 6. VERIFICATION NOTES
+- Any red flags
+- Missing information
+- Authenticity indicators
+
+MISS NO DETAIL.`,
+
+            medical: `⚠️ DISCLAIMER: For educational purposes only. Not medical advice.
+
+## MEDICAL IMAGE ANALYSIS:
+
+### 1. IMAGE TYPE
+- X-ray, MRI, CT, ultrasound, photo, etc.
+- Body region shown
+- View angle/orientation
+
+### 2. ANATOMICAL STRUCTURES
+- Identify all visible anatomy
+- Label major structures
+- Note any variations
+
+### 3. OBSERVATIONS
+- Normal findings
+- Abnormal findings (if any)
+- Areas of interest
+
+### 4. IMAGE QUALITY
+- Diagnostic quality
+- Technical factors
+- Limitations
+
+### 5. EDUCATIONAL NOTES
+- What this type of image shows
+- Common findings in such images
+- Learning points
+
+⚠️ ALWAYS CONSULT HEALTHCARE PROFESSIONALS.`,
+
+            food: `You are an EXPERT FOOD & CULINARY ANALYST.
+
+## FOOD ANALYSIS REQUIREMENTS:
+
+### 1. DISH IDENTIFICATION
+- Name of dish(es)
+- Cuisine type
+- Course category
+
+### 2. INGREDIENTS DETECTED
+List all visible ingredients:
+| Ingredient | Amount | Preparation | Location |
+|------------|--------|-------------|----------|
+
+### 3. COOKING METHODS
+- How was this prepared?
+- Cooking techniques used
+- Skill level required
+
+### 4. PRESENTATION ANALYSIS
+- Plating style
+- Garnishes
+- Visual appeal rating
+
+### 5. NUTRITIONAL ESTIMATE
+- Approximate calories
+- Macro breakdown (carbs, protein, fat)
+- Dietary considerations (vegan, gluten-free, etc.)
+
+### 6. RECIPE POTENTIAL
+- Could this be recreated?
+- Key steps to make
+- Difficulty level
+
+ANALYZE LIKE A MASTER CHEF.`,
+
+            nature: `You are an EXPERT NATURALIST & BIOLOGIST.
+
+## NATURE ANALYSIS REQUIREMENTS:
+
+### 1. SCENE IDENTIFICATION
+- Ecosystem type
+- Geographic region
+- Time of day/season
+
+### 2. SPECIES IDENTIFICATION
+For each organism:
+| Type | Common Name | Scientific Name | Details |
+|------|-------------|-----------------|---------|
+
+### 3. PLANTS
+- Species identification
+- Health assessment
+- Growth stage
+
+### 4. ANIMALS
+- Species identification
+- Behavior observed
+- Approximate age/gender
+
+### 5. ECOLOGICAL ANALYSIS
+- Habitat characteristics
+- Food web connections
+- Environmental indicators
+
+### 6. WEATHER & CLIMATE
+- Current conditions
+- Climate indicators
+- Seasonal signs
+
+IDENTIFY EVERY SPECIES POSSIBLE.`,
+
+            product: `You are an EXPERT PRODUCT ANALYST.
+
+## PRODUCT ANALYSIS REQUIREMENTS:
+
+### 1. PRODUCT IDENTIFICATION
+- Product name/type
+- Brand (if visible)
+- Model/variant
+
+### 2. PHYSICAL DESCRIPTION
+- Dimensions (estimated)
+- Colors
+- Materials
+- Weight class
+
+### 3. FEATURES
+- Visible features
+- Buttons/controls
+- Ports/connections
+- Included accessories
+
+### 4. CONDITION
+- New or used
+- Any damage/wear
+- Completeness
+
+### 5. MARKET ANALYSIS
+- Approximate price range
+- Target audience
+- Competitor comparisons
+
+### 6. USE CASES
+- Primary purpose
+- Secondary uses
+- Setup requirements
+
+ANALYZE LIKE A PRODUCT REVIEWER.`,
+
+            meme: `You are an EXPERT MEME ANALYST & INTERNET CULTURE SPECIALIST.
+
+## MEME ANALYSIS REQUIREMENTS:
+
+### 1. MEME IDENTIFICATION
+- Meme template name
+- Origin (if known)
+- Era (when popular)
+
+### 2. TEXT EXTRACTION
+- Top text
+- Bottom text
+- Any additional text
+
+### 3. HUMOR ANALYSIS
+- Type of humor
+- Setup → Punchline structure
+- Cultural references
+
+### 4. CONTEXT
+- What situation is being referenced
+- Target audience
+- Relatability factor
+
+### 5. VIRALITY ASSESSMENT
+- Shareability (1-10)
+- Originality (1-10)
+- Humor effectiveness (1-10)
+
+### 6. EXPLANATION
+For someone who doesn't get it:
+[Clear explanation of the joke]
+
+BE THE MEME LORD.`,
+
+            compare: `You are an EXPERT IMAGE COMPARISON ANALYST.
+
+## COMPARISON ANALYSIS REQUIREMENTS:
+
+### 1. IMAGE OVERVIEW
+For each image:
+- Subject
+- Type
+- Key characteristics
+
+### 2. SIMILARITIES
+- Matching elements
+- Shared characteristics
+- Common themes
+
+### 3. DIFFERENCES
+| Aspect | Image 1 | Image 2 |
+|--------|---------|---------|
+[Detailed comparison table]
+
+### 4. QUALITY COMPARISON
+- Resolution
+- Clarity
+- Composition
+- Lighting
+
+### 5. CHANGE DETECTION (if before/after)
+- What changed
+- What stayed same
+- Progression/regression
+
+### 6. VERDICT
+- Which is better for what purpose
+- Recommendations
+
+COMPARE EVERY DETAIL.`
         };
 
-        // ============ File Handling ============
+        // ==================== QUICK ACTIONS PER MODE ====================
+        const QUICK_ACTIONS = {
+            ultra: [
+                { text: '🔍 Ultra Detail', prompt: 'Describe everything in EXTREME detail' },
+                { text: '🏷️ All Objects', prompt: 'List every single object visible' },
+                { text: '📝 Extract Text', prompt: 'Extract all text with perfect accuracy' },
+                { text: '🎨 Visual Style', prompt: 'Analyze colors, composition, lighting' }
+            ],
+            ocr: [
+                { text: '📝 Full Extract', prompt: 'Extract ALL text maintaining format' },
+                { text: '📋 As List', prompt: 'Extract text as a structured list' },
+                { text: '🌐 Translate', prompt: 'Extract and translate to English' },
+                { text: '✍️ Handwriting', prompt: 'Focus on handwritten text' }
+            ],
+            code: [
+                { text: '💻 Extract Code', prompt: 'Extract the complete code' },
+                { text: '📖 Explain', prompt: 'Explain what this code does' },
+                { text: '🐛 Find Bugs', prompt: 'Find any bugs or issues' },
+                { text: '⚡ Optimize', prompt: 'Suggest optimizations' }
+            ],
+            objects: [
+                { text: '🏷️ List All', prompt: 'List every object with locations' },
+                { text: '📊 Count', prompt: 'Count all objects by category' },
+                { text: '🎯 Main Subject', prompt: 'Focus on the main subject' },
+                { text: '🔍 Hidden Items', prompt: 'Find hidden or small objects' }
+            ]
+        };
+
+        // ==================== FILE HANDLING ====================
         function handleFiles(files) {
             Array.from(files).forEach(async file => {
                 if (file.type.startsWith('image/')) {
                     const base64 = await fileToBase64(file);
-                    const img = {
+                    addImage({
                         id: Date.now() + Math.random(),
                         name: file.name,
-                        size: formatFileSize(file.size),
+                        size: formatSize(file.size),
                         base64: base64,
-                        file: file
-                    };
-                    images.push(img);
-                    renderQueue();
-                    
-                    if (images.length === 1) {
-                        selectImage(0);
-                    }
+                        analyzed: false
+                    });
                 }
             });
         }
@@ -900,245 +1837,244 @@ Provide a detailed comparative analysis.`
             });
         }
 
-        function formatFileSize(bytes) {
+        function formatSize(bytes) {
             if (bytes < 1024) return bytes + ' B';
             if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
             return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
 
-        // ============ Queue Management ============
+        function addImage(img) {
+            images.push(img);
+            renderQueue();
+            if (images.length === 1) selectImage(0);
+            showToast('Image added!', 'success');
+        }
+
+        // ==================== QUEUE MANAGEMENT ====================
         function renderQueue() {
             queueCount.textContent = images.length;
-            imageQueue.innerHTML = images.map((img, index) => `
-                <div class="queue-item ${index === selectedImageIndex ? 'selected' : ''}" 
-                     onclick="selectImage(${index})">
-                    <img src="${img.base64}" alt="${img.name}">
+            
+            if (images.length === 0) {
+                imageQueue.innerHTML = '<div class="queue-empty"><p>No images uploaded yet</p></div>';
+                return;
+            }
+
+            imageQueue.innerHTML = images.map((img, i) => `
+                <div class="queue-item ${i === selectedIndex ? 'selected' : ''}" onclick="selectImage(${i})">
+                    <img src="${img.base64}" alt="${img.name}" class="queue-item-thumb">
                     <div class="queue-item-info">
                         <div class="queue-item-name">${img.name}</div>
-                        <div class="queue-item-size">${img.size}</div>
+                        <div class="queue-item-meta">${img.size}</div>
                     </div>
-                    <button class="queue-item-remove" onclick="event.stopPropagation(); removeImage(${index})">✕</button>
+                    <span class="queue-item-status ${img.analyzed ? 'analyzed' : ''}">${img.analyzed ? '✓' : '○'}</span>
+                    <button class="queue-item-remove" onclick="event.stopPropagation(); removeImage(${i})">✕</button>
                 </div>
             `).join('');
         }
 
         function selectImage(index) {
-            selectedImageIndex = index;
+            selectedIndex = index;
             const img = images[index];
             
             mainImage.src = img.base64;
-            mainImage.style.display = 'block';
+            mainImageContainer.classList.add('active');
             viewerPlaceholder.style.display = 'none';
-            imageControls.style.display = 'flex';
+            imageToolbar.classList.add('active');
             
-            resetZoom();
+            currentZoom = 1;
+            currentRotation = 0;
+            applyTransforms();
+            resetEnhance();
             renderQueue();
-            statusText.textContent = `Selected: ${img.name}`;
         }
 
         function removeImage(index) {
             images.splice(index, 1);
             
             if (images.length === 0) {
-                selectedImageIndex = -1;
-                mainImage.style.display = 'none';
+                selectedIndex = -1;
+                mainImageContainer.classList.remove('active');
                 viewerPlaceholder.style.display = 'block';
-                imageControls.style.display = 'none';
-            } else if (selectedImageIndex >= images.length) {
+                imageToolbar.classList.remove('active');
+            } else if (selectedIndex >= images.length) {
                 selectImage(images.length - 1);
-            } else if (selectedImageIndex === index) {
+            } else if (selectedIndex === index) {
                 selectImage(Math.max(0, index - 1));
             }
             
             renderQueue();
         }
 
-        // ============ Image Controls ============
+        function clearAll() {
+            images = [];
+            selectedIndex = -1;
+            mainImageContainer.classList.remove('active');
+            viewerPlaceholder.style.display = 'block';
+            imageToolbar.classList.remove('active');
+            analysisResult.style.display = 'none';
+            resultsEmpty.style.display = 'block';
+            renderQueue();
+            showToast('Cleared all images', 'success');
+        }
+
+        // ==================== IMAGE CONTROLS ====================
         function zoomImage(delta) {
-            currentZoom = Math.max(0.25, Math.min(3, currentZoom + delta));
-            applyTransform();
+            currentZoom = Math.max(0.25, Math.min(4, currentZoom + delta));
+            applyTransforms();
             zoomLevel.textContent = Math.round(currentZoom * 100) + '%';
         }
 
-        function resetZoom() {
-            currentZoom = 1;
-            currentRotation = 0;
-            applyTransform();
-            zoomLevel.textContent = '100%';
+        function rotateImage(degrees) {
+            currentRotation = (currentRotation + degrees) % 360;
+            applyTransforms();
         }
 
-        function rotateImage() {
-            currentRotation = (currentRotation + 90) % 360;
-            applyTransform();
-        }
-
-        function applyTransform() {
+        function applyTransforms() {
             mainImage.style.transform = `scale(${currentZoom}) rotate(${currentRotation}deg)`;
         }
 
+        function toggleEnhance() {
+            enhancePanel.classList.toggle('active');
+        }
+
+        function applyEnhance() {
+            const brightness = $('brightness').value;
+            const contrast = $('contrast').value;
+            const saturation = $('saturation').value;
+            const sharpness = $('sharpness').value;
+
+            $('brightnessVal').textContent = brightness + '%';
+            $('contrastVal').textContent = contrast + '%';
+            $('saturationVal').textContent = saturation + '%';
+            $('sharpnessVal').textContent = sharpness + '%';
+
+            mainImage.style.filter = `
+                brightness(${brightness}%) 
+                contrast(${contrast}%) 
+                saturate(${saturation}%)
+                ${sharpness > 0 ? `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg"><filter id="sharp"><feConvolveMatrix kernelMatrix="0 -1 0 -1 ${5 + sharpness/10} -1 0 -1 0"/></filter></svg>#sharp')` : ''}
+            `;
+        }
+
+        function resetEnhance() {
+            $('brightness').value = 100;
+            $('contrast').value = 100;
+            $('saturation').value = 100;
+            $('sharpness').value = 0;
+            applyEnhance();
+        }
+
+        // ==================== FULLSCREEN ====================
         function openFullscreen() {
-            if (selectedImageIndex >= 0) {
-                fullscreenImage.src = images[selectedImageIndex].base64;
-                fullscreenModal.classList.add('open');
+            if (selectedIndex >= 0) {
+                $('fullscreenImage').src = images[selectedIndex].base64;
+                $('fullscreenModal').classList.add('active');
             }
         }
 
         function closeFullscreen() {
-            fullscreenModal.classList.remove('open');
+            $('fullscreenModal').classList.remove('active');
         }
 
-        // ============ Analysis Modes ============
-        document.querySelectorAll('.mode-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentMode = btn.dataset.mode;
-                statusText.textContent = `Mode: ${btn.textContent.trim()}`;
-                updateQuickActions();
-            });
-        });
-
-        function updateQuickActions() {
-            const actions = {
-                detailed: [
-                    { text: '🔍 Full Analysis', prompt: 'Analyze this image in complete detail' },
-                    { text: '🏷️ List Objects', prompt: 'List every object you can identify' },
-                    { text: '📍 Describe Scene', prompt: 'Describe the scene and setting' }
-                ],
-                ocr: [
-                    { text: '📝 Extract All Text', prompt: 'Extract all text from this image' },
-                    { text: '📋 Format as List', prompt: 'Extract text and format as a bullet list' },
-                    { text: '🔤 Translate Text', prompt: 'Extract and translate any text to English' }
-                ],
-                code: [
-                    { text: '💻 Extract Code', prompt: 'Extract the code from this image' },
-                    { text: '🐛 Find Bugs', prompt: 'Extract the code and identify any bugs' },
-                    { text: '📖 Explain Code', prompt: 'Extract and explain what this code does' }
-                ],
-                art: [
-                    { text: '🎨 Art Critique', prompt: 'Provide a professional art critique' },
-                    { text: '🖌️ Identify Style', prompt: 'What art style and techniques are used?' },
-                    { text: '😊 Mood Analysis', prompt: 'Analyze the mood and emotions conveyed' }
-                ],
-                technical: [
-                    { text: '⚙️ Explain System', prompt: 'Explain how this system works' },
-                    { text: '📐 List Components', prompt: 'List all components and their functions' },
-                    { text: '🔧 Troubleshoot', prompt: 'What could go wrong with this system?' }
-                ],
-                medical: [
-                    { text: '🏥 Describe Image', prompt: 'Describe this medical image for educational purposes' },
-                    { text: '🦴 Identify Anatomy', prompt: 'Identify the anatomical structures shown' }
-                ],
-                document: [
-                    { text: '📄 Summarize', prompt: 'Summarize this document' },
-                    { text: '📋 Extract Key Points', prompt: 'Extract the key points from this document' },
-                    { text: '✅ Find Action Items', prompt: 'List any action items or tasks mentioned' }
-                ],
-                compare: [
-                    { text: '⚖️ Compare Images', prompt: 'Compare these images and highlight differences' },
-                    { text: '🔄 Find Changes', prompt: 'What changed between these images?' }
-                ]
-            };
-
-            const modeActions = actions[currentMode] || actions.detailed;
-            quickActions.innerHTML = modeActions.map(a => 
-                `<button class="quick-btn" data-prompt="${a.prompt}">${a.text}</button>`
-            ).join('');
-
-            // Reattach event listeners
-            document.querySelectorAll('.quick-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    chatInput.value = btn.dataset.prompt;
-                    sendMessage();
-                });
-            });
-        }
-
-        // ============ Chat & Analysis ============
-        function addMessage(content, role, messageImages = []) {
-            const div = document.createElement('div');
-            div.className = `message ${role}`;
-            
-            let html = '';
-            if (messageImages.length > 0) {
-                html += '<div class="message-images">';
-                messageImages.forEach(img => {
-                    html += `<img src="${img}" alt="Image">`;
-                });
-                html += '</div>';
+        // ==================== CAMERA ====================
+        async function openCamera() {
+            try {
+                cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                $('cameraFeed').srcObject = cameraStream;
+                $('cameraModal').classList.add('active');
+            } catch (error) {
+                showToast('Camera access denied', 'error');
             }
+        }
+
+        function capturePhoto() {
+            const video = $('cameraFeed');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
             
-            html += `<div class="message-content">${formatText(content)}</div>`;
-            div.innerHTML = html;
-            chatMessages.appendChild(div);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            return div;
-        }
-
-        function formatText(text) {
-            if (!text) return '';
-            // Code blocks
-            text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-            // Inline code
-            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-            // Bold
-            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            // Italic
-            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            // Line breaks
-            text = text.replace(/\n/g, '<br>');
-            return text;
-        }
-
-        function showTyping() {
-            const div = document.createElement('div');
-            div.className = 'typing-indicator';
-            div.id = 'typingIndicator';
-            div.innerHTML = '<span></span><span></span><span></span>';
-            chatMessages.appendChild(div);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }
-
-        function hideTyping() {
-            const typing = document.getElementById('typingIndicator');
-            if (typing) typing.remove();
-        }
-
-        async function sendMessage() {
-            let userMessage = chatInput.value.trim();
+            const base64 = canvas.toDataURL('image/jpeg');
+            addImage({
+                id: Date.now(),
+                name: 'Camera_' + new Date().toISOString().slice(0,19).replace(/:/g, '-') + '.jpg',
+                size: 'Camera capture',
+                base64: base64,
+                analyzed: false
+            });
             
-            if (!userMessage && images.length === 0) return;
+            closeCamera();
+        }
+
+        function closeCamera() {
+            if (cameraStream) {
+                cameraStream.getTracks().forEach(track => track.stop());
+                cameraStream = null;
+            }
+            $('cameraModal').classList.remove('active');
+        }
+
+        // ==================== URL IMPORT ====================
+        function toggleUrlInput() {
+            $('urlInputContainer').classList.toggle('active');
+        }
+
+        async function loadImageFromUrl() {
+            const url = $('urlInput').value.trim();
+            if (!url) return;
+
+            try {
+                showToast('Loading image...', 'success');
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const base64 = await fileToBase64(blob);
+                
+                addImage({
+                    id: Date.now(),
+                    name: url.split('/').pop() || 'URL Image',
+                    size: formatSize(blob.size),
+                    base64: base64,
+                    analyzed: false
+                });
+                
+                $('urlInput').value = '';
+                toggleUrlInput();
+            } catch (error) {
+                showToast('Failed to load image from URL', 'error');
+            }
+        }
+
+        // ==================== ANALYSIS ====================
+        async function analyze() {
             if (images.length === 0) {
-                addMessage('⚠️ Please upload at least one image first.', 'assistant');
+                showToast('Please upload an image first', 'error');
                 return;
             }
 
-            // If no message, use mode prompt
-            if (!userMessage) {
-                userMessage = modePrompts[currentMode];
-            }
+            if (isAnalyzing) return;
 
-            const selectedModel = modelSelect.value;
+            isAnalyzing = true;
+            analyzeBtn.disabled = true;
+            analyzeBtn.textContent = '⏳ Analyzing...';
             
-            // Disable inputs
-            chatInput.disabled = true;
-            sendBtn.disabled = true;
-            statusText.textContent = `Analyzing with ${selectedModel}...`;
+            resultsEmpty.style.display = 'none';
+            analysisResult.style.display = 'block';
+            analysisResult.innerHTML = '';
+            streamingIndicator.classList.add('active');
 
-            // Get images to analyze
+            const userPrompt = customPrompt.value.trim();
+            const modePrompt = ULTRA_PROMPTS[currentMode] || ULTRA_PROMPTS.ultra;
+            const finalPrompt = userPrompt 
+                ? `${modePrompt}\n\n## USER'S SPECIFIC REQUEST:\n${userPrompt}\n\nPRIORITIZE the user's request while still providing comprehensive analysis.`
+                : modePrompt;
+
             const imagesToAnalyze = currentMode === 'compare' 
                 ? images.map(img => img.base64)
-                : (selectedImageIndex >= 0 ? [images[selectedImageIndex].base64] : [images[0].base64]);
+                : [images[selectedIndex >= 0 ? selectedIndex : 0].base64];
 
-            // Show user message
-            addMessage(userMessage.substring(0, 100) + (userMessage.length > 100 ? '...' : ''), 'user', imagesToAnalyze.slice(0, 3));
-            chatInput.value = '';
-
-            // Build API content
             let content = [];
-            
-            imagesToAnalyze.forEach(imgBase64 => {
-                const matches = imgBase64.match(/^data:(.+);base64,(.+)$/);
+            imagesToAnalyze.forEach(base64 => {
+                const matches = base64.match(/^data:(.+);base64,(.+)$/);
                 if (matches) {
                     content.push({
                         type: 'image',
@@ -1150,135 +2086,124 @@ Provide a detailed comparative analysis.`
                     });
                 }
             });
-
-            content.push({ type: 'text', text: userMessage });
-
-            // Show typing indicator
-            showTyping();
+            content.push({ type: 'text', text: finalPrompt });
 
             try {
                 const response = await puter.ai.chat(
                     [{ role: 'user', content: content }],
-                    { model: selectedModel, stream: true }
+                    { model: modelSelect.value, stream: true }
                 );
 
-                hideTyping();
-                
-                const responseDiv = addMessage('', 'assistant');
-                const contentDiv = responseDiv.querySelector('.message-content');
+                streamingIndicator.classList.remove('active');
                 let fullResponse = '';
 
                 for await (const part of response) {
                     if (part?.text) {
                         fullResponse += part.text;
-                        contentDiv.innerHTML = formatText(fullResponse);
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        analysisResult.innerHTML = formatMarkdown(fullResponse);
+                        resultsContent.scrollTop = resultsContent.scrollHeight;
                     }
                 }
 
-                lastAnalysis = fullResponse;
-                statusText.textContent = `✅ Analysis complete`;
+                lastResult = fullResponse;
+                if (selectedIndex >= 0) {
+                    images[selectedIndex].analyzed = true;
+                    renderQueue();
+                }
+
+                showToast('Analysis complete!', 'success');
 
             } catch (error) {
-                hideTyping();
-                console.error(error);
-                addMessage(`❌ Error: ${error.message}`, 'assistant');
-                statusText.textContent = `Error occurred`;
+                streamingIndicator.classList.remove('active');
+                analysisResult.innerHTML = `<div style="color: #ef4444;">❌ Error: ${error.message}</div>`;
+                showToast('Analysis failed', 'error');
             }
 
-            chatInput.disabled = false;
-            sendBtn.disabled = false;
-            chatInput.focus();
+            isAnalyzing = false;
+            analyzeBtn.disabled = false;
+            analyzeBtn.textContent = '🚀 Analyze';
+            customPrompt.value = '';
         }
 
-        // ============ Results Panel ============
-        function openResults() {
-            resultsBody.innerHTML = formatText(lastAnalysis);
-            resultsPanel.classList.add('open');
+        // ==================== MARKDOWN FORMATTING ====================
+        function formatMarkdown(text) {
+            if (!text) return '';
+            
+            // Code blocks
+            text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre><code class="language-$1">$2</code></pre>');
+            
+            // Headers
+            text = text.replace(/^### (.*$)/gm, '<h4 style="color:#8b5cf6;margin:16px 0 8px;">$1</h4>');
+            text = text.replace(/^## (.*$)/gm, '<h3 style="color:#6366f1;margin:20px 0 10px;">$1</h3>');
+            text = text.replace(/^# (.*$)/gm, '<h2 style="color:#6366f1;margin:24px 0 12px;">$1</h2>');
+            
+            // Bold and italic
+            text = text.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            // Inline code
+            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+            
+            // Tables
+            text = text.replace(/\|(.+)\|/g, (match) => {
+                const cells = match.split('|').filter(c => c.trim());
+                const row = cells.map(c => `<td style="padding:8px;border:1px solid #333;">${c.trim()}</td>`).join('');
+                return `<tr>${row}</tr>`;
+            });
+            text = text.replace(/(<tr>.*<\/tr>)/gs, '<table style="border-collapse:collapse;width:100%;margin:12px 0;">$1</table>');
+            
+            // Lists
+            text = text.replace(/^\- (.*$)/gm, '<li style="margin:4px 0;">$1</li>');
+            text = text.replace(/(<li.*<\/li>)/gs, '<ul style="padding-left:20px;margin:8px 0;">$1</ul>');
+            
+            // Line breaks
+            text = text.replace(/\n\n/g, '</p><p style="margin:12px 0;">');
+            text = text.replace(/\n/g, '<br>');
+            
+            return `<div class="result-section-content"><p style="margin:12px 0;">${text}</p></div>`;
         }
 
-        function closeResults() {
-            resultsPanel.classList.remove('open');
-        }
-
+        // ==================== RESULTS ACTIONS ====================
         function copyResults() {
-            navigator.clipboard.writeText(lastAnalysis);
-            statusText.textContent = '📋 Copied to clipboard!';
+            navigator.clipboard.writeText(lastResult);
+            showToast('Copied to clipboard!', 'success');
         }
 
         function downloadResults() {
-            const blob = new Blob([lastAnalysis], { type: 'text/plain' });
+            const blob = new Blob([lastResult], { type: 'text/markdown' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `analysis-${Date.now()}.txt`;
+            a.download = `analysis-${Date.now()}.md`;
             a.click();
             URL.revokeObjectURL(url);
-            statusText.textContent = '💾 Downloaded!';
+            showToast('Downloaded!', 'success');
         }
 
-        // ============ Event Listeners ============
-        
-        // Upload zone
-        uploadZone.addEventListener('click', () => fileInput.click());
-        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        // ==================== TOAST NOTIFICATIONS ====================
+        function showToast(message, type = '') {
+            const toast = $('toast');
+            toast.textContent = message;
+            toast.className = 'toast show ' + type;
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
 
-        // Drag and drop
-        uploadZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadZone.classList.add('dragover');
-        });
-        uploadZone.addEventListener('dragleave', () => {
-            uploadZone.classList.remove('dragover');
-        });
-        uploadZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadZone.classList.remove('dragover');
-            handleFiles(e.dataTransfer.files);
-        });
-
-        // Global paste
-        document.addEventListener('paste', (e) => {
-            const items = Array.from(e.clipboardData.items);
-            const imageItems = items.filter(item => item.type.startsWith('image/'));
-            if (imageItems.length > 0) {
-                e.preventDefault();
-                const files = imageItems.map(item => item.getAsFile());
-                handleFiles(files);
-            }
-        });
-
-        // Enter to send
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-            }
-        });
-
-        // Model change
-        modelSelect.addEventListener('change', () => {
-            modelStatus.textContent = `Model: ${modelSelect.options[modelSelect.selectedIndex].text}`;
-        });
-
-        // Quick actions
-        document.querySelectorAll('.quick-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                chatInput.value = btn.dataset.prompt;
-                sendMessage();
+        // ==================== UPDATE QUICK ACTIONS ====================
+        function updateQuickActions() {
+            const actions = QUICK_ACTIONS[currentMode] || QUICK_ACTIONS.ultra;
+            $('quickActions').innerHTML = actions.map(a => 
+                `<button class="quick-action-btn" data-prompt="${a.prompt}">${a.text}</button>`
+            ).join('');
+            
+            document.querySelectorAll('.quick-action-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    customPrompt.value = btn.dataset.prompt;
+                    analyze();
+                });
             });
-        });
+        }
 
-        // Escape to close modals
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeFullscreen();
-                closeResults();
-            }
-        });
-
-        // Initialize quick actions
-        updateQuickActions();
-    </script>
-</body>
-</html>
+        // ==================== EVENT LISTENERS ====================
+        
+        //
