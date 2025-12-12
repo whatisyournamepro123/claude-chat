@@ -26,7 +26,6 @@
       --purple: #a78bfa;
       --green: #4ade80;
       --red: #f87171;
-      --radius: 12px;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -40,7 +39,6 @@
       overflow: hidden;
     }
 
-    /* Layout */
     .app {
       display: flex;
       width: 100%;
@@ -61,8 +59,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(9,9,11,0.9);
-      backdrop-filter: blur(10px);
+      background: rgba(9,9,11,0.95);
     }
 
     .logo {
@@ -124,10 +121,6 @@
       font-size: 13px;
       cursor: pointer;
       outline: none;
-    }
-
-    select:hover {
-      border-color: var(--border2);
     }
 
     .btn {
@@ -217,21 +210,9 @@
       transform: translateY(-2px);
     }
 
-    .welcome-card-icon {
-      font-size: 22px;
-      margin-bottom: 8px;
-    }
-
-    .welcome-card-title {
-      font-size: 13px;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-
-    .welcome-card-desc {
-      font-size: 11px;
-      color: var(--text3);
-    }
+    .welcome-card-icon { font-size: 22px; margin-bottom: 8px; }
+    .welcome-card-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+    .welcome-card-desc { font-size: 11px; color: var(--text3); }
 
     /* Messages */
     .msg {
@@ -281,18 +262,16 @@
       margin-bottom: 6px;
     }
 
-    .msg-content {
+    .msg-text {
       font-size: 14px;
       line-height: 1.7;
       word-wrap: break-word;
+      white-space: pre-wrap;
     }
 
-    .msg-content p { margin-bottom: 10px; }
-    .msg-content p:last-child { margin-bottom: 0; }
+    .msg-text strong { color: var(--accent); }
 
-    .msg-content strong { color: var(--accent); }
-
-    .msg-content code:not(pre code) {
+    .msg-text code:not(pre code) {
       background: var(--bg3);
       padding: 2px 6px;
       border-radius: 4px;
@@ -301,7 +280,7 @@
       color: #f0abfc;
     }
 
-    .msg-content pre {
+    .msg-text pre {
       background: #0d1117;
       border: 1px solid #30363d;
       border-radius: 8px;
@@ -309,7 +288,7 @@
       overflow: hidden;
     }
 
-    .msg-content pre code {
+    .msg-text pre code {
       display: block;
       padding: 14px;
       font-family: 'JetBrains Mono', monospace;
@@ -359,7 +338,7 @@
       gap: 8px;
     }
 
-    .artifact-title-icon {
+    .artifact-icon {
       width: 22px;
       height: 22px;
       background: linear-gradient(135deg, var(--purple), #7c3aed);
@@ -370,7 +349,7 @@
       font-size: 11px;
     }
 
-    .artifact-actions {
+    .artifact-btns {
       display: flex;
       gap: 6px;
     }
@@ -383,7 +362,6 @@
       color: var(--text2);
       font-size: 11px;
       cursor: pointer;
-      transition: all 0.15s;
     }
 
     .artifact-btn:hover {
@@ -392,7 +370,7 @@
     }
 
     .artifact-preview {
-      height: 200px;
+      height: 220px;
       background: white;
     }
 
@@ -430,7 +408,7 @@
       30% { transform: translateY(-6px); }
     }
 
-    .typing-text {
+    .typing-label {
       font-size: 13px;
       color: var(--text3);
     }
@@ -468,9 +446,7 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .preview-row.active {
-      display: flex;
-    }
+    .preview-row.active { display: flex; }
 
     .preview-item {
       position: relative;
@@ -523,9 +499,7 @@
       line-height: 1.5;
     }
 
-    textarea::placeholder {
-      color: var(--text3);
-    }
+    textarea::placeholder { color: var(--text3); }
 
     .input-btns {
       display: flex;
@@ -544,7 +518,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.15s;
     }
 
     .icon-btn:hover {
@@ -564,31 +537,23 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.15s;
     }
 
-    .send-btn:hover {
-      transform: scale(1.05);
-    }
-
-    .send-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-      transform: none;
-    }
+    .send-btn:hover { transform: scale(1.05); }
+    .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
     /* Artifacts Panel */
-    .artifacts-panel {
+    .panel {
       width: 0;
       background: var(--bg2);
       border-left: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      transition: width 0.25s ease;
+      transition: width 0.25s;
     }
 
-    .artifacts-panel.open {
+    .panel.open {
       width: 50%;
       min-width: 350px;
     }
@@ -625,14 +590,8 @@
       cursor: pointer;
     }
 
-    .panel-tab:hover {
-      background: var(--bg4);
-    }
-
-    .panel-tab.active {
-      background: var(--bg4);
-      color: var(--text);
-    }
+    .panel-tab:hover { background: var(--bg4); }
+    .panel-tab.active { background: var(--bg4); color: var(--text); }
 
     .panel-close {
       width: 28px;
@@ -645,15 +604,9 @@
       cursor: pointer;
     }
 
-    .panel-close:hover {
-      background: var(--red);
-      color: white;
-    }
+    .panel-close:hover { background: var(--red); color: white; }
 
-    .panel-content {
-      flex: 1;
-      overflow: hidden;
-    }
+    .panel-body { flex: 1; overflow: hidden; }
 
     .panel-code {
       height: 100%;
@@ -661,9 +614,7 @@
       display: none;
     }
 
-    .panel-code.active {
-      display: block;
-    }
+    .panel-code.active { display: block; }
 
     .panel-code pre {
       margin: 0;
@@ -678,9 +629,7 @@
       display: none;
     }
 
-    .panel-preview.active {
-      display: block;
-    }
+    .panel-preview.active { display: block; }
 
     .panel-preview iframe {
       width: 100%;
@@ -688,7 +637,7 @@
       border: none;
     }
 
-    .panel-actions {
+    .panel-footer {
       padding: 12px 16px;
       border-top: 1px solid var(--border);
       display: flex;
@@ -711,20 +660,12 @@
       gap: 6px;
     }
 
-    .panel-btn:hover {
-      background: var(--bg4);
-    }
+    .panel-btn:hover { background: var(--bg4); }
+    .panel-btn.primary { background: var(--accent); border-color: var(--accent); color: #000; }
 
-    .panel-btn.primary {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #000;
-    }
-
-    /* Hidden */
+    /* Overlays */
     #fileInput { display: none; }
 
-    /* Drop */
     .drop-overlay {
       position: fixed;
       inset: 0;
@@ -737,20 +678,10 @@
       z-index: 999;
     }
 
-    .drop-overlay.active {
-      display: flex;
-    }
+    .drop-overlay.active { display: flex; }
+    .drop-overlay .icon { font-size: 60px; }
+    .drop-overlay .text { font-size: 18px; font-weight: 600; }
 
-    .drop-overlay .icon {
-      font-size: 60px;
-    }
-
-    .drop-overlay .text {
-      font-size: 18px;
-      font-weight: 600;
-    }
-
-    /* Modal */
     .modal {
       position: fixed;
       inset: 0;
@@ -762,15 +693,8 @@
       padding: 30px;
     }
 
-    .modal.active {
-      display: flex;
-    }
-
-    .modal img {
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 8px;
-    }
+    .modal.active { display: flex; }
+    .modal img { max-width: 100%; max-height: 100%; border-radius: 8px; }
 
     .modal-close {
       position: absolute;
@@ -789,7 +713,6 @@
       justify-content: center;
     }
 
-    /* Toast */
     .toast {
       position: fixed;
       bottom: 80px;
@@ -810,15 +733,18 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    .error-msg {
+      color: var(--red);
+      font-size: 13px;
+      padding: 10px;
+      background: rgba(248,113,113,0.1);
+      border-radius: 8px;
+      margin-top: 8px;
+    }
+
     @media (max-width: 800px) {
-      .artifacts-panel.open {
-        position: fixed;
-        inset: 0;
-        width: 100%;
-        z-index: 500;
-      }
+      .panel.open { position: fixed; inset: 0; width: 100%; z-index: 500; }
       .welcome-cards { grid-template-columns: 1fr; }
-      .controls .btn span { display: none; }
     }
   </style>
 </head>
@@ -843,9 +769,7 @@
             <option value="claude-haiku-4-5">Claude Haiku 4.5</option>
             <option value="gpt-4o">GPT-4o</option>
           </select>
-          <button class="btn" onclick="newChat()">
-            <span>+</span> <span>New</span>
-          </button>
+          <button class="btn" id="newChatBtn">+ New</button>
         </div>
       </header>
 
@@ -856,22 +780,22 @@
           <h1>How can I help?</h1>
           <p>Upload images for analysis, ask questions, or have me write code with live previews.</p>
           <div class="welcome-cards">
-            <div class="welcome-card" onclick="document.getElementById('fileInput').click()">
+            <div class="welcome-card" id="cardImage">
               <div class="welcome-card-icon">🖼️</div>
               <div class="welcome-card-title">Analyze Image</div>
               <div class="welcome-card-desc">Detailed vision analysis</div>
             </div>
-            <div class="welcome-card" onclick="setPrompt('Create a beautiful animated button')">
+            <div class="welcome-card" id="cardCode">
               <div class="welcome-card-icon">💻</div>
               <div class="welcome-card-title">Write Code</div>
               <div class="welcome-card-desc">With live preview</div>
             </div>
-            <div class="welcome-card" onclick="setPrompt('Explain how neural networks work')">
+            <div class="welcome-card" id="cardExplain">
               <div class="welcome-card-icon">🧠</div>
               <div class="welcome-card-title">Explain</div>
               <div class="welcome-card-desc">Clear explanations</div>
             </div>
-            <div class="welcome-card" onclick="setPrompt('Write a short story about AI')">
+            <div class="welcome-card" id="cardCreate">
               <div class="welcome-card-icon">✍️</div>
               <div class="welcome-card-title">Create</div>
               <div class="welcome-card-desc">Stories & content</div>
@@ -888,8 +812,8 @@
             <div class="input-row">
               <textarea id="input" placeholder="Message Claude..." rows="1"></textarea>
               <div class="input-btns">
-                <button class="icon-btn" onclick="document.getElementById('fileInput').click()" title="Upload image">📷</button>
-                <button class="send-btn" id="sendBtn" onclick="send()" title="Send">➤</button>
+                <button class="icon-btn" id="uploadBtn" title="Upload image">📷</button>
+                <button class="send-btn" id="sendBtn" title="Send">➤</button>
               </div>
             </div>
           </div>
@@ -900,26 +824,26 @@
     </div>
 
     <!-- Artifacts Panel -->
-    <div class="artifacts-panel" id="artifactsPanel">
+    <div class="panel" id="panel">
       <div class="panel-header">
         <div class="panel-title">
           <span>⚡</span>
           <span id="panelTitle">Artifact</span>
         </div>
         <div class="panel-tabs">
-          <button class="panel-tab active" onclick="showPanelView('code')">Code</button>
-          <button class="panel-tab" onclick="showPanelView('preview')">Preview</button>
+          <button class="panel-tab active" id="tabCode">Code</button>
+          <button class="panel-tab" id="tabPreview">Preview</button>
         </div>
-        <button class="panel-close" onclick="closePanel()">×</button>
+        <button class="panel-close" id="panelClose">×</button>
       </div>
-      <div class="panel-content">
+      <div class="panel-body">
         <div class="panel-code active" id="panelCode"><pre><code id="panelCodeContent"></code></pre></div>
         <div class="panel-preview" id="panelPreview"><iframe id="panelFrame"></iframe></div>
       </div>
-      <div class="panel-actions">
-        <button class="panel-btn" onclick="copyCode()">📋 Copy</button>
-        <button class="panel-btn" onclick="downloadCode()">💾 Download</button>
-        <button class="panel-btn primary" onclick="openNewTab()">🚀 Open</button>
+      <div class="panel-footer">
+        <button class="panel-btn" id="copyBtn">📋 Copy</button>
+        <button class="panel-btn" id="downloadBtn">💾 Download</button>
+        <button class="panel-btn primary" id="openBtn">🚀 Open</button>
       </div>
     </div>
   </div>
@@ -931,7 +855,7 @@
   </div>
 
   <div class="modal" id="modal">
-    <button class="modal-close" onclick="closeModal()">×</button>
+    <button class="modal-close" id="modalClose">×</button>
     <img id="modalImg" />
   </div>
 
@@ -951,53 +875,37 @@
     const previewRowEl = document.getElementById('previewRow');
     const inputEl = document.getElementById('input');
     const sendBtnEl = document.getElementById('sendBtn');
+    const uploadBtnEl = document.getElementById('uploadBtn');
     const fileInputEl = document.getElementById('fileInput');
     const modelSelectEl = document.getElementById('modelSelect');
     const modeBadgeEl = document.getElementById('modeBadge');
     const modeTextEl = document.getElementById('modeText');
+    const newChatBtnEl = document.getElementById('newChatBtn');
     const dropOverlayEl = document.getElementById('dropOverlay');
     const modalEl = document.getElementById('modal');
     const modalImgEl = document.getElementById('modalImg');
+    const modalCloseEl = document.getElementById('modalClose');
     const toastEl = document.getElementById('toast');
-    const artifactsPanelEl = document.getElementById('artifactsPanel');
+
+    // Panel
+    const panelEl = document.getElementById('panel');
     const panelTitleEl = document.getElementById('panelTitle');
     const panelCodeEl = document.getElementById('panelCode');
     const panelCodeContentEl = document.getElementById('panelCodeContent');
     const panelPreviewEl = document.getElementById('panelPreview');
     const panelFrameEl = document.getElementById('panelFrame');
+    const panelCloseEl = document.getElementById('panelClose');
+    const tabCodeEl = document.getElementById('tabCode');
+    const tabPreviewEl = document.getElementById('tabPreview');
+    const copyBtnEl = document.getElementById('copyBtn');
+    const downloadBtnEl = document.getElementById('downloadBtn');
+    const openBtnEl = document.getElementById('openBtn');
 
-    // ============ PROMPTS ============
-    const VISION_PROMPT = `You are an advanced vision AI. Analyze images with precision.
-
-Format your response:
-## 🎯 What This Is
-[Identification]
-
-## 🔍 Details
-- [Observations]
-
-## 📝 Text Found
-[Any visible text]
-
-## 💡 Notes
-[Additional insights]`;
-
-    const CODE_PROMPT = `You are an expert coder. When writing HTML/CSS/JS code that can be previewed, wrap it like this:
-
-\`\`\`artifact:html
-<!DOCTYPE html>
-<html>
-<head>
-  <style>/* CSS here */</style>
-</head>
-<body>
-  <!-- HTML here -->
-  <script>/* JS here */<\/script>
-</body>
-</html>
-\`\`\`
-
-This creates a live preview. Always write complete, working code.`;
+    // Cards
+    const cardImageEl = document.getElementById('cardImage');
+    const cardCodeEl = document.getElementById('cardCode');
+    const cardExplainEl = document.getElementById('cardExplain');
+    const cardCreateEl = document.getElementById('cardCreate');
 
     // ============ UTILITIES ============
     function toast(msg) {
@@ -1016,74 +924,82 @@ This creates a live preview. Always write complete, working code.`;
       inputEl.style.height = Math.min(inputEl.scrollHeight, 150) + 'px';
     }
 
-    function escape(s) {
-      return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/[&<>"']/g, c => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[c]));
     }
 
-    // ============ MARKDOWN + ARTIFACTS ============
-    function render(text) {
+    // ============ MARKDOWN RENDERING ============
+    function renderMarkdown(text) {
+      if (!text) return '';
+      
       let html = '';
-      let t = text;
+      let remaining = text;
       
-      // Find artifacts
-      const artifactRe = /```artifact:(\w+)\n([\s\S]*?)```/g;
-      let lastIdx = 0;
-      let m;
+      // Check for artifacts
+      const artifactRegex = /```artifact:(\w+)\n([\s\S]*?)```/g;
+      let lastIndex = 0;
+      let match;
       
-      while ((m = artifactRe.exec(text)) !== null) {
-        // Text before
-        html += formatMd(text.slice(lastIdx, m.index));
+      while ((match = artifactRegex.exec(text)) !== null) {
+        // Add text before artifact
+        html += formatText(text.slice(lastIndex, match.index));
         
-        // Artifact
-        const type = m[1];
-        const code = m[2].trim();
+        // Create artifact
+        const type = match[1];
+        const code = match[2].trim();
         currentArtifact = { type, code };
-        
-        const safeCode = code.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         
         html += `
           <div class="artifact-box">
             <div class="artifact-header">
               <div class="artifact-title">
-                <span class="artifact-title-icon">⚡</span>
-                ${type.toUpperCase()}
+                <span class="artifact-icon">⚡</span>
+                ${escapeHtml(type.toUpperCase())} Preview
               </div>
-              <div class="artifact-actions">
-                <button class="artifact-btn" onclick="copyCode()">📋 Copy</button>
+              <div class="artifact-btns">
+                <button class="artifact-btn" onclick="copyArtifactCode()">📋 Copy</button>
                 <button class="artifact-btn" onclick="openPanel()">🔍 Expand</button>
               </div>
             </div>
             <div class="artifact-preview">
-              <iframe srcdoc="${safeCode.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"')}" sandbox="allow-scripts"></iframe>
+              <iframe srcdoc="${escapeHtml(code)}" sandbox="allow-scripts"></iframe>
             </div>
           </div>
         `;
         
-        lastIdx = m.index + m[0].length;
+        lastIndex = match.index + match[0].length;
       }
       
-      // Remaining text
-      html += formatMd(text.slice(lastIdx));
+      // Add remaining text
+      html += formatText(text.slice(lastIndex));
       
       return html;
     }
 
-    function formatMd(text) {
+    function formatText(text) {
       if (!text) return '';
       
-      let t = escape(text);
+      let t = escapeHtml(text);
       
       // Headers
-      t = t.replace(/^## (.*$)/gm, '<strong style="color:var(--accent);display:block;margin:14px 0 8px;">$1</strong>');
-      t = t.replace(/^# (.*$)/gm, '<strong style="color:var(--accent);font-size:16px;display:block;margin:16px 0 10px;">$1</strong>');
+      t = t.replace(/^### (.*$)/gm, '<strong style="color:var(--accent);display:block;margin:12px 0 6px;">$1</strong>');
+      t = t.replace(/^## (.*$)/gm, '<strong style="color:var(--accent);font-size:15px;display:block;margin:14px 0 8px;">$1</strong>');
+      t = t.replace(/^# (.*$)/gm, '<strong style="color:var(--accent);font-size:17px;display:block;margin:16px 0 10px;">$1</strong>');
       
       // Code blocks
-      t = t.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
+      t = t.replace(/```(\w*)\n([\s\S]*?)```/g, (m, lang, code) => {
         try {
-          const hl = hljs.highlightAuto(code.trim()).value;
-          return `<pre><code class="hljs">${hl}</code></pre>`;
-        } catch {
-          return `<pre><code>${escape(code.trim())}</code></pre>`;
+          const highlighted = hljs.highlightAuto(code.trim()).value;
+          return `<pre><code class="hljs">${highlighted}</code></pre>`;
+        } catch (e) {
+          return `<pre><code>${escapeHtml(code.trim())}</code></pre>`;
         }
       });
       
@@ -1093,6 +1009,9 @@ This creates a live preview. Always write complete, working code.`;
       // Bold
       t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       
+      // Italic
+      t = t.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      
       // Line breaks
       t = t.replace(/\n/g, '<br>');
       
@@ -1100,20 +1019,27 @@ This creates a live preview. Always write complete, working code.`;
     }
 
     // ============ IMAGE HANDLING ============
-    async function loadImage(file) {
+    function loadImage(file) {
       if (!file || !file.type.startsWith('image/')) return;
+      
+      // Clear previous
+      if (pendingImageUrl) URL.revokeObjectURL(pendingImageUrl);
       
       pendingImage = file;
       pendingImageUrl = URL.createObjectURL(file);
       
       previewRowEl.innerHTML = `
         <div class="preview-item">
-          <img src="${pendingImageUrl}" />
-          <button class="preview-remove" onclick="removeImage()">×</button>
+          <img src="${pendingImageUrl}" alt="Preview" />
+          <button class="preview-remove" id="removePreview">×</button>
         </div>
       `;
       previewRowEl.classList.add('active');
       setMode('vision');
+      
+      // Add remove listener
+      document.getElementById('removePreview').addEventListener('click', removeImage);
+      
       toast('Image ready!');
     }
 
@@ -1126,215 +1052,203 @@ This creates a live preview. Always write complete, working code.`;
       setMode('chat');
     }
 
-    async function toDataUrl(file) {
-      return new Promise((res, rej) => {
-        const r = new FileReader();
-        r.onload = () => res(r.result);
-        r.onerror = rej;
-        r.readAsDataURL(file);
+    async function imageToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const dataUrl = reader.result;
+          const match = dataUrl.match(/^data:(image\/\w+);base64,(.+)$/);
+          if (match) {
+            resolve({ media_type: match[1], data: match[2] });
+          } else {
+            reject(new Error('Invalid image'));
+          }
+        };
+        reader.onerror = () => reject(new Error('Failed to read image'));
+        reader.readAsDataURL(file);
       });
     }
 
-    async function toBitmap(file) {
-      try {
-        return await createImageBitmap(file);
-      } catch {
-        const url = await toDataUrl(file);
-        return new Promise((res, rej) => {
-          const img = new Image();
-          img.onload = () => res(img);
-          img.onerror = rej;
-          img.src = url;
-        });
-      }
-    }
-
-    function toJpeg(canvas, q = 0.92) {
-      return canvas.toDataURL('image/jpeg', q);
-    }
-
-    function resize(src, max = 1800) {
-      const scale = Math.min(1, max / Math.max(src.width, src.height));
-      const w = Math.round(src.width * scale);
-      const h = Math.round(src.height * scale);
-      const c = document.createElement('canvas');
-      c.width = w; c.height = h;
-      const ctx = c.getContext('2d');
-      ctx.drawImage(src, 0, 0, w, h);
-      return c;
-    }
-
-    async function buildImageData(file) {
-      const bmp = await toBitmap(file);
-      const canvas = resize(bmp, 1800);
-      const dataUrl = toJpeg(canvas, 0.92);
-      const m = dataUrl.match(/^data:(image\/\w+);base64,(.+)$/);
-      return { media_type: m[1], data: m[2] };
-    }
-
-    // ============ CHAT UI ============
-    function addMsg(role, text, imgUrl = null) {
+    // ============ MESSAGE UI ============
+    function addUserMessage(text, imageUrl) {
       welcomeEl.style.display = 'none';
       
       const div = document.createElement('div');
       div.className = 'msg';
       
-      const isAI = role === 'assistant';
-      
-      let imgHtml = '';
-      if (imgUrl) {
-        imgHtml = `<div class="msg-images"><img src="${imgUrl}" onclick="openModal('${imgUrl}')" /></div>`;
+      let imageHtml = '';
+      if (imageUrl) {
+        imageHtml = `<div class="msg-images"><img src="${imageUrl}" onclick="openImageModal('${imageUrl}')" /></div>`;
       }
       
       div.innerHTML = `
-        <div class="msg-avatar ${role}">${isAI ? '✦' : '👤'}</div>
+        <div class="msg-avatar user">👤</div>
         <div class="msg-body">
-          <div class="msg-name">${isAI ? 'Claude' : 'You'}</div>
-          ${imgHtml}
-          <div class="msg-content"></div>
+          <div class="msg-name">You</div>
+          ${imageHtml}
+          <div class="msg-text">${escapeHtml(text)}</div>
+        </div>
+      `;
+      
+      chatEl.appendChild(div);
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function addAssistantMessage() {
+      welcomeEl.style.display = 'none';
+      
+      const div = document.createElement('div');
+      div.className = 'msg';
+      div.innerHTML = `
+        <div class="msg-avatar assistant">✦</div>
+        <div class="msg-body">
+          <div class="msg-name">Claude</div>
+          <div class="msg-text"></div>
         </div>
       `;
       
       chatEl.appendChild(div);
       chatEl.scrollTop = chatEl.scrollHeight;
       
-      return div.querySelector('.msg-content');
+      return div.querySelector('.msg-text');
     }
 
-    function addTyping() {
+    function addTypingIndicator() {
       welcomeEl.style.display = 'none';
       
       const div = document.createElement('div');
       div.className = 'msg';
-      div.id = 'typingMsg';
+      div.id = 'typingIndicator';
       div.innerHTML = `
         <div class="msg-avatar assistant">✦</div>
         <div class="msg-body">
           <div class="msg-name">Claude</div>
           <div class="typing">
             <div class="typing-dots"><span></span><span></span><span></span></div>
-            <span class="typing-text">Thinking...</span>
+            <span class="typing-label">Thinking...</span>
           </div>
         </div>
       `;
+      
       chatEl.appendChild(div);
       chatEl.scrollTop = chatEl.scrollHeight;
     }
 
-    function removeTyping() {
-      const el = document.getElementById('typingMsg');
+    function removeTypingIndicator() {
+      const el = document.getElementById('typingIndicator');
       if (el) el.remove();
     }
 
-    // ============ API ============
-    async function callVision(model, text, imageData) {
-      const content = [
-        {
-          type: 'image',
-          source: {
-            type: 'base64',
-            media_type: imageData.media_type,
-            data: imageData.data
-          }
-        },
-        {
-          type: 'text',
-          text: VISION_PROMPT + '\n\nUser: ' + (text || 'Analyze this image.')
-        }
-      ];
-      
-      return await puter.ai.chat([{ role: 'user', content }], { model, stream: true });
-    }
-
-    async function callChat(model, text) {
-      // Add to history
-      chatHistory.push({ role: 'user', content: text });
-      
-      // Build messages with system prompt
-      const messages = [
-        { role: 'user', content: CODE_PROMPT },
-        { role: 'assistant', content: 'Understood! I will create complete, working code with live previews using the artifact format.' },
-        ...chatHistory.slice(-20)
-      ];
-      
-      return await puter.ai.chat(messages, { model, stream: true });
-    }
-
-    // ============ SEND ============
+    // ============ SEND MESSAGE ============
     async function send() {
       if (busy) return;
       
       const text = inputEl.value.trim();
       const hasImage = !!pendingImage;
       
-      if (!text && !hasImage) return;
+      // Need text or image
+      if (!text && !hasImage) {
+        return;
+      }
       
       busy = true;
       sendBtnEl.disabled = true;
       
+      // Get values before clearing
+      const messageText = text || 'Analyze this image in detail.';
+      const imageFile = pendingImage;
+      const imageDisplayUrl = pendingImageUrl;
+      
+      // Clear input immediately
+      inputEl.value = '';
+      autoResize();
+      
+      // Clear image immediately (one-time use)
+      if (hasImage) {
+        pendingImage = null;
+        pendingImageUrl = null;
+        previewRowEl.innerHTML = '';
+        previewRowEl.classList.remove('active');
+        setMode('chat');
+      }
+      
+      // Show user message
+      addUserMessage(messageText, imageDisplayUrl);
+      
+      // Show typing indicator
+      addTypingIndicator();
+      
       try {
         const model = modelSelectEl.value;
-        let displayUrl = null;
-        let imageData = null;
-        
-        // Process image if present (ONE TIME ONLY)
-        if (hasImage) {
-          displayUrl = pendingImageUrl;
-          imageData = await buildImageData(pendingImage);
-          
-          // Clear image immediately
-          pendingImage = null;
-          pendingImageUrl = null;
-          previewRowEl.innerHTML = '';
-          previewRowEl.classList.remove('active');
-          setMode('chat');
-        }
-        
-        // Show user message
-        addMsg('user', text || 'Analyze this image.', displayUrl);
-        
-        // Clear input
-        inputEl.value = '';
-        autoResize();
-        
-        // Show typing
-        addTyping();
-        
-        // Call API
         let stream;
-        if (imageData) {
-          stream = await callVision(model, text, imageData);
+        
+        if (imageFile) {
+          // Vision mode
+          const imageData = await imageToBase64(imageFile);
+          
+          const content = [
+            {
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: imageData.media_type,
+                data: imageData.data
+              }
+            },
+            {
+              type: 'text',
+              text: `You are an advanced vision AI. Analyze this image carefully.
+
+User's request: ${messageText}
+
+Provide a detailed, accurate response. If there's text in the image, extract it precisely.`
+            }
+          ];
+          
+          stream = await puter.ai.chat([{ role: 'user', content }], { model, stream: true });
+          
         } else {
-          stream = await callChat(model, text);
+          // Text chat mode
+          chatHistory.push({ role: 'user', content: messageText });
+          
+          // Simple messages array
+          const messages = chatHistory.slice(-20);
+          
+          stream = await puter.ai.chat(messages, { model, stream: true });
         }
         
-        removeTyping();
+        // Remove typing indicator
+        removeTypingIndicator();
         
-        // Stream response
-        const contentEl = addMsg('assistant', '');
-        let fullText = '';
+        // Create assistant message and stream into it
+        const msgTextEl = addAssistantMessage();
+        let fullResponse = '';
         
         for await (const chunk of stream) {
           if (chunk?.text) {
-            fullText += chunk.text;
-            contentEl.innerHTML = render(fullText);
+            fullResponse += chunk.text;
+            msgTextEl.innerHTML = renderMarkdown(fullResponse);
             chatEl.scrollTop = chatEl.scrollHeight;
           }
         }
         
         // Save to history (text chat only)
-        if (!imageData && fullText) {
-          chatHistory.push({ role: 'assistant', content: fullText });
+        if (!imageFile && fullResponse) {
+          chatHistory.push({ role: 'assistant', content: fullResponse });
         }
         
-        if (!fullText) {
-          contentEl.innerHTML = '<em style="color:var(--text3)">No response. Try again.</em>';
+        // Handle empty response
+        if (!fullResponse.trim()) {
+          msgTextEl.innerHTML = '<span style="color:var(--text3)">No response received. Please try again.</span>';
         }
         
-      } catch (err) {
-        removeTyping();
-        addMsg('assistant', '❌ Error: ' + (err?.message || err));
-        console.error(err);
+      } catch (error) {
+        removeTypingIndicator();
+        
+        const errorEl = addAssistantMessage();
+        errorEl.innerHTML = `<div class="error-msg">❌ Error: ${escapeHtml(error?.message || 'Something went wrong')}</div>`;
+        
+        console.error('API Error:', error);
       }
       
       busy = false;
@@ -1342,75 +1256,69 @@ This creates a live preview. Always write complete, working code.`;
       inputEl.focus();
     }
 
-    // ============ ARTIFACTS PANEL ============
+    // ============ PANEL FUNCTIONS ============
     function openPanel() {
       if (!currentArtifact) return;
       
       panelTitleEl.textContent = currentArtifact.type.toUpperCase();
       panelCodeContentEl.textContent = currentArtifact.code;
-      hljs.highlightElement(panelCodeContentEl);
+      
+      try {
+        hljs.highlightElement(panelCodeContentEl);
+      } catch (e) {}
       
       if (currentArtifact.type === 'html') {
         panelFrameEl.srcdoc = currentArtifact.code;
       }
       
-      artifactsPanelEl.classList.add('open');
+      panelEl.classList.add('open');
     }
 
     function closePanel() {
-      artifactsPanelEl.classList.remove('open');
+      panelEl.classList.remove('open');
     }
 
-    function showPanelView(view) {
-      document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
-      event.target.classList.add('active');
-      
-      panelCodeEl.classList.toggle('active', view === 'code');
-      panelPreviewEl.classList.toggle('active', view === 'preview');
+    function showPanelCode() {
+      tabCodeEl.classList.add('active');
+      tabPreviewEl.classList.remove('active');
+      panelCodeEl.classList.add('active');
+      panelPreviewEl.classList.remove('active');
     }
 
-    function copyCode() {
+    function showPanelPreview() {
+      tabCodeEl.classList.remove('active');
+      tabPreviewEl.classList.add('active');
+      panelCodeEl.classList.remove('active');
+      panelPreviewEl.classList.add('active');
+    }
+
+    function copyArtifactCode() {
       if (!currentArtifact) return;
       navigator.clipboard.writeText(currentArtifact.code);
       toast('Copied!');
     }
 
-    function downloadCode() {
+    function downloadArtifact() {
       if (!currentArtifact) return;
       const blob = new Blob([currentArtifact.code], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
+      a.href = url;
       a.download = 'artifact.' + currentArtifact.type;
       a.click();
+      URL.revokeObjectURL(url);
       toast('Downloaded!');
     }
 
-    function openNewTab() {
+    function openInNewTab() {
       if (!currentArtifact) return;
-      const w = window.open('', '_blank');
-      w.document.write(currentArtifact.code);
-      w.document.close();
+      const win = window.open('', '_blank');
+      win.document.write(currentArtifact.code);
+      win.document.close();
     }
 
-    // ============ HELPERS ============
-    function setPrompt(text) {
-      inputEl.value = text;
-      autoResize();
-      inputEl.focus();
-    }
-
-    function newChat() {
-      chatHistory = [];
-      currentArtifact = null;
-      removeImage();
-      closePanel();
-      chatEl.innerHTML = '';
-      chatEl.appendChild(welcomeEl);
-      welcomeEl.style.display = '';
-      toast('New chat started');
-    }
-
-    function openModal(src) {
+    // ============ OTHER FUNCTIONS ============
+    function openImageModal(src) {
       modalImgEl.src = src;
       modalEl.classList.add('active');
     }
@@ -1419,66 +1327,126 @@ This creates a live preview. Always write complete, working code.`;
       modalEl.classList.remove('active');
     }
 
-    // ============ EVENTS ============
-    fileInputEl.addEventListener('change', e => {
-      loadImage(e.target.files?.[0]);
-      fileInputEl.value = '';
-    });
+    function newChat() {
+      chatHistory = [];
+      currentArtifact = null;
+      removeImage();
+      closePanel();
+      
+      // Clear chat and show welcome
+      chatEl.innerHTML = '';
+      chatEl.appendChild(welcomeEl);
+      welcomeEl.style.display = '';
+      
+      toast('New chat started');
+    }
 
-    inputEl.addEventListener('input', autoResize);
+    function setPrompt(text) {
+      inputEl.value = text;
+      autoResize();
+      inputEl.focus();
+    }
+
+    // ============ EVENT LISTENERS ============
+    // Send
+    sendBtnEl.addEventListener('click', send);
     
-    inputEl.addEventListener('keydown', e => {
+    // Enter to send
+    inputEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         send();
       }
     });
-
-    // Paste
-    document.addEventListener('paste', e => {
-      const item = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith('image/'));
-      if (item) {
-        e.preventDefault();
-        loadImage(item.getAsFile());
-      }
-    });
-
-    // Drag & drop
-    let dragCount = 0;
     
-    document.addEventListener('dragenter', e => {
-      e.preventDefault();
-      dragCount++;
-      dropOverlayEl.classList.add('active');
+    // Auto resize
+    inputEl.addEventListener('input', autoResize);
+    
+    // Upload button
+    uploadBtnEl.addEventListener('click', () => fileInputEl.click());
+    
+    // File input
+    fileInputEl.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (file) loadImage(file);
+      fileInputEl.value = '';
     });
     
-    document.addEventListener('dragover', e => e.preventDefault());
+    // New chat
+    newChatBtnEl.addEventListener('click', newChat);
     
-    document.addEventListener('dragleave', e => {
-      e.preventDefault();
-      if (--dragCount <= 0) dropOverlayEl.classList.remove('active');
-    });
+    // Welcome cards
+    cardImageEl.addEventListener('click', () => fileInputEl.click());
+    cardCodeEl.addEventListener('click', () => setPrompt('Create a beautiful animated button with HTML, CSS and JavaScript'));
+    cardExplainEl.addEventListener('click', () => setPrompt('Explain how neural networks work in simple terms'));
+    cardCreateEl.addEventListener('click', () => setPrompt('Write a short creative story about AI'));
     
-    document.addEventListener('drop', e => {
-      e.preventDefault();
-      dragCount = 0;
-      dropOverlayEl.classList.remove('active');
-      loadImage(e.dataTransfer?.files?.[0]);
-    });
-
+    // Panel
+    panelCloseEl.addEventListener('click', closePanel);
+    tabCodeEl.addEventListener('click', showPanelCode);
+    tabPreviewEl.addEventListener('click', showPanelPreview);
+    copyBtnEl.addEventListener('click', copyArtifactCode);
+    downloadBtnEl.addEventListener('click', downloadArtifact);
+    openBtnEl.addEventListener('click', openInNewTab);
+    
     // Modal
-    modalEl.addEventListener('click', e => {
+    modalCloseEl.addEventListener('click', closeModal);
+    modalEl.addEventListener('click', (e) => {
       if (e.target === modalEl) closeModal();
     });
     
-    document.addEventListener('keydown', e => {
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeModal();
         closePanel();
       }
     });
-
-    // Init
+    
+    // Paste image
+    document.addEventListener('paste', (e) => {
+      const items = Array.from(e.clipboardData?.items || []);
+      const imageItem = items.find(item => item.type.startsWith('image/'));
+      if (imageItem) {
+        e.preventDefault();
+        loadImage(imageItem.getAsFile());
+      }
+    });
+    
+    // Drag & drop
+    let dragCounter = 0;
+    
+    document.addEventListener('dragenter', (e) => {
+      e.preventDefault();
+      dragCounter++;
+      dropOverlayEl.classList.add('active');
+    });
+    
+    document.addEventListener('dragover', (e) => {
+      e.preventDefault();
+    });
+    
+    document.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      dragCounter--;
+      if (dragCounter <= 0) {
+        dragCounter = 0;
+        dropOverlayEl.classList.remove('active');
+      }
+    });
+    
+    document.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dragCounter = 0;
+      dropOverlayEl.classList.remove('active');
+      
+      const file = e.dataTransfer?.files?.[0];
+      if (file && file.type.startsWith('image/')) {
+        loadImage(file);
+      }
+    });
+    
+    // Focus input on load
     inputEl.focus();
   </script>
 </body>
