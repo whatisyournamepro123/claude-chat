@@ -3,11 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Claude Vision AI</title>
+  <title>Claude AI - Ultra Advanced</title>
   <script src="https://js.puter.com/v2/"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Highlight.js for syntax highlighting -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   
   <style>
     :root {
@@ -29,12 +33,16 @@
       --accent-primary: #c9a87c;
       --accent-secondary: #e8d5b7;
       --accent-glow: rgba(201,168,124,0.15);
-      --accent-glow-strong: rgba(201,168,124,0.25);
+      --accent-glow-strong: rgba(201,168,124,0.3);
+      
+      --code-bg: #0d1117;
+      --code-border: #30363d;
       
       --success: #4ade80;
       --warning: #fbbf24;
       --error: #f87171;
       --info: #60a5fa;
+      --purple: #a78bfa;
       
       --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
       --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
@@ -44,40 +52,29 @@
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
-      --radius-xl: 24px;
+      --radius-xl: 20px;
       --radius-full: 9999px;
       
       --transition-fast: 0.15s ease;
       --transition-normal: 0.25s ease;
-      --transition-slow: 0.4s ease;
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html, body {
-      height: 100%;
-      overflow: hidden;
-    }
-
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; }
+    
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
       background: var(--bg-base);
       color: var(--text-primary);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* ===== Animated Background ===== */
+    /* ===== Background ===== */
     .bg-gradient {
       position: fixed;
       inset: 0;
       z-index: -1;
-      overflow: hidden;
       pointer-events: none;
     }
     
@@ -88,7 +85,7 @@
       left: -20%;
       width: 80%;
       height: 80%;
-      background: radial-gradient(ellipse, rgba(201,168,124,0.08) 0%, transparent 70%);
+      background: radial-gradient(ellipse, rgba(201,168,124,0.07) 0%, transparent 70%);
       animation: float1 25s ease-in-out infinite;
     }
     
@@ -99,43 +96,212 @@
       right: -10%;
       width: 70%;
       height: 70%;
-      background: radial-gradient(ellipse, rgba(139,92,246,0.06) 0%, transparent 70%);
+      background: radial-gradient(ellipse, rgba(167,139,250,0.05) 0%, transparent 70%);
       animation: float2 30s ease-in-out infinite;
     }
     
     @keyframes float1 {
       0%, 100% { transform: translate(0, 0) scale(1); }
-      33% { transform: translate(5%, 8%) scale(1.05); }
-      66% { transform: translate(-3%, 4%) scale(0.98); }
+      50% { transform: translate(5%, 8%) scale(1.05); }
     }
     
     @keyframes float2 {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(-8%, -5%) scale(1.08); }
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-8%, -5%); }
     }
 
     /* ===== Layout ===== */
     .app {
       display: flex;
-      flex-direction: column;
       height: 100%;
-      max-width: 1000px;
-      margin: 0 auto;
-      position: relative;
+    }
+
+    .main-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* ===== Artifacts Panel ===== */
+    .artifacts-panel {
+      width: 0;
+      background: var(--bg-surface);
+      border-left: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      transition: width var(--transition-normal);
+      overflow: hidden;
+    }
+
+    .artifacts-panel.open {
+      width: 50%;
+      min-width: 400px;
+      max-width: 700px;
+    }
+
+    .artifacts-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-elevated);
+    }
+
+    .artifacts-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .artifacts-title-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--purple), #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+
+    .artifacts-tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .artifact-tab {
+      padding: 8px 14px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .artifact-tab:hover {
+      background: var(--bg-hover);
+    }
+
+    .artifact-tab.active {
+      background: var(--bg-active);
+      border-color: var(--border-default);
+      color: var(--text-primary);
+    }
+
+    .artifacts-close {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-fast);
+    }
+
+    .artifacts-close:hover {
+      background: var(--error);
+      border-color: var(--error);
+      color: white;
+    }
+
+    .artifacts-content {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .artifact-code-view {
+      flex: 1;
+      overflow: auto;
+      padding: 0;
+      display: none;
+    }
+
+    .artifact-code-view.active {
+      display: block;
+    }
+
+    .artifact-code-view pre {
+      margin: 0;
+      padding: 20px;
+      background: var(--code-bg);
+      min-height: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .artifact-preview-view {
+      flex: 1;
+      background: white;
+      display: none;
+    }
+
+    .artifact-preview-view.active {
+      display: block;
+    }
+
+    .artifact-preview-view iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .artifacts-actions {
+      padding: 12px 20px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      gap: 10px;
+      background: var(--bg-elevated);
+    }
+
+    .artifact-action-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+      background: var(--bg-surface);
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all var(--transition-fast);
+    }
+
+    .artifact-action-btn:hover {
+      background: var(--bg-hover);
+      border-color: var(--accent-primary);
+    }
+
+    .artifact-action-btn.primary {
+      background: linear-gradient(135deg, var(--accent-primary), #a88a5c);
+      border: none;
+      color: var(--bg-base);
     }
 
     /* ===== Header ===== */
     .header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      padding: 16px 20px;
-      background: rgba(9,9,11,0.8);
-      backdrop-filter: blur(20px) saturate(180%);
+      padding: 14px 20px;
+      background: rgba(9,9,11,0.85);
+      backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border-subtle);
-    }
-
-    .header-inner {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -145,54 +311,43 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
     }
 
     .brand-logo {
-      width: 44px;
-      height: 44px;
+      width: 40px;
+      height: 40px;
       border-radius: var(--radius-md);
-      background: linear-gradient(135deg, var(--accent-primary) 0%, #a88a5c 100%);
+      background: linear-gradient(135deg, var(--accent-primary), #a88a5c);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       color: var(--bg-base);
       box-shadow: var(--shadow-glow);
-      position: relative;
-      overflow: hidden;
     }
 
-    .brand-logo::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 50%);
-    }
-
-    .brand-text {
+    .brand-info {
       display: flex;
       flex-direction: column;
       gap: 2px;
     }
 
     .brand-name {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
-      letter-spacing: -0.02em;
-      background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-secondary) 100%);
+      background: linear-gradient(135deg, var(--text-primary), var(--accent-secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
     }
 
     .brand-tag {
-      font-size: 11px;
-      font-weight: 500;
+      font-size: 10px;
+      font-weight: 600;
       color: var(--text-muted);
-      letter-spacing: 0.05em;
       text-transform: uppercase;
+      letter-spacing: 0.08em;
     }
 
     .header-controls {
@@ -201,8 +356,30 @@
       gap: 12px;
     }
 
-    .model-select-wrapper {
-      position: relative;
+    .mode-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .mode-indicator .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background: var(--success);
+      box-shadow: 0 0 8px var(--success);
+    }
+
+    .mode-indicator.vision .dot {
+      background: var(--purple);
+      box-shadow: 0 0 8px var(--purple);
     }
 
     .model-select {
@@ -210,19 +387,20 @@
       background: var(--bg-elevated);
       border: 1px solid var(--border-default);
       border-radius: var(--radius-md);
-      padding: 10px 40px 10px 14px;
+      padding: 10px 36px 10px 14px;
       font-size: 13px;
       font-weight: 500;
       color: var(--text-primary);
       cursor: pointer;
-      transition: all var(--transition-fast);
       outline: none;
-      font-family: inherit;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      transition: all var(--transition-fast);
     }
 
     .model-select:hover {
       border-color: var(--border-strong);
-      background: var(--bg-hover);
     }
 
     .model-select:focus {
@@ -232,47 +410,47 @@
 
     .model-select option {
       background: var(--bg-elevated);
+    }
+
+    .new-chat-btn {
+      padding: 10px 16px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all var(--transition-fast);
+    }
+
+    .new-chat-btn:hover {
+      background: var(--bg-hover);
       color: var(--text-primary);
-      padding: 10px;
+      border-color: var(--accent-primary);
     }
 
-    .model-select-arrow {
-      position: absolute;
-      right: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      pointer-events: none;
-      color: var(--text-muted);
-      font-size: 10px;
-    }
-
-    /* ===== Chat Container ===== */
+    /* ===== Chat ===== */
     .chat-container {
       flex: 1;
       overflow-y: auto;
-      overflow-x: hidden;
       padding: 24px 20px;
-      scroll-behavior: smooth;
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
     }
 
-    .chat-container::-webkit-scrollbar {
-      width: 6px;
-    }
-
-    .chat-container::-webkit-scrollbar-track {
-      background: transparent;
-    }
-
+    .chat-container::-webkit-scrollbar { width: 6px; }
+    .chat-container::-webkit-scrollbar-track { background: transparent; }
     .chat-container::-webkit-scrollbar-thumb {
       background: var(--border-default);
       border-radius: var(--radius-full);
     }
 
-    .chat-container::-webkit-scrollbar-thumb:hover {
-      background: var(--border-strong);
-    }
-
-    /* ===== Welcome Screen ===== */
+    /* ===== Welcome ===== */
     .welcome {
       display: flex;
       flex-direction: column;
@@ -280,148 +458,114 @@
       justify-content: center;
       text-align: center;
       padding: 60px 20px;
-      animation: fadeInUp 0.6s ease;
+      animation: fadeIn 0.5s ease;
     }
 
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .welcome-icon {
-      width: 90px;
-      height: 90px;
+      width: 80px;
+      height: 80px;
       border-radius: var(--radius-xl);
-      background: linear-gradient(135deg, var(--accent-primary) 0%, #a88a5c 100%);
+      background: linear-gradient(135deg, var(--accent-primary), #a88a5c);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 42px;
-      margin-bottom: 28px;
+      font-size: 38px;
+      margin-bottom: 24px;
       box-shadow: var(--shadow-glow), var(--shadow-lg);
-      position: relative;
       animation: pulse 3s ease-in-out infinite;
     }
 
     @keyframes pulse {
       0%, 100% { box-shadow: var(--shadow-glow), var(--shadow-lg); }
-      50% { box-shadow: 0 0 60px var(--accent-glow-strong), var(--shadow-lg); }
+      50% { box-shadow: 0 0 50px var(--accent-glow-strong), var(--shadow-lg); }
     }
 
     .welcome-title {
-      font-size: 32px;
+      font-size: 28px;
       font-weight: 700;
-      letter-spacing: -0.03em;
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, var(--text-primary) 20%, var(--accent-secondary) 100%);
+      margin-bottom: 10px;
+      background: linear-gradient(135deg, var(--text-primary), var(--accent-secondary));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
     }
 
     .welcome-subtitle {
-      font-size: 16px;
+      font-size: 15px;
       color: var(--text-secondary);
-      max-width: 500px;
+      max-width: 480px;
       line-height: 1.7;
-      margin-bottom: 40px;
+      margin-bottom: 36px;
     }
 
-    .welcome-features {
+    .welcome-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px;
       width: 100%;
-      max-width: 600px;
+      max-width: 560px;
     }
 
-    .feature-card {
+    .welcome-card {
       background: var(--bg-surface);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-lg);
-      padding: 20px;
+      padding: 18px;
       text-align: left;
       cursor: pointer;
       transition: all var(--transition-normal);
-      position: relative;
-      overflow: hidden;
     }
 
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, var(--accent-glow) 0%, transparent 50%);
-      opacity: 0;
-      transition: opacity var(--transition-normal);
-    }
-
-    .feature-card:hover {
+    .welcome-card:hover {
       border-color: var(--accent-primary);
-      transform: translateY(-4px);
-      box-shadow: var(--shadow-md), 0 0 30px var(--accent-glow);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md), 0 0 25px var(--accent-glow);
     }
 
-    .feature-card:hover::before {
-      opacity: 1;
+    .welcome-card-icon {
+      font-size: 24px;
+      margin-bottom: 10px;
     }
 
-    .feature-icon {
-      font-size: 28px;
-      margin-bottom: 12px;
-      position: relative;
-    }
-
-    .feature-title {
-      font-size: 14px;
+    .welcome-card-title {
+      font-size: 13px;
       font-weight: 600;
-      margin-bottom: 6px;
-      position: relative;
+      margin-bottom: 4px;
     }
 
-    .feature-desc {
-      font-size: 12px;
+    .welcome-card-desc {
+      font-size: 11px;
       color: var(--text-muted);
-      position: relative;
       line-height: 1.5;
     }
 
     /* ===== Messages ===== */
     .message {
       display: flex;
-      gap: 16px;
-      margin-bottom: 28px;
-      animation: messageIn 0.4s ease;
+      gap: 14px;
+      margin-bottom: 24px;
+      animation: msgIn 0.35s ease;
     }
 
-    @keyframes messageIn {
-      from {
-        opacity: 0;
-        transform: translateY(12px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .message-avatar {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 700;
       flex-shrink: 0;
-      position: relative;
     }
 
     .message-avatar.user {
@@ -431,9 +575,9 @@
     }
 
     .message-avatar.assistant {
-      background: linear-gradient(135deg, var(--accent-primary) 0%, #a88a5c 100%);
+      background: linear-gradient(135deg, var(--accent-primary), #a88a5c);
       color: var(--bg-base);
-      box-shadow: 0 0 20px var(--accent-glow);
+      box-shadow: 0 0 15px var(--accent-glow);
     }
 
     .message-body {
@@ -445,11 +589,11 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
 
     .message-name {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
     }
 
@@ -459,9 +603,12 @@
     }
 
     .message-content {
-      font-size: 15px;
+      font-size: 14px;
       line-height: 1.75;
-      color: var(--text-primary);
+    }
+
+    .message-content strong {
+      color: var(--accent-secondary);
     }
 
     .message-content p {
@@ -472,67 +619,42 @@
       margin-bottom: 0;
     }
 
-    .message-content strong {
-      color: var(--accent-secondary);
-      font-weight: 600;
-    }
-
-    .message-content code {
+    .message-content code:not(pre code) {
       background: var(--bg-elevated);
       border: 1px solid var(--border-subtle);
-      padding: 3px 8px;
+      padding: 2px 7px;
       border-radius: var(--radius-sm);
-      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
-      font-size: 13px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
       color: #f0abfc;
     }
 
     .message-content pre {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
+      margin: 14px 0;
       border-radius: var(--radius-md);
-      padding: 16px;
-      overflow-x: auto;
-      margin: 16px 0;
+      overflow: hidden;
+      border: 1px solid var(--code-border);
     }
 
     .message-content pre code {
-      background: none;
-      border: none;
-      padding: 0;
-      color: #a5f3fc;
-    }
-
-    .message-content ul, .message-content ol {
-      margin: 12px 0;
-      padding-left: 24px;
-    }
-
-    .message-content li {
-      margin-bottom: 6px;
-    }
-
-    .message-content a {
-      color: var(--accent-primary);
-      text-decoration: none;
-      border-bottom: 1px solid transparent;
-      transition: border-color var(--transition-fast);
-    }
-
-    .message-content a:hover {
-      border-bottom-color: var(--accent-primary);
+      display: block;
+      padding: 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-x: auto;
     }
 
     .message-images {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
 
     .message-image {
-      max-width: 280px;
-      max-height: 280px;
+      max-width: 260px;
+      max-height: 260px;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-default);
       cursor: pointer;
@@ -543,55 +665,152 @@
     .message-image:hover {
       border-color: var(--accent-primary);
       transform: scale(1.02);
-      box-shadow: var(--shadow-md);
     }
 
-    /* ===== Typing Indicator ===== */
+    /* Artifact in message */
+    .message-artifact {
+      margin: 14px 0;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .message-artifact-header {
+      padding: 12px 16px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .message-artifact-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .message-artifact-title-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--purple), #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .message-artifact-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .message-artifact-btn {
+      padding: 6px 12px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-fast);
+    }
+
+    .message-artifact-btn:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .message-artifact-preview {
+      height: 200px;
+      background: white;
+      position: relative;
+    }
+
+    .message-artifact-preview iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .message-artifact-expand {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      padding: 8px 14px;
+      background: var(--bg-base);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-fast);
+    }
+
+    .message-artifact-expand:hover {
+      background: var(--accent-primary);
+      color: var(--bg-base);
+    }
+
+    /* Typing */
     .typing-indicator {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .typing-dots {
       display: flex;
-      gap: 5px;
+      gap: 4px;
     }
 
     .typing-dots span {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       background: var(--accent-primary);
       border-radius: var(--radius-full);
-      animation: typingBounce 1.4s ease-in-out infinite;
+      animation: typeBounce 1.2s ease-in-out infinite;
     }
 
     .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
     .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
 
-    @keyframes typingBounce {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.6; }
-      30% { transform: translateY(-8px); opacity: 1; }
+    @keyframes typeBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+      30% { transform: translateY(-6px); opacity: 1; }
     }
 
     .typing-text {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-muted);
     }
 
     /* ===== Composer ===== */
     .composer {
-      position: sticky;
-      bottom: 0;
-      padding: 20px;
-      background: linear-gradient(to top, var(--bg-base) 60%, transparent);
+      padding: 16px 20px 20px;
+      background: linear-gradient(to top, var(--bg-base) 70%, transparent);
+      max-width: 900px;
+      margin: 0 auto;
+      width: 100%;
     }
 
     .composer-box {
       background: var(--bg-surface);
       border: 1px solid var(--border-default);
       border-radius: var(--radius-xl);
-      padding: 16px;
+      padding: 14px;
       transition: all var(--transition-fast);
       box-shadow: var(--shadow-lg);
     }
@@ -601,13 +820,12 @@
       box-shadow: var(--shadow-lg), 0 0 0 3px var(--accent-glow);
     }
 
-    /* Preview */
     .preview-area {
       display: none;
       flex-wrap: wrap;
-      gap: 12px;
-      padding-bottom: 16px;
-      margin-bottom: 16px;
+      gap: 10px;
+      padding-bottom: 14px;
+      margin-bottom: 14px;
       border-bottom: 1px solid var(--border-subtle);
     }
 
@@ -617,16 +835,11 @@
 
     .preview-item {
       position: relative;
-      width: 80px;
-      height: 80px;
+      width: 72px;
+      height: 72px;
       border-radius: var(--radius-md);
       overflow: hidden;
       border: 2px solid var(--border-default);
-      transition: all var(--transition-fast);
-    }
-
-    .preview-item:hover {
-      border-color: var(--accent-primary);
     }
 
     .preview-item img {
@@ -637,52 +850,40 @@
 
     .preview-remove {
       position: absolute;
-      top: -8px;
-      right: -8px;
-      width: 24px;
-      height: 24px;
+      top: -7px;
+      right: -7px;
+      width: 22px;
+      height: 22px;
       border-radius: var(--radius-full);
       background: var(--error);
       border: 2px solid var(--bg-surface);
       color: white;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all var(--transition-fast);
     }
 
-    .preview-remove:hover {
-      transform: scale(1.1);
-    }
-
-    /* Input Row */
     .input-row {
       display: flex;
       align-items: flex-end;
-      gap: 12px;
-    }
-
-    .input-wrapper {
-      flex: 1;
-      position: relative;
+      gap: 10px;
     }
 
     .text-input {
-      width: 100%;
+      flex: 1;
       background: transparent;
       border: none;
       outline: none;
       color: var(--text-primary);
-      font-size: 15px;
+      font-size: 14px;
       font-family: inherit;
       line-height: 1.5;
       resize: none;
       min-height: 24px;
       max-height: 180px;
-      padding: 0;
     }
 
     .text-input::placeholder {
@@ -695,8 +896,8 @@
     }
 
     .action-btn {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-default);
       background: var(--bg-elevated);
@@ -712,33 +913,27 @@
     .action-btn:hover {
       border-color: var(--accent-primary);
       color: var(--accent-primary);
-      background: var(--bg-hover);
     }
 
     .send-btn {
-      width: 44px;
-      height: 44px;
+      width: 42px;
+      height: 42px;
       border-radius: var(--radius-md);
       border: none;
-      background: linear-gradient(135deg, var(--accent-primary) 0%, #a88a5c 100%);
+      background: linear-gradient(135deg, var(--accent-primary), #a88a5c);
       color: var(--bg-base);
-      font-size: 18px;
-      font-weight: 700;
+      font-size: 16px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: all var(--transition-fast);
-      box-shadow: 0 4px 15px var(--accent-glow);
+      box-shadow: 0 4px 12px var(--accent-glow);
     }
 
     .send-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 25px var(--accent-glow-strong);
-    }
-
-    .send-btn:active {
-      transform: translateY(0);
+      box-shadow: 0 6px 20px var(--accent-glow-strong);
     }
 
     .send-btn:disabled {
@@ -747,93 +942,20 @@
       transform: none;
     }
 
-    /* Status Bar */
-    .status-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 14px;
-      padding-top: 14px;
-      border-top: 1px solid var(--border-subtle);
-    }
-
-    .status-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: var(--radius-full);
-      background: var(--text-faint);
-    }
-
-    .status-dot.active {
-      background: var(--success);
-      box-shadow: 0 0 8px var(--success);
-    }
-
-    .status-dot.loading {
-      background: var(--warning);
-      animation: statusPulse 1s ease-in-out infinite;
-    }
-
-    @keyframes statusPulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    .boost-toggle {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 14px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-full);
-      cursor: pointer;
-      transition: all var(--transition-fast);
-      user-select: none;
-    }
-
-    .boost-toggle:hover {
-      border-color: var(--border-strong);
-    }
-
-    .boost-toggle input {
-      accent-color: var(--accent-primary);
-      width: 16px;
-      height: 16px;
-      cursor: pointer;
-    }
-
-    .boost-toggle span {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-secondary);
-    }
-
-    /* ===== Hidden Input ===== */
-    #fileInput {
-      display: none;
-    }
+    /* ===== Hidden ===== */
+    #fileInput { display: none; }
 
     /* ===== Drop Overlay ===== */
     .drop-overlay {
       position: fixed;
       inset: 0;
-      z-index: 200;
+      z-index: 500;
       display: none;
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
       background: rgba(9,9,11,0.95);
-      backdrop-filter: blur(20px);
       border: 3px dashed var(--accent-primary);
     }
 
@@ -842,36 +964,29 @@
     }
 
     .drop-icon {
-      font-size: 72px;
-      animation: dropBounce 1s ease-in-out infinite;
+      font-size: 64px;
+      animation: dropFloat 1s ease-in-out infinite;
     }
 
-    @keyframes dropBounce {
+    @keyframes dropFloat {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
+      50% { transform: translateY(-12px); }
     }
 
     .drop-text {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .drop-hint {
-      font-size: 14px;
-      color: var(--text-muted);
     }
 
     /* ===== Modal ===== */
     .modal {
       position: fixed;
       inset: 0;
-      z-index: 300;
+      z-index: 600;
       display: none;
       align-items: center;
       justify-content: center;
       background: rgba(0,0,0,0.92);
-      backdrop-filter: blur(10px);
       padding: 40px;
     }
 
@@ -883,26 +998,24 @@
       max-width: 100%;
       max-height: 100%;
       border-radius: var(--radius-lg);
-      border: 1px solid var(--border-default);
       object-fit: contain;
     }
 
     .modal-close {
       position: absolute;
-      top: 24px;
-      right: 24px;
-      width: 50px;
-      height: 50px;
+      top: 20px;
+      right: 20px;
+      width: 46px;
+      height: 46px;
       border-radius: var(--radius-full);
       border: 1px solid var(--border-default);
       background: var(--bg-elevated);
       color: var(--text-primary);
-      font-size: 24px;
+      font-size: 22px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all var(--transition-fast);
     }
 
     .modal-close:hover {
@@ -913,21 +1026,20 @@
     /* ===== Toast ===== */
     .toast {
       position: fixed;
-      bottom: 100px;
+      bottom: 90px;
       left: 50%;
       transform: translateX(-50%) translateY(20px);
       background: var(--bg-elevated);
       border: 1px solid var(--border-default);
       border-radius: var(--radius-lg);
-      padding: 14px 24px;
-      font-size: 14px;
+      padding: 12px 22px;
+      font-size: 13px;
       font-weight: 500;
-      color: var(--text-primary);
       box-shadow: var(--shadow-lg);
       opacity: 0;
       pointer-events: none;
       transition: all var(--transition-normal);
-      z-index: 400;
+      z-index: 700;
     }
 
     .toast.show {
@@ -935,132 +1047,153 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    .toast.success { border-color: var(--success); }
-    .toast.error { border-color: var(--error); }
-
     /* ===== Responsive ===== */
-    @media (max-width: 600px) {
-      .header { padding: 12px 16px; }
-      .brand-text { display: none; }
-      .chat-container { padding: 16px; }
-      .composer { padding: 16px; }
-      .welcome-title { font-size: 26px; }
-      .welcome-subtitle { font-size: 14px; }
-      .message-image { max-width: 100%; }
+    @media (max-width: 900px) {
+      .artifacts-panel.open {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        max-width: none;
+        z-index: 400;
+      }
+      
+      .brand-info { display: none; }
+      .mode-indicator span { display: none; }
     }
   </style>
 </head>
 
 <body>
-  <!-- Animated Background -->
   <div class="bg-gradient"></div>
 
   <div class="app">
-    <!-- Header -->
-    <header class="header">
-      <div class="header-inner">
+    <!-- Main Panel -->
+    <div class="main-panel">
+      <!-- Header -->
+      <header class="header">
         <div class="brand">
           <div class="brand-logo">✦</div>
-          <div class="brand-text">
-            <div class="brand-name">Claude Vision</div>
-            <div class="brand-tag">Ultra Advanced AI</div>
+          <div class="brand-info">
+            <div class="brand-name">Claude AI</div>
+            <div class="brand-tag">Ultra Advanced</div>
           </div>
         </div>
         
         <div class="header-controls">
-          <div class="model-select-wrapper">
-            <select class="model-select" id="modelSelect">
-              <option value="claude-opus-4-5">Claude Opus 4.5</option>
-              <option value="claude-sonnet-4-5" selected>Claude Sonnet 4.5</option>
-              <option value="claude-haiku-4-5">Claude Haiku 4.5</option>
-              <option value="gpt-4o">GPT-4o (Backup)</option>
-            </select>
-            <span class="model-select-arrow">▼</span>
+          <div class="mode-indicator" id="modeIndicator">
+            <span class="dot"></span>
+            <span>Chat</span>
+          </div>
+          
+          <select class="model-select" id="modelSelect">
+            <option value="claude-opus-4-5">Claude Opus 4.5</option>
+            <option value="claude-sonnet-4-5" selected>Claude Sonnet 4.5</option>
+            <option value="claude-haiku-4-5">Claude Haiku 4.5</option>
+            <option value="gpt-4o">GPT-4o (Backup)</option>
+          </select>
+          
+          <button class="new-chat-btn" id="newChatBtn">
+            <span>+</span> New
+          </button>
+        </div>
+      </header>
+
+      <!-- Chat -->
+      <div class="chat-container" id="chatContainer">
+        <div class="welcome" id="welcome">
+          <div class="welcome-icon">✦</div>
+          <h1 class="welcome-title">How can I help you?</h1>
+          <p class="welcome-subtitle">
+            I can analyze images, write code with live previews, answer questions, and much more.
+          </p>
+          <div class="welcome-grid">
+            <div class="welcome-card" onclick="triggerUpload()">
+              <div class="welcome-card-icon">🖼️</div>
+              <div class="welcome-card-title">Analyze Image</div>
+              <div class="welcome-card-desc">Ultra detailed vision</div>
+            </div>
+            <div class="welcome-card" onclick="setPrompt('Create a beautiful landing page with HTML, CSS, and JS')">
+              <div class="welcome-card-icon">💻</div>
+              <div class="welcome-card-title">Write Code</div>
+              <div class="welcome-card-desc">With live preview</div>
+            </div>
+            <div class="welcome-card" onclick="setPrompt('Explain quantum computing simply')">
+              <div class="welcome-card-icon">🧠</div>
+              <div class="welcome-card-title">Explain Anything</div>
+              <div class="welcome-card-desc">Clear explanations</div>
+            </div>
+            <div class="welcome-card" onclick="setPrompt('Help me brainstorm ideas for a mobile app')">
+              <div class="welcome-card-icon">💡</div>
+              <div class="welcome-card-title">Brainstorm</div>
+              <div class="welcome-card-desc">Creative ideas</div>
+            </div>
           </div>
         </div>
       </div>
-    </header>
 
-    <!-- Chat Container -->
-    <div class="chat-container" id="chatContainer">
-      <!-- Welcome Screen -->
-      <div class="welcome" id="welcome">
-        <div class="welcome-icon">✦</div>
-        <h1 class="welcome-title">Ultra Vision AI</h1>
-        <p class="welcome-subtitle">
-          Upload any image and I'll analyze it with incredible precision. 
-          I use advanced multi-crop analysis to catch every tiny detail.
-        </p>
-        <div class="welcome-features">
-          <div class="feature-card" onclick="triggerUpload()">
-            <div class="feature-icon">🖼️</div>
-            <div class="feature-title">Image Analysis</div>
-            <div class="feature-desc">Deep visual understanding</div>
-          </div>
-          <div class="feature-card" onclick="setPrompt('Extract all text from this image')">
-            <div class="feature-icon">📝</div>
-            <div class="feature-title">Text Extraction</div>
-            <div class="feature-desc">Perfect OCR accuracy</div>
-          </div>
-          <div class="feature-card" onclick="setPrompt('What is this? Identify it precisely')">
-            <div class="feature-icon">🔍</div>
-            <div class="feature-title">Object ID</div>
-            <div class="feature-desc">Smart identification</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Composer -->
-    <div class="composer">
-      <div class="composer-box">
-        <div class="preview-area" id="previewArea"></div>
-        
-        <div class="input-row">
-          <div class="input-wrapper">
+      <!-- Composer -->
+      <div class="composer">
+        <div class="composer-box">
+          <div class="preview-area" id="previewArea"></div>
+          
+          <div class="input-row">
             <textarea 
               class="text-input" 
               id="textInput" 
-              placeholder="Ask anything about the image..."
+              placeholder="Message Claude..."
               rows="1"
             ></textarea>
+            <div class="input-actions">
+              <button class="action-btn" id="imageBtn" title="Upload Image">📷</button>
+              <button class="send-btn" id="sendBtn" title="Send">➤</button>
+            </div>
           </div>
-          <div class="input-actions">
-            <button class="action-btn" id="imageBtn" title="Upload Image">📷</button>
-            <button class="send-btn" id="sendBtn" title="Send">➤</button>
-          </div>
-        </div>
-
-        <div class="status-bar">
-          <div class="status-item">
-            <span class="status-dot" id="statusDot"></span>
-            <span id="statusText">Ready</span>
-          </div>
-          <label class="boost-toggle">
-            <input type="checkbox" id="boostToggle" checked />
-            <span>Ultra Analysis</span>
-          </label>
         </div>
       </div>
+
+      <input type="file" id="fileInput" accept="image/*" />
     </div>
 
-    <input type="file" id="fileInput" accept="image/*" />
+    <!-- Artifacts Panel -->
+    <div class="artifacts-panel" id="artifactsPanel">
+      <div class="artifacts-header">
+        <div class="artifacts-title">
+          <span class="artifacts-title-icon">⚡</span>
+          <span id="artifactName">Artifact</span>
+        </div>
+        <div class="artifacts-tabs">
+          <button class="artifact-tab active" data-view="code" onclick="switchArtifactView('code')">Code</button>
+          <button class="artifact-tab" data-view="preview" onclick="switchArtifactView('preview')">Preview</button>
+        </div>
+        <button class="artifacts-close" onclick="closeArtifacts()">×</button>
+      </div>
+      <div class="artifacts-content">
+        <div class="artifact-code-view active" id="artifactCodeView">
+          <pre><code id="artifactCode"></code></pre>
+        </div>
+        <div class="artifact-preview-view" id="artifactPreviewView">
+          <iframe id="artifactPreviewFrame" sandbox="allow-scripts"></iframe>
+        </div>
+      </div>
+      <div class="artifacts-actions">
+        <button class="artifact-action-btn" onclick="copyArtifact()">📋 Copy Code</button>
+        <button class="artifact-action-btn" onclick="downloadArtifact()">💾 Download</button>
+        <button class="artifact-action-btn primary" onclick="openInNewTab()">🚀 Open in New Tab</button>
+      </div>
+    </div>
   </div>
 
-  <!-- Drop Overlay -->
+  <!-- Overlays -->
   <div class="drop-overlay" id="dropOverlay">
     <div class="drop-icon">📷</div>
-    <div class="drop-text">Drop your image here</div>
-    <div class="drop-hint">PNG, JPG, GIF, WebP supported</div>
+    <div class="drop-text">Drop image here</div>
   </div>
 
-  <!-- Image Modal -->
   <div class="modal" id="imageModal">
-    <button class="modal-close" id="modalClose">✕</button>
-    <img id="modalImage" alt="Preview" />
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <img id="modalImage" />
   </div>
 
-  <!-- Toast -->
   <div class="toast" id="toast"></div>
 
   <script>
@@ -1068,7 +1201,8 @@
     const state = {
       pendingFile: null,
       pendingPreviewUrl: null,
-      lastPack: null,
+      currentArtifact: null,
+      conversationHistory: [],
       busy: false
     };
 
@@ -1081,60 +1215,65 @@
     const sendBtn = document.getElementById('sendBtn');
     const fileInput = document.getElementById('fileInput');
     const modelSelect = document.getElementById('modelSelect');
-    const boostToggle = document.getElementById('boostToggle');
-    const statusDot = document.getElementById('statusDot');
-    const statusText = document.getElementById('statusText');
+    const modeIndicator = document.getElementById('modeIndicator');
+    const newChatBtn = document.getElementById('newChatBtn');
     const dropOverlay = document.getElementById('dropOverlay');
     const imageModal = document.getElementById('imageModal');
     const modalImage = document.getElementById('modalImage');
-    const modalClose = document.getElementById('modalClose');
     const toast = document.getElementById('toast');
+    
+    // Artifacts
+    const artifactsPanel = document.getElementById('artifactsPanel');
+    const artifactName = document.getElementById('artifactName');
+    const artifactCode = document.getElementById('artifactCode');
+    const artifactCodeView = document.getElementById('artifactCodeView');
+    const artifactPreviewView = document.getElementById('artifactPreviewView');
+    const artifactPreviewFrame = document.getElementById('artifactPreviewFrame');
 
-    // ==================== ULTRA VISION PROMPT ====================
-    const ULTRA_PROMPT = `You are an elite vision AI with superhuman attention to detail.
-
-ANALYSIS PROTOCOL:
-1. Examine the FULL image for overall context
-2. Use ZOOMED CROPS to verify tiny details (text, logos, small objects)
-3. Cross-reference findings between full and cropped views
-4. NEVER guess - if uncertain, state what's unclear
+    // ==================== PROMPTS ====================
+    const VISION_PROMPT = `You are an ultra-advanced vision AI. Analyze images with extreme precision.
 
 OUTPUT FORMAT:
-## 🎯 IDENTIFICATION
-[What this is - be specific]
+## 🎯 Identification
+[What this is]
 
-## 📊 CONFIDENCE: [0-100]%
-[Why this confidence level]
+## 🔍 Detailed Analysis
+[Bullet points of everything observed]
 
-## 🔍 DETAILED ANALYSIS
-- [Bullet points of everything observed]
-- [Include colors, text, objects, people, setting]
-- [Note positions: top-left, center, etc.]
+## 📝 Text Found
+[Any text in the image]
 
-## 📝 TEXT FOUND
-[Exact transcription of any text, preserve formatting]
-[Use [?] for unclear characters]
+## 💡 Key Insights
+[Notable observations]
 
-## 💡 NOTABLE DETAILS
-[Unusual or interesting observations]
+Be thorough and precise.`;
 
-## 🔎 SEARCH QUERY
-[Short Google query to verify this identification]
+    const CODE_PROMPT = `You are an elite coding assistant. When writing code:
+1. Always provide complete, working code
+2. Use modern best practices
+3. Include helpful comments
+4. Make it beautiful and functional
 
-Be thorough. Miss nothing.`;
+When creating HTML/CSS/JS, wrap your code in a special artifact block like this:
+\`\`\`artifact:html
+<!DOCTYPE html>
+<html>
+...complete code here...
+</html>
+\`\`\`
+
+This will create a live preview for the user.`;
 
     // ==================== UTILITIES ====================
-    function showToast(msg, type = '') {
+    function showToast(msg) {
       toast.textContent = msg;
-      toast.className = 'toast show ' + type;
-      setTimeout(() => toast.classList.remove('show'), 3000);
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
     }
 
-    function setStatus(type, text) {
-      statusDot.className = 'status-dot';
-      if (type === 'loading') statusDot.classList.add('loading');
-      if (type === 'active') statusDot.classList.add('active');
-      statusText.textContent = text;
+    function updateMode(mode) {
+      modeIndicator.className = 'mode-indicator' + (mode === 'vision' ? ' vision' : '');
+      modeIndicator.querySelector('span:last-child').textContent = mode === 'vision' ? 'Vision' : 'Chat';
     }
 
     function autoResize() {
@@ -1148,17 +1287,75 @@ Be thorough. Miss nothing.`;
       }[c]));
     }
 
+    function getTime() {
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // ==================== MARKDOWN + ARTIFACTS ====================
+    function parseAndRender(text) {
+      let html = '';
+      let remaining = text;
+      
+      // Extract artifacts
+      const artifactRegex = /```artifact:(\w+)\n([\s\S]*?)```/g;
+      let match;
+      let lastIndex = 0;
+      
+      while ((match = artifactRegex.exec(text)) !== null) {
+        // Add text before artifact
+        const before = text.slice(lastIndex, match.index);
+        html += formatMarkdown(before);
+        
+        // Add artifact
+        const type = match[1];
+        const code = match[2].trim();
+        
+        state.currentArtifact = { type, code, name: `${type.toUpperCase()} Code` };
+        
+        html += `
+          <div class="message-artifact">
+            <div class="message-artifact-header">
+              <div class="message-artifact-title">
+                <span class="message-artifact-title-icon">⚡</span>
+                <span>${type.toUpperCase()} Artifact</span>
+              </div>
+              <div class="message-artifact-actions">
+                <button class="message-artifact-btn" onclick="copyArtifact()">📋 Copy</button>
+                <button class="message-artifact-btn" onclick="openArtifacts()">🔍 Expand</button>
+              </div>
+            </div>
+            <div class="message-artifact-preview">
+              <iframe id="inlinePreview" sandbox="allow-scripts" srcdoc="${escapeHtml(code)}"></iframe>
+              <button class="message-artifact-expand" onclick="openArtifacts()">⛶ Full View</button>
+            </div>
+          </div>
+        `;
+        
+        lastIndex = match.index + match[0].length;
+      }
+      
+      // Add remaining text
+      if (lastIndex < text.length) {
+        html += formatMarkdown(text.slice(lastIndex));
+      }
+      
+      return html || formatMarkdown(text);
+    }
+
     function formatMarkdown(text) {
-      let t = escapeHtml(text || '');
+      if (!text) return '';
+      
+      let t = escapeHtml(text);
       
       // Headers
-      t = t.replace(/^## (.*$)/gm, '<strong style="color:var(--accent-secondary);font-size:16px;">$1</strong>');
-      t = t.replace(/^# (.*$)/gm, '<strong style="color:var(--accent-secondary);font-size:18px;">$1</strong>');
+      t = t.replace(/^### (.*$)/gm, '<strong style="color:var(--accent-secondary);display:block;margin:16px 0 8px;">$1</strong>');
+      t = t.replace(/^## (.*$)/gm, '<strong style="color:var(--accent-secondary);font-size:16px;display:block;margin:18px 0 10px;">$1</strong>');
+      t = t.replace(/^# (.*$)/gm, '<strong style="color:var(--accent-secondary);font-size:18px;display:block;margin:20px 0 12px;">$1</strong>');
       
-      // Code blocks
-      t = t.replace(/```[\s\S]*?```/g, m => {
-        const inner = m.slice(3, -3).replace(/^\w+\n/, '');
-        return `<pre><code>${inner.trim()}</code></pre>`;
+      // Code blocks (not artifacts)
+      t = t.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
+        const highlighted = hljs.highlightAuto(code.trim()).value;
+        return `<pre><code class="hljs">${highlighted}</code></pre>`;
       });
       
       // Inline code
@@ -1167,14 +1364,69 @@ Be thorough. Miss nothing.`;
       // Bold
       t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       
+      // Italic
+      t = t.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      
+      // Lists
+      t = t.replace(/^- (.*$)/gm, '• $1');
+      
       // Line breaks
       t = t.replace(/\n/g, '<br>');
       
       return t;
     }
 
-    function getTime() {
-      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // ==================== ARTIFACTS PANEL ====================
+    function openArtifacts() {
+      if (!state.currentArtifact) return;
+      
+      artifactName.textContent = state.currentArtifact.name;
+      artifactCode.textContent = state.currentArtifact.code;
+      hljs.highlightElement(artifactCode);
+      
+      if (state.currentArtifact.type === 'html') {
+        artifactPreviewFrame.srcdoc = state.currentArtifact.code;
+      }
+      
+      artifactsPanel.classList.add('open');
+    }
+
+    function closeArtifacts() {
+      artifactsPanel.classList.remove('open');
+    }
+
+    function switchArtifactView(view) {
+      document.querySelectorAll('.artifact-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector(`.artifact-tab[data-view="${view}"]`).classList.add('active');
+      
+      artifactCodeView.classList.toggle('active', view === 'code');
+      artifactPreviewView.classList.toggle('active', view === 'preview');
+    }
+
+    function copyArtifact() {
+      if (!state.currentArtifact) return;
+      navigator.clipboard.writeText(state.currentArtifact.code);
+      showToast('Code copied!');
+    }
+
+    function downloadArtifact() {
+      if (!state.currentArtifact) return;
+      const ext = state.currentArtifact.type === 'html' ? 'html' : state.currentArtifact.type;
+      const blob = new Blob([state.currentArtifact.code], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `artifact.${ext}`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Downloaded!');
+    }
+
+    function openInNewTab() {
+      if (!state.currentArtifact) return;
+      const win = window.open('', '_blank');
+      win.document.write(state.currentArtifact.code);
+      win.document.close();
     }
 
     // ==================== IMAGE PROCESSING ====================
@@ -1191,81 +1443,68 @@ Be thorough. Miss nothing.`;
       try {
         return await createImageBitmap(file, { imageOrientation: 'from-image' });
       } catch {
-        const dataUrl = await fileToDataUrl(file);
+        const url = await fileToDataUrl(file);
         return new Promise((resolve, reject) => {
           const img = new Image();
           img.onload = () => resolve(img);
-          img.onerror = () => reject(new Error('Failed to decode'));
-          img.src = dataUrl;
+          img.onerror = () => reject(new Error('Failed'));
+          img.src = url;
         });
       }
     }
 
-    function canvasToJpeg(canvas, quality = 0.95) {
-      return canvas.toDataURL('image/jpeg', quality);
+    function canvasToJpeg(canvas, q = 0.95) {
+      return canvas.toDataURL('image/jpeg', q);
     }
 
-    function resizeToCanvas(drawable, maxSide = 2400) {
-      const scale = Math.min(1, maxSide / Math.max(drawable.width, drawable.height));
+    function resizeCanvas(drawable, max = 2400) {
+      const scale = Math.min(1, max / Math.max(drawable.width, drawable.height));
       const w = Math.round(drawable.width * scale);
       const h = Math.round(drawable.height * scale);
-      
-      const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      const ctx = canvas.getContext('2d', { alpha: false });
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      const ctx = c.getContext('2d', { alpha: false });
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(drawable, 0, 0, w, h);
-      return canvas;
+      return c;
     }
 
     function cropCanvas(src, x, y, w, h) {
-      const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      const ctx = canvas.getContext('2d', { alpha: false });
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
+      const c = document.createElement('canvas');
+      c.width = w; c.height = h;
+      const ctx = c.getContext('2d', { alpha: false });
       ctx.drawImage(src, x, y, w, h, 0, 0, w, h);
-      return canvasToJpeg(canvas, 0.95);
+      return canvasToJpeg(c, 0.95);
     }
 
-    async function buildVisionPack(file, boost = true) {
+    async function buildVisionPack(file) {
       const bmp = await fileToBitmap(file);
-      const base = resizeToCanvas(bmp, 2400);
+      const base = resizeCanvas(bmp, 2400);
       const full = canvasToJpeg(base, 0.95);
       
-      const crops = [];
+      const W = base.width, H = base.height;
+      const hW = Math.floor(W/2), hH = Math.floor(H/2);
       
-      if (boost) {
-        const W = base.width, H = base.height;
-        const hW = Math.floor(W / 2), hH = Math.floor(H / 2);
-        
-        // 2x2 grid
-        crops.push({ label: 'TOP-LEFT', data: cropCanvas(base, 0, 0, hW, hH) });
-        crops.push({ label: 'TOP-RIGHT', data: cropCanvas(base, hW, 0, W - hW, hH) });
-        crops.push({ label: 'BOTTOM-LEFT', data: cropCanvas(base, 0, hH, hW, H - hH) });
-        crops.push({ label: 'BOTTOM-RIGHT', data: cropCanvas(base, hW, hH, W - hW, H - hH) });
-        
-        // Center zoom
-        const cx = Math.floor(W * 0.25), cy = Math.floor(H * 0.25);
-        const cw = Math.floor(W * 0.5), ch = Math.floor(H * 0.5);
-        crops.push({ label: 'CENTER-ZOOM', data: cropCanvas(base, cx, cy, cw, ch) });
-      }
+      const crops = [
+        { label: 'TOP-LEFT', data: cropCanvas(base, 0, 0, hW, hH) },
+        { label: 'TOP-RIGHT', data: cropCanvas(base, hW, 0, W-hW, hH) },
+        { label: 'BOTTOM-LEFT', data: cropCanvas(base, 0, hH, hW, H-hH) },
+        { label: 'BOTTOM-RIGHT', data: cropCanvas(base, hW, hH, W-hW, H-hH) },
+        { label: 'CENTER', data: cropCanvas(base, Math.floor(W*0.25), Math.floor(H*0.25), Math.floor(W*0.5), Math.floor(H*0.5)) }
+      ];
       
-      const displayUrl = URL.createObjectURL(file);
-      return { full, crops, displayUrl };
+      return { full, crops, displayUrl: URL.createObjectURL(file) };
     }
 
-    function dataUrlToParts(dataUrl) {
-      const m = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
-      if (!m) throw new Error('Invalid data URL');
+    function dataUrlToParts(url) {
+      const m = url.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+      if (!m) throw new Error('Invalid');
       return { media_type: m[1], data: m[2] };
     }
 
-    function makeImageBlock(dataUrl) {
-      const { media_type, data } = dataUrlToParts(dataUrl);
+    function makeImageBlock(url) {
+      const { media_type, data } = dataUrlToParts(url);
       return { type: 'image', source: { type: 'base64', media_type, data } };
     }
 
@@ -1281,7 +1520,7 @@ Be thorough. Miss nothing.`;
       let imagesHtml = '';
       if (images.length) {
         imagesHtml = `<div class="message-images">
-          ${images.map(url => `<img src="${url}" class="message-image" onclick="openModal('${url}')" />`).join('')}
+          ${images.map(u => `<img src="${u}" class="message-image" onclick="openImageModal('${u}')" />`).join('')}
         </div>`;
       }
       
@@ -1293,7 +1532,7 @@ Be thorough. Miss nothing.`;
             <span class="message-time">${getTime()}</span>
           </div>
           ${imagesHtml}
-          <div class="message-content">${formatMarkdown(text)}</div>
+          <div class="message-content"></div>
         </div>
       `;
       
@@ -1317,18 +1556,16 @@ Be thorough. Miss nothing.`;
           </div>
           <div class="typing-indicator">
             <div class="typing-dots"><span></span><span></span><span></span></div>
-            <span class="typing-text">Analyzing image...</span>
+            <span class="typing-text">Thinking...</span>
           </div>
         </div>
       `;
-      
       chatContainer.appendChild(msg);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
     function removeTyping() {
-      const el = document.getElementById('typingMsg');
-      if (el) el.remove();
+      document.getElementById('typingMsg')?.remove();
     }
 
     // ==================== PREVIEW ====================
@@ -1342,16 +1579,19 @@ Be thorough. Miss nothing.`;
       
       if (!state.pendingFile) {
         previewArea.classList.remove('active');
+        updateMode('chat');
         return;
       }
       
       previewArea.classList.add('active');
+      updateMode('vision');
+      
       const url = URL.createObjectURL(state.pendingFile);
       state.pendingPreviewUrl = url;
       
       previewArea.innerHTML = `
         <div class="preview-item">
-          <img src="${url}" alt="Preview" onclick="openModal('${url}')" />
+          <img src="${url}" onclick="openImageModal('${url}')" />
           <button class="preview-remove" onclick="removeImage()">×</button>
         </div>
       `;
@@ -1360,60 +1600,66 @@ Be thorough. Miss nothing.`;
     function removeImage() {
       state.pendingFile = null;
       renderPreview();
-      setStatus('', 'Ready');
     }
 
-    // ==================== MODEL CALL ====================
-    async function callVision({ model, userText, pack, boost }) {
+    // ==================== API CALLS ====================
+    async function callVision({ model, userText, pack }) {
       const blocks = [];
       
       blocks.push({ type: 'text', text: '[FULL IMAGE]' });
       blocks.push(makeImageBlock(pack.full));
       
-      if (boost) {
-        for (const crop of pack.crops) {
-          blocks.push({ type: 'text', text: `[CROP: ${crop.label}]` });
-          blocks.push(makeImageBlock(crop.data));
-        }
+      for (const crop of pack.crops) {
+        blocks.push({ type: 'text', text: `[CROP: ${crop.label}]` });
+        blocks.push(makeImageBlock(crop.data));
       }
       
-      const prompt = `${ULTRA_PROMPT}\n\n---\n\nUSER REQUEST: ${userText || 'Analyze this image in complete detail.'}`;
+      const prompt = `${VISION_PROMPT}\n\n---\n\nUSER: ${userText || 'Analyze this image thoroughly.'}`;
       blocks.push({ type: 'text', text: prompt });
       
       return await puter.ai.chat([{ role: 'user', content: blocks }], { model, stream: true });
     }
 
-    // ==================== SEND MESSAGE ====================
+    async function callChat({ model, userText }) {
+      state.conversationHistory.push({ role: 'user', content: userText });
+      
+      const systemMsg = { role: 'user', content: CODE_PROMPT };
+      const messages = [systemMsg, ...state.conversationHistory.slice(-20)];
+      
+      return await puter.ai.chat(messages, { model, stream: true });
+    }
+
+    // ==================== SEND ====================
     async function send() {
       if (state.busy) return;
       
       const userText = textInput.value.trim();
-      const boost = boostToggle.checked;
-      const hasNew = !!state.pendingFile;
-      const hasLast = !!state.lastPack;
+      const hasImage = !!state.pendingFile;
       
-      if (!userText && !hasNew && !hasLast) return;
+      if (!userText && !hasImage) return;
       
       state.busy = true;
       sendBtn.disabled = true;
-      setStatus('loading', 'Analyzing...');
       
       try {
         let pack = null;
+        let displayUrl = null;
         
-        if (hasNew) {
-          pack = await buildVisionPack(state.pendingFile, boost);
-          state.lastPack = pack;
+        // If there's an image, process it (ONE TIME ONLY)
+        if (hasImage) {
+          pack = await buildVisionPack(state.pendingFile);
+          displayUrl = pack.displayUrl;
+          
+          // CLEAR the image after use!
           state.pendingFile = null;
           renderPreview();
-        } else {
-          pack = state.lastPack;
         }
         
+        // Show user message
         addMessage({
           role: 'user',
-          text: userText || 'Analyze this image in detail.',
-          images: pack ? [pack.displayUrl] : []
+          text: userText || 'Analyze this image.',
+          images: displayUrl ? [displayUrl] : []
         });
         
         textInput.value = '';
@@ -1423,9 +1669,13 @@ Be thorough. Miss nothing.`;
         
         const model = modelSelect.value;
         
-        const stream = pack
-          ? await callVision({ model, userText, pack, boost })
-          : await puter.ai.chat(userText, { model, stream: true });
+        // Call appropriate API
+        let stream;
+        if (pack) {
+          stream = await callVision({ model, userText, pack });
+        } else {
+          stream = await callChat({ model, userText });
+        }
         
         removeTyping();
         
@@ -1435,34 +1685,26 @@ Be thorough. Miss nothing.`;
         for await (const part of stream) {
           if (part?.text) {
             fullText += part.text;
-            contentEl.innerHTML = formatMarkdown(fullText);
+            contentEl.innerHTML = parseAndRender(fullText);
             chatContainer.scrollTop = chatContainer.scrollHeight;
           }
         }
         
-        // Add search link if present
-        const queryMatch = fullText.match(/SEARCH QUERY[:\s]*(.+?)(?:\n|$)/i);
-        if (queryMatch) {
-          const query = queryMatch[1].trim();
-          const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
-          contentEl.innerHTML += `<br><br><a href="${url}" target="_blank" rel="noopener">🔎 Verify on Google</a>`;
+        // Add to history for context (text only, not images)
+        if (!pack) {
+          state.conversationHistory.push({ role: 'assistant', content: fullText });
         }
         
         if (!fullText.trim()) {
-          contentEl.innerHTML = formatMarkdown('No response received. Try switching to GPT-4o (Backup).');
+          contentEl.innerHTML = '<em style="color:var(--text-muted)">No response received. Try again.</em>';
         }
-        
-        setStatus('active', 'Complete');
-        showToast('Analysis complete!', 'success');
         
       } catch (err) {
         removeTyping();
         addMessage({
           role: 'assistant',
-          text: `Error: ${err?.message || err}\n\nTry switching to a different model.`
+          text: `❌ Error: ${err?.message || err}\n\nTry switching models.`
         });
-        setStatus('', 'Error');
-        showToast('Something went wrong', 'error');
         console.error(err);
       } finally {
         state.busy = false;
@@ -1479,37 +1721,49 @@ Be thorough. Miss nothing.`;
     function setPrompt(text) {
       textInput.value = text;
       autoResize();
-      triggerUpload();
+      textInput.focus();
     }
 
-    function openModal(src) {
+    function openImageModal(src) {
       modalImage.src = src;
       imageModal.classList.add('active');
     }
 
     function closeModal() {
       imageModal.classList.remove('active');
-      modalImage.src = '';
     }
 
-    // ==================== EVENT LISTENERS ====================
+    function newChat() {
+      state.conversationHistory = [];
+      state.currentArtifact = null;
+      state.pendingFile = null;
+      renderPreview();
+      closeArtifacts();
+      
+      chatContainer.innerHTML = '';
+      chatContainer.appendChild(welcomeEl);
+      welcomeEl.style.display = '';
+      
+      showToast('New chat started');
+    }
+
+    // ==================== EVENTS ====================
     imageBtn.addEventListener('click', triggerUpload);
     
-    fileInput.addEventListener('change', async (e) => {
+    fileInput.addEventListener('change', (e) => {
       const file = e.target.files?.[0];
-      if (file && file.type.startsWith('image/')) {
+      if (file?.type.startsWith('image/')) {
         state.pendingFile = file;
         renderPreview();
-        setStatus('active', 'Image ready');
-        showToast('Image loaded!', 'success');
+        showToast('Image ready!');
       }
       fileInput.value = '';
     });
     
     sendBtn.addEventListener('click', send);
+    newChatBtn.addEventListener('click', newChat);
     
     textInput.addEventListener('input', autoResize);
-    
     textInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
@@ -1518,60 +1772,38 @@ Be thorough. Miss nothing.`;
     });
     
     // Paste
-    document.addEventListener('paste', async (e) => {
-      const items = Array.from(e.clipboardData?.items || []);
-      const imgItem = items.find(i => i.type.startsWith('image/'));
-      if (imgItem) {
+    document.addEventListener('paste', (e) => {
+      const item = Array.from(e.clipboardData?.items || []).find(i => i.type.startsWith('image/'));
+      if (item) {
         e.preventDefault();
-        state.pendingFile = imgItem.getAsFile();
+        state.pendingFile = item.getAsFile();
         renderPreview();
-        setStatus('active', 'Image ready');
-        showToast('Image pasted!', 'success');
+        showToast('Image pasted!');
       }
     });
     
     // Drag & Drop
     let dragCounter = 0;
-    
-    document.addEventListener('dragenter', (e) => {
-      e.preventDefault();
-      dragCounter++;
-      dropOverlay.classList.add('active');
-    });
-    
+    document.addEventListener('dragenter', (e) => { e.preventDefault(); dragCounter++; dropOverlay.classList.add('active'); });
     document.addEventListener('dragover', (e) => e.preventDefault());
-    
-    document.addEventListener('dragleave', (e) => {
-      e.preventDefault();
-      dragCounter = Math.max(0, dragCounter - 1);
-      if (dragCounter === 0) dropOverlay.classList.remove('active');
-    });
-    
-    document.addEventListener('drop', async (e) => {
+    document.addEventListener('dragleave', (e) => { e.preventDefault(); if (--dragCounter <= 0) dropOverlay.classList.remove('active'); });
+    document.addEventListener('drop', (e) => {
       e.preventDefault();
       dragCounter = 0;
       dropOverlay.classList.remove('active');
-      
       const file = e.dataTransfer?.files?.[0];
-      if (file && file.type.startsWith('image/')) {
+      if (file?.type.startsWith('image/')) {
         state.pendingFile = file;
         renderPreview();
-        setStatus('active', 'Image ready');
-        showToast('Image dropped!', 'success');
+        showToast('Image dropped!');
       }
     });
     
     // Modal
-    modalClose.addEventListener('click', closeModal);
-    imageModal.addEventListener('click', (e) => {
-      if (e.target === imageModal) closeModal();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
-    });
+    imageModal.addEventListener('click', (e) => { if (e.target === imageModal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeModal(); closeArtifacts(); } });
     
-    // Initial state
-    setStatus('', 'Ready');
+    // Init
     textInput.focus();
   </script>
 </body>
