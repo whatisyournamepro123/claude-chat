@@ -1,323 +1,896 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Free Claude Opus 4.5 Chat + Vision</title>
+    <title>Advanced Claude Vision Analyzer</title>
     <script src="https://js.puter.com/v2/"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        h1 {
-            color: #fff;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-        .subtitle {
-            color: #aaa;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .model-selector {
-            text-align: center;
-            margin-bottom: 15px;
-        }
-        select {
-            padding: 12px 20px;
-            font-size: 16px;
-            border-radius: 10px;
-            border: none;
-            background: #fff;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        #chat {
-            background: #fff;
-            border-radius: 15px;
-            height: 450px;
-            overflow-y: auto;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-        .message {
-            margin: 15px 0;
-            padding: 15px 18px;
-            border-radius: 15px;
-            max-width: 85%;
-            line-height: 1.6;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-        .user {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            margin-left: auto;
-        }
-        .assistant {
-            background: #f0f0f0;
-            color: #333;
-        }
-        .message img {
-            max-width: 100%;
-            max-height: 300px;
-            border-radius: 10px;
-            margin: 10px 0;
-            display: block;
-        }
         
-        /* Image Preview Area */
-        #imagePreview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 10px;
-            min-height: 0;
-        }
-        #imagePreview:empty {
-            display: none;
-        }
-        .preview-item {
-            position: relative;
-            display: inline-block;
-        }
-        .preview-item img {
-            height: 80px;
-            width: 80px;
-            object-fit: cover;
-            border-radius: 10px;
-            border: 2px solid #667eea;
-        }
-        .preview-item .remove-btn {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #ff4757;
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            line-height: 1;
-        }
-        .preview-item .remove-btn:hover {
-            background: #ff2234;
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --dark: #1e1b4b;
+            --darker: #0f0d24;
+            --light: #f5f5ff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
         }
 
-        /* Input Area */
-        .input-container {
-            background: #fff;
-            border-radius: 15px;
-            padding: 15px;
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--darker) 0%, var(--dark) 100%);
+            min-height: 100vh;
+            color: #fff;
         }
-        .input-area {
+
+        /* Header */
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .header h1 {
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-controls {
             display: flex;
             gap: 10px;
             align-items: center;
         }
-        #input {
-            flex: 1;
+        .model-select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .model-select option {
+            background: var(--dark);
+            color: #fff;
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            height: calc(100vh - 70px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: rgba(0,0,0,0.2);
+            border-right: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .sidebar-section {
             padding: 15px;
-            border: 2px solid #eee;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .sidebar-section h3 {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* Upload Area */
+        .upload-zone {
+            border: 2px dashed rgba(255,255,255,0.3);
             border-radius: 12px;
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.3s;
+            padding: 30px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255,255,255,0.02);
         }
-        #input:focus {
-            border-color: #667eea;
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
         }
-        .btn {
-            padding: 15px 20px;
+        .upload-zone .icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+        .upload-zone p {
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+        }
+        .upload-zone .formats {
+            font-size: 11px;
+            color: rgba(255,255,255,0.4);
+            margin-top: 8px;
+        }
+
+        /* Image Queue */
+        .image-queue {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        .queue-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .queue-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .queue-item.selected {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.15);
+        }
+        .queue-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .queue-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .queue-item-name {
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .queue-item-size {
+            font-size: 11px;
+            color: rgba(255,255,255,0.5);
+        }
+        .queue-item-remove {
+            background: rgba(239, 68, 68, 0.2);
             border: none;
-            border-radius: 12px;
+            color: #ef4444;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
-            font-weight: bold;
-            transition: transform 0.2s, opacity 0.2s;
         }
-        .btn:hover { transform: scale(1.05); }
-        .btn:disabled { opacity: 0.5; transform: none; }
-        
-        .btn-send {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 15px 30px;
-        }
-        .btn-image {
-            background: #f0f0f0;
-            color: #333;
-        }
-        .btn-image:hover {
-            background: #e0e0e0;
-        }
-        
-        #fileInput {
-            display: none;
+        .queue-item-remove:hover {
+            background: rgba(239, 68, 68, 0.4);
         }
 
-        /* Drop Zone */
-        .drop-zone {
-            border: 3px dashed #667eea;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            color: #667eea;
-            margin-bottom: 15px;
-            display: none;
-            background: rgba(102, 126, 234, 0.1);
+        /* Analysis Modes */
+        .analysis-modes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
         }
-        .drop-zone.active {
-            display: block;
-            animation: pulse 1s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        .typing { color: #888; font-style: italic; }
-        .status {
-            text-align: center;
-            color: #aaa;
-            font-size: 14px;
-            margin-top: 15px;
-        }
-        .error {
-            background: #ffe0e0 !important;
-            color: #c00 !important;
-        }
-        code {
-            background: #e8e8e8;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-        }
-        pre {
-            background: #1a1a2e;
-            color: #0f0;
-            padding: 15px;
+        .mode-btn {
+            padding: 12px 10px;
+            border: 1px solid rgba(255,255,255,0.2);
             border-radius: 10px;
-            overflow-x: auto;
-            margin: 10px 0;
-        }
-        pre code {
-            background: none;
-            padding: 0;
-            color: inherit;
-        }
-        .hint {
-            color: #888;
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            cursor: pointer;
             font-size: 12px;
             text-align: center;
-            margin-top: 10px;
+            transition: all 0.2s;
+        }
+        .mode-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.3);
+        }
+        .mode-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+        .mode-btn .mode-icon {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        /* Main Content */
+        .content {
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Image Viewer */
+        .image-viewer {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 300px;
+        }
+        .image-viewer-placeholder {
+            text-align: center;
+            color: rgba(255,255,255,0.4);
+        }
+        .image-viewer-placeholder .icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        #mainImage {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.2s;
+        }
+        .image-controls {
+            position: absolute;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            background: rgba(0,0,0,0.7);
+            padding: 8px 12px;
+            border-radius: 10px;
+        }
+        .img-ctrl-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        .img-ctrl-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .zoom-level {
+            color: rgba(255,255,255,0.7);
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        /* Chat Area */
+        .chat-container {
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+        }
+        .message {
+            margin-bottom: 15px;
+            max-width: 90%;
+        }
+        .message.user {
+            margin-left: auto;
+        }
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        .message.user .message-content {
+            background: var(--primary);
+            border-bottom-right-radius: 4px;
+        }
+        .message.assistant .message-content {
+            background: rgba(255,255,255,0.1);
+            border-bottom-left-radius: 4px;
+        }
+        .message-images {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+        .message-images img {
+            height: 60px;
+            width: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 15px;
+        }
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 15px;
+            background: rgba(0,0,0,0.2);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .input-row {
+            display: flex;
+            gap: 10px;
+        }
+        #chatInput {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+        #chatInput:focus {
+            border-color: var(--primary);
+            background: rgba(255,255,255,0.08);
+        }
+        #chatInput::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        .send-btn {
+            padding: 14px 28px;
+            background: var(--primary);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .send-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.02);
+        }
+        .send-btn:disabled {
+            opacity: 0.5;
+            transform: none;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .quick-btn {
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            color: rgba(255,255,255,0.8);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quick-btn:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: var(--primary);
+        }
+
+        /* Results Panel */
+        .results-panel {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 450px;
+            height: 100vh;
+            background: var(--dark);
+            border-left: 1px solid rgba(255,255,255,0.1);
+            z-index: 100;
+            flex-direction: column;
+        }
+        .results-panel.open {
+            display: flex;
+        }
+        .results-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .results-header h3 {
+            font-size: 16px;
+        }
+        .results-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .results-actions {
+            padding: 15px 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            gap: 10px;
+        }
+        .result-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .result-btn.primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        .result-btn.secondary {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .close-btn:hover {
+            opacity: 1;
+        }
+
+        /* Fullscreen Modal */
+        .fullscreen-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .fullscreen-modal.open {
+            display: flex;
+        }
+        .fullscreen-modal img {
+            max-width: 95%;
+            max-height: 95%;
+            object-fit: contain;
+        }
+        .fullscreen-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: rgba(0,0,0,0.4);
+            padding: 15px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+        code {
+            font-family: 'Fira Code', 'Consolas', monospace;
+            color: #a5f3fc;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            padding: 8px 15px;
+            background: rgba(0,0,0,0.3);
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                display: none;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Analysis Result Sections */
+        .analysis-section {
+            margin-bottom: 20px;
+        }
+        .analysis-section h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .analysis-section p {
+            color: rgba(255,255,255,0.8);
+            line-height: 1.7;
+        }
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(99, 102, 241, 0.2);
+            color: var(--primary);
+            border-radius: 15px;
+            font-size: 12px;
+            margin: 3px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🧠 Free Claude Opus 4.5 + Vision</h1>
-        <p class="subtitle">Upload images, paste, or drag & drop!</p>
-        
-        <div class="model-selector">
-            <select id="modelSelect">
-                <option value="claude-opus-4-5">🏆 Claude Opus 4.5 (Most Powerful)</option>
-                <option value="claude-opus-4-1">Claude Opus 4.1</option>
-                <option value="claude-opus-4">Claude Opus 4</option>
+    <!-- Header -->
+    <header class="header">
+        <h1>🔬 Advanced Claude Vision</h1>
+        <div class="header-controls">
+            <select class="model-select" id="modelSelect">
+                <option value="claude-opus-4-5">🏆 Claude Opus 4.5</option>
                 <option value="claude-sonnet-4-5">Claude Sonnet 4.5</option>
                 <option value="claude-sonnet-4">Claude Sonnet 4</option>
-                <option value="claude-haiku-4-5">⚡ Claude Haiku 4.5 (Fastest)</option>
+                <option value="claude-haiku-4-5">⚡ Haiku 4.5 (Fast)</option>
             </select>
         </div>
+    </header>
 
-        <div id="chat">
-            <div class="message assistant">
-                👋 Hello! I'm Claude with vision capabilities. You can:
-                <br>• 📎 Click the image button to upload
-                <br>• 📋 Paste images with Ctrl+V
-                <br>• 🖱️ Drag & drop images here
-                <br><br>Ask me anything or show me an image!
+    <!-- Main Layout -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Upload Section -->
+            <div class="sidebar-section">
+                <h3>📁 Upload Images</h3>
+                <div class="upload-zone" id="uploadZone">
+                    <div class="icon">📷</div>
+                    <p>Drop images here or click to upload</p>
+                    <p class="formats">PNG, JPG, GIF, WebP supported</p>
+                </div>
+                <input type="file" id="fileInput" accept="image/*" multiple hidden>
             </div>
-        </div>
 
-        <div class="drop-zone" id="dropZone">
-            📁 Drop your images here!
-        </div>
-        
-        <div class="input-container">
-            <div id="imagePreview"></div>
-            
-            <div class="input-area">
-                <input type="file" id="fileInput" accept="image/*" multiple>
-                <button class="btn btn-image" onclick="document.getElementById('fileInput').click()">
-                    📷
-                </button>
-                <input type="text" id="input" placeholder="Type your message or paste an image...">
-                <button class="btn btn-send" id="sendBtn" onclick="sendMessage()">Send</button>
+            <!-- Analysis Modes -->
+            <div class="sidebar-section">
+                <h3>🎯 Analysis Mode</h3>
+                <div class="analysis-modes">
+                    <button class="mode-btn active" data-mode="detailed">
+                        <span class="mode-icon">🔍</span>
+                        Detailed
+                    </button>
+                    <button class="mode-btn" data-mode="ocr">
+                        <span class="mode-icon">📝</span>
+                        OCR/Text
+                    </button>
+                    <button class="mode-btn" data-mode="code">
+                        <span class="mode-icon">💻</span>
+                        Code
+                    </button>
+                    <button class="mode-btn" data-mode="art">
+                        <span class="mode-icon">🎨</span>
+                        Art/Design
+                    </button>
+                    <button class="mode-btn" data-mode="technical">
+                        <span class="mode-icon">⚙️</span>
+                        Technical
+                    </button>
+                    <button class="mode-btn" data-mode="medical">
+                        <span class="mode-icon">🏥</span>
+                        Medical*
+                    </button>
+                    <button class="mode-btn" data-mode="document">
+                        <span class="mode-icon">📄</span>
+                        Document
+                    </button>
+                    <button class="mode-btn" data-mode="compare">
+                        <span class="mode-icon">⚖️</span>
+                        Compare
+                    </button>
+                </div>
             </div>
+
+            <!-- Image Queue -->
+            <div class="sidebar-section" style="flex:1; overflow:hidden; display:flex; flex-direction:column;">
+                <h3>🖼️ Image Queue (<span id="queueCount">0</span>)</h3>
+                <div class="image-queue" id="imageQueue">
+                    <!-- Images will be added here -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="content">
+            <!-- Image Viewer -->
+            <div class="image-viewer" id="imageViewer">
+                <div class="image-viewer-placeholder" id="viewerPlaceholder">
+                    <div class="icon">🖼️</div>
+                    <p>Upload an image to start analyzing</p>
+                </div>
+                <img id="mainImage" style="display:none;">
+                <div class="image-controls" id="imageControls" style="display:none;">
+                    <button class="img-ctrl-btn" onclick="zoomImage(-0.25)">➖</button>
+                    <span class="zoom-level" id="zoomLevel">100%</span>
+                    <button class="img-ctrl-btn" onclick="zoomImage(0.25)">➕</button>
+                    <button class="img-ctrl-btn" onclick="resetZoom()">↺</button>
+                    <button class="img-ctrl-btn" onclick="rotateImage()">🔄</button>
+                    <button class="img-ctrl-btn" onclick="openFullscreen()">⛶</button>
+                </div>
+            </div>
+
+            <!-- Chat Area -->
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message assistant">
+                        <div class="message-content">
+                            👋 Welcome to Advanced Claude Vision! Upload an image and select an analysis mode to get started. I can:
+                            <br><br>
+                            🔍 <strong>Detailed Analysis</strong> - Complete description<br>
+                            📝 <strong>OCR</strong> - Extract all text<br>
+                            💻 <strong>Code Analysis</strong> - Read & explain code<br>
+                            🎨 <strong>Art Critique</strong> - Style & composition<br>
+                            ⚙️ <strong>Technical</strong> - Diagrams & schematics<br>
+                            📄 <strong>Documents</strong> - Summarize & extract<br>
+                            ⚖️ <strong>Compare</strong> - Multiple images
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Input Area -->
+                <div class="input-area">
+                    <div class="quick-actions" id="quickActions">
+                        <button class="quick-btn" data-prompt="Describe this image in detail">🔍 Describe</button>
+                        <button class="quick-btn" data-prompt="Extract all text from this image">📝 Extract Text</button>
+                        <button class="quick-btn" data-prompt="What objects can you identify?">🏷️ Identify Objects</button>
+                        <button class="quick-btn" data-prompt="Analyze the colors and composition">🎨 Analyze Style</button>
+                        <button class="quick-btn" data-prompt="Is there anything unusual or notable?">❓ Find Unusual</button>
+                    </div>
+                    <div class="input-row">
+                        <input type="text" id="chatInput" placeholder="Ask anything about the image...">
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">Analyze 🚀</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span id="statusText">Ready</span>
+                <span id="modelStatus">Model: Claude Opus 4.5</span>
+            </div>
+        </main>
+    </div>
+
+    <!-- Fullscreen Modal -->
+    <div class="fullscreen-modal" id="fullscreenModal">
+        <button class="fullscreen-close" onclick="closeFullscreen()">✕</button>
+        <img id="fullscreenImage">
+    </div>
+
+    <!-- Results Panel -->
+    <div class="results-panel" id="resultsPanel">
+        <div class="results-header">
+            <h3>📊 Analysis Results</h3>
+            <button class="close-btn" onclick="closeResults()">✕</button>
         </div>
-        
-        <p class="hint">💡 Tip: Paste images directly with Ctrl+V or Cmd+V</p>
-        <div class="status" id="status">Ready to chat with Claude Opus 4.5</div>
+        <div class="results-body" id="resultsBody">
+            <!-- Results will appear here -->
+        </div>
+        <div class="results-actions">
+            <button class="result-btn secondary" onclick="copyResults()">📋 Copy</button>
+            <button class="result-btn primary" onclick="downloadResults()">💾 Download</button>
+        </div>
     </div>
 
     <script>
-        const chat = document.getElementById('chat');
-        const input = document.getElementById('input');
+        // ============ State ============
+        let images = [];
+        let selectedImageIndex = -1;
+        let currentMode = 'detailed';
+        let conversationHistory = [];
+        let currentZoom = 1;
+        let currentRotation = 0;
+        let lastAnalysis = '';
+
+        // ============ DOM Elements ============
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+        const imageQueue = document.getElementById('imageQueue');
+        const queueCount = document.getElementById('queueCount');
+        const mainImage = document.getElementById('mainImage');
+        const viewerPlaceholder = document.getElementById('viewerPlaceholder');
+        const imageControls = document.getElementById('imageControls');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
         const sendBtn = document.getElementById('sendBtn');
         const modelSelect = document.getElementById('modelSelect');
-        const status = document.getElementById('status');
-        const fileInput = document.getElementById('fileInput');
-        const imagePreview = document.getElementById('imagePreview');
-        const dropZone = document.getElementById('dropZone');
+        const statusText = document.getElementById('statusText');
+        const modelStatus = document.getElementById('modelStatus');
+        const zoomLevel = document.getElementById('zoomLevel');
+        const fullscreenModal = document.getElementById('fullscreenModal');
+        const fullscreenImage = document.getElementById('fullscreenImage');
+        const resultsPanel = document.getElementById('resultsPanel');
+        const resultsBody = document.getElementById('resultsBody');
+        const quickActions = document.getElementById('quickActions');
 
-        let conversationHistory = [];
-        let pendingImages = []; // Store base64 images
+        // ============ Analysis Mode Prompts ============
+        const modePrompts = {
+            detailed: `Analyze this image in comprehensive detail. Include:
+1. **Overview**: What is the main subject/scene?
+2. **Objects & Elements**: List all visible objects, people, text, etc.
+3. **Colors & Lighting**: Describe the color palette and lighting conditions
+4. **Composition**: How is the image composed? What's the focal point?
+5. **Context & Setting**: Where/when might this be? What's the environment?
+6. **Notable Details**: Any interesting or unusual elements?
+7. **Quality Assessment**: Image quality, resolution, any issues?
 
-        // Format text with markdown
-        function formatText(text) {
-            if (!text) return '';
-            text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            return text;
+Be thorough and precise.`,
+
+            ocr: `Extract ALL text from this image with maximum accuracy:
+
+1. **Full Text Extraction**: Transcribe every piece of text visible, maintaining original formatting where possible
+2. **Text Location**: Indicate where text appears (headers, body, labels, signs, etc.)
+3. **Languages**: Identify any languages present
+4. **Handwriting vs Printed**: Note if text is handwritten or printed
+5. **Confidence Level**: Indicate if any text is unclear
+6. **Text Hierarchy**: Show headings, subheadings, paragraphs structure
+
+Format the extracted text clearly with proper line breaks.`,
+
+            code: `Analyze this code/programming image:
+
+1. **Language Detection**: What programming language(s) is this?
+2. **Full Code Transcription**: Extract all code exactly as shown
+3. **Code Explanation**: What does this code do?
+4. **Key Functions/Classes**: List and explain main components
+5. **Potential Issues**: Any bugs, errors, or improvements?
+6. **Best Practices**: Does it follow coding standards?
+7. **Dependencies**: Any imports or external libraries used?
+
+Provide the extracted code in a proper code block.`,
+
+            art: `Provide an art critique and design analysis:
+
+1. **Style Classification**: What art style/movement does this represent?
+2. **Medium & Technique**: What materials/techniques were likely used?
+3. **Color Theory**: Analyze the color palette, harmony, contrast
+4. **Composition Analysis**: Rule of thirds, balance, focal points, flow
+5. **Mood & Emotion**: What feelings does this evoke?
+6. **Symbolism**: Any symbolic elements or deeper meanings?
+7. **Influences**: What artists or movements might have influenced this?
+8. **Critique**: Strengths, areas for improvement, overall assessment
+
+Be insightful and detailed like a professional art critic.`,
+
+            technical: `Analyze this technical image/diagram:
+
+1. **Type Identification**: What kind of diagram/schematic is this?
+2. **Component Identification**: List all components, labels, symbols
+3. **System Description**: What system or process does this represent?
+4. **Connections/Flow**: Explain how components are connected
+5. **Technical Specifications**: Any values, measurements, specifications shown
+6. **Standards**: Does this follow any technical standards?
+7. **Function Explanation**: How does this system work?
+8. **Applications**: Where would this be used?
+
+Be precise and technically accurate.`,
+
+            medical: `⚠️ DISCLAIMER: This is for educational purposes only, not medical diagnosis.
+
+Analyze this medical/health-related image:
+
+1. **Image Type**: What type of medical image is this (X-ray, MRI, photo, diagram)?
+2. **Anatomical Region**: What body part/system is shown?
+3. **Visible Structures**: Identify anatomical structures visible
+4. **Observations**: What notable features can be observed?
+5. **Image Quality**: Is the image quality sufficient for analysis?
+6. **Educational Context**: What would this typically be used to demonstrate?
+
+REMINDER: Always consult qualified healthcare professionals for medical advice.`,
+
+            document: `Analyze this document:
+
+1. **Document Type**: What kind of document is this?
+2. **Full Text Extraction**: Extract all text content
+3. **Structure Analysis**: Headers, sections, formatting
+4. **Key Information**: What are the main points/data?
+5. **Summary**: Provide a concise summary
+6. **Metadata**: Any dates, names, reference numbers?
+7. **Purpose**: What is this document's purpose?
+8. **Action Items**: Any tasks or next steps mentioned?
+
+Format the analysis clearly with sections.`,
+
+            compare: `Compare and contrast the provided images:
+
+1. **Similarities**: What do the images have in common?
+2. **Differences**: How do they differ?
+3. **Quality Comparison**: Which has better quality/composition?
+4. **Subject Analysis**: How do subjects compare?
+5. **Style/Mood**: Compare the styles and moods
+6. **Timeline**: Could these be before/after or related?
+7. **Recommendation**: Which is better for what purpose?
+
+Provide a detailed comparative analysis.`
+        };
+
+        // ============ File Handling ============
+        function handleFiles(files) {
+            Array.from(files).forEach(async file => {
+                if (file.type.startsWith('image/')) {
+                    const base64 = await fileToBase64(file);
+                    const img = {
+                        id: Date.now() + Math.random(),
+                        name: file.name,
+                        size: formatFileSize(file.size),
+                        base64: base64,
+                        file: file
+                    };
+                    images.push(img);
+                    renderQueue();
+                    
+                    if (images.length === 1) {
+                        selectImage(0);
+                    }
+                }
+            });
         }
 
-        // Add message to chat
-        function addMessage(content, role, images = []) {
-            const div = document.createElement('div');
-            div.className = `message ${role}`;
-            
-            let html = '';
-            
-            // Add images first
-            if (images.length > 0) {
-                images.forEach(img => {
-                    html += `<img src="${img}" alt="Uploaded image">`;
-                });
-            }
-            
-            // Add text content
-            html += formatText(content);
-            
-            div.innerHTML = html;
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
-            return div;
-        }
-
-        // Convert file to base64
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -327,110 +900,247 @@
             });
         }
 
-        // Add image to preview
-        function addImagePreview(base64Data) {
-            pendingImages.push(base64Data);
-            
-            const previewItem = document.createElement('div');
-            previewItem.className = 'preview-item';
-            previewItem.innerHTML = `
-                <img src="${base64Data}" alt="Preview">
-                <button class="remove-btn" onclick="removeImage(this, ${pendingImages.length - 1})">×</button>
-            `;
-            imagePreview.appendChild(previewItem);
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
         }
 
-        // Remove image from preview
-        function removeImage(btn, index) {
-            pendingImages.splice(index, 1);
-            btn.parentElement.remove();
-            // Update remaining remove buttons
-            document.querySelectorAll('.preview-item .remove-btn').forEach((b, i) => {
-                b.setAttribute('onclick', `removeImage(this, ${i})`);
+        // ============ Queue Management ============
+        function renderQueue() {
+            queueCount.textContent = images.length;
+            imageQueue.innerHTML = images.map((img, index) => `
+                <div class="queue-item ${index === selectedImageIndex ? 'selected' : ''}" 
+                     onclick="selectImage(${index})">
+                    <img src="${img.base64}" alt="${img.name}">
+                    <div class="queue-item-info">
+                        <div class="queue-item-name">${img.name}</div>
+                        <div class="queue-item-size">${img.size}</div>
+                    </div>
+                    <button class="queue-item-remove" onclick="event.stopPropagation(); removeImage(${index})">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function selectImage(index) {
+            selectedImageIndex = index;
+            const img = images[index];
+            
+            mainImage.src = img.base64;
+            mainImage.style.display = 'block';
+            viewerPlaceholder.style.display = 'none';
+            imageControls.style.display = 'flex';
+            
+            resetZoom();
+            renderQueue();
+            statusText.textContent = `Selected: ${img.name}`;
+        }
+
+        function removeImage(index) {
+            images.splice(index, 1);
+            
+            if (images.length === 0) {
+                selectedImageIndex = -1;
+                mainImage.style.display = 'none';
+                viewerPlaceholder.style.display = 'block';
+                imageControls.style.display = 'none';
+            } else if (selectedImageIndex >= images.length) {
+                selectImage(images.length - 1);
+            } else if (selectedImageIndex === index) {
+                selectImage(Math.max(0, index - 1));
+            }
+            
+            renderQueue();
+        }
+
+        // ============ Image Controls ============
+        function zoomImage(delta) {
+            currentZoom = Math.max(0.25, Math.min(3, currentZoom + delta));
+            applyTransform();
+            zoomLevel.textContent = Math.round(currentZoom * 100) + '%';
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            currentRotation = 0;
+            applyTransform();
+            zoomLevel.textContent = '100%';
+        }
+
+        function rotateImage() {
+            currentRotation = (currentRotation + 90) % 360;
+            applyTransform();
+        }
+
+        function applyTransform() {
+            mainImage.style.transform = `scale(${currentZoom}) rotate(${currentRotation}deg)`;
+        }
+
+        function openFullscreen() {
+            if (selectedImageIndex >= 0) {
+                fullscreenImage.src = images[selectedImageIndex].base64;
+                fullscreenModal.classList.add('open');
+            }
+        }
+
+        function closeFullscreen() {
+            fullscreenModal.classList.remove('open');
+        }
+
+        // ============ Analysis Modes ============
+        document.querySelectorAll('.mode-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentMode = btn.dataset.mode;
+                statusText.textContent = `Mode: ${btn.textContent.trim()}`;
+                updateQuickActions();
+            });
+        });
+
+        function updateQuickActions() {
+            const actions = {
+                detailed: [
+                    { text: '🔍 Full Analysis', prompt: 'Analyze this image in complete detail' },
+                    { text: '🏷️ List Objects', prompt: 'List every object you can identify' },
+                    { text: '📍 Describe Scene', prompt: 'Describe the scene and setting' }
+                ],
+                ocr: [
+                    { text: '📝 Extract All Text', prompt: 'Extract all text from this image' },
+                    { text: '📋 Format as List', prompt: 'Extract text and format as a bullet list' },
+                    { text: '🔤 Translate Text', prompt: 'Extract and translate any text to English' }
+                ],
+                code: [
+                    { text: '💻 Extract Code', prompt: 'Extract the code from this image' },
+                    { text: '🐛 Find Bugs', prompt: 'Extract the code and identify any bugs' },
+                    { text: '📖 Explain Code', prompt: 'Extract and explain what this code does' }
+                ],
+                art: [
+                    { text: '🎨 Art Critique', prompt: 'Provide a professional art critique' },
+                    { text: '🖌️ Identify Style', prompt: 'What art style and techniques are used?' },
+                    { text: '😊 Mood Analysis', prompt: 'Analyze the mood and emotions conveyed' }
+                ],
+                technical: [
+                    { text: '⚙️ Explain System', prompt: 'Explain how this system works' },
+                    { text: '📐 List Components', prompt: 'List all components and their functions' },
+                    { text: '🔧 Troubleshoot', prompt: 'What could go wrong with this system?' }
+                ],
+                medical: [
+                    { text: '🏥 Describe Image', prompt: 'Describe this medical image for educational purposes' },
+                    { text: '🦴 Identify Anatomy', prompt: 'Identify the anatomical structures shown' }
+                ],
+                document: [
+                    { text: '📄 Summarize', prompt: 'Summarize this document' },
+                    { text: '📋 Extract Key Points', prompt: 'Extract the key points from this document' },
+                    { text: '✅ Find Action Items', prompt: 'List any action items or tasks mentioned' }
+                ],
+                compare: [
+                    { text: '⚖️ Compare Images', prompt: 'Compare these images and highlight differences' },
+                    { text: '🔄 Find Changes', prompt: 'What changed between these images?' }
+                ]
+            };
+
+            const modeActions = actions[currentMode] || actions.detailed;
+            quickActions.innerHTML = modeActions.map(a => 
+                `<button class="quick-btn" data-prompt="${a.prompt}">${a.text}</button>`
+            ).join('');
+
+            // Reattach event listeners
+            document.querySelectorAll('.quick-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    chatInput.value = btn.dataset.prompt;
+                    sendMessage();
+                });
             });
         }
 
-        // Handle file input
-        fileInput.addEventListener('change', async (e) => {
-            const files = Array.from(e.target.files);
-            for (const file of files) {
-                if (file.type.startsWith('image/')) {
-                    const base64 = await fileToBase64(file);
-                    addImagePreview(base64);
-                }
-            }
-            fileInput.value = ''; // Reset input
-        });
-
-        // Handle paste
-        document.addEventListener('paste', async (e) => {
-            const items = Array.from(e.clipboardData.items);
-            for (const item of items) {
-                if (item.type.startsWith('image/')) {
-                    e.preventDefault();
-                    const file = item.getAsFile();
-                    const base64 = await fileToBase64(file);
-                    addImagePreview(base64);
-                }
-            }
-        });
-
-        // Drag and drop
-        document.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('active');
-        });
-
-        document.addEventListener('dragleave', (e) => {
-            if (!e.relatedTarget) {
-                dropZone.classList.remove('active');
-            }
-        });
-
-        document.addEventListener('drop', async (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('active');
+        // ============ Chat & Analysis ============
+        function addMessage(content, role, messageImages = []) {
+            const div = document.createElement('div');
+            div.className = `message ${role}`;
             
-            const files = Array.from(e.dataTransfer.files);
-            for (const file of files) {
-                if (file.type.startsWith('image/')) {
-                    const base64 = await fileToBase64(file);
-                    addImagePreview(base64);
-                }
+            let html = '';
+            if (messageImages.length > 0) {
+                html += '<div class="message-images">';
+                messageImages.forEach(img => {
+                    html += `<img src="${img}" alt="Image">`;
+                });
+                html += '</div>';
             }
-        });
+            
+            html += `<div class="message-content">${formatText(content)}</div>`;
+            div.innerHTML = html;
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            return div;
+        }
 
-        // Send message
+        function formatText(text) {
+            if (!text) return '';
+            // Code blocks
+            text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+            // Inline code
+            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+            // Bold
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            // Italic
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            // Line breaks
+            text = text.replace(/\n/g, '<br>');
+            return text;
+        }
+
+        function showTyping() {
+            const div = document.createElement('div');
+            div.className = 'typing-indicator';
+            div.id = 'typingIndicator';
+            div.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typingIndicator');
+            if (typing) typing.remove();
+        }
+
         async function sendMessage() {
-            const message = input.value.trim();
-            const images = [...pendingImages];
+            let userMessage = chatInput.value.trim();
             
-            if (!message && images.length === 0) return;
+            if (!userMessage && images.length === 0) return;
+            if (images.length === 0) {
+                addMessage('⚠️ Please upload at least one image first.', 'assistant');
+                return;
+            }
+
+            // If no message, use mode prompt
+            if (!userMessage) {
+                userMessage = modePrompts[currentMode];
+            }
 
             const selectedModel = modelSelect.value;
             
             // Disable inputs
-            input.disabled = true;
+            chatInput.disabled = true;
             sendBtn.disabled = true;
-            status.textContent = `⏳ Waiting for ${selectedModel}...`;
+            statusText.textContent = `Analyzing with ${selectedModel}...`;
 
-            // Show user message with images
-            addMessage(message || '(Image)', 'user', images);
-            input.value = '';
-            
-            // Clear preview
-            pendingImages = [];
-            imagePreview.innerHTML = '';
+            // Get images to analyze
+            const imagesToAnalyze = currentMode === 'compare' 
+                ? images.map(img => img.base64)
+                : (selectedImageIndex >= 0 ? [images[selectedImageIndex].base64] : [images[0].base64]);
 
-            // Build content array for API
-            let userContent = [];
+            // Show user message
+            addMessage(userMessage.substring(0, 100) + (userMessage.length > 100 ? '...' : ''), 'user', imagesToAnalyze.slice(0, 3));
+            chatInput.value = '';
+
+            // Build API content
+            let content = [];
             
-            // Add images
-            for (const img of images) {
-                // Extract base64 data and media type
-                const matches = img.match(/^data:(.+);base64,(.+)$/);
+            imagesToAnalyze.forEach(imgBase64 => {
+                const matches = imgBase64.match(/^data:(.+);base64,(.+)$/);
                 if (matches) {
-                    userContent.push({
+                    content.push({
                         type: 'image',
                         source: {
                             type: 'base64',
@@ -439,81 +1149,136 @@
                         }
                     });
                 }
-            }
-            
-            // Add text
-            if (message) {
-                userContent.push({
-                    type: 'text',
-                    text: message
-                });
-            } else if (images.length > 0) {
-                userContent.push({
-                    type: 'text',
-                    text: 'What do you see in this image?'
-                });
-            }
+            });
 
-            // Add to history
-            conversationHistory.push({ role: 'user', content: userContent });
+            content.push({ type: 'text', text: userMessage });
 
             // Show typing indicator
-            const typingDiv = addMessage('Thinking...', 'assistant typing');
+            showTyping();
 
             try {
-                // Call Puter AI
-                const response = await puter.ai.chat(conversationHistory, {
-                    model: selectedModel,
-                    stream: true
-                });
+                const response = await puter.ai.chat(
+                    [{ role: 'user', content: content }],
+                    { model: selectedModel, stream: true }
+                );
 
-                // Clear typing
-                typingDiv.textContent = '';
-                typingDiv.classList.remove('typing');
-
+                hideTyping();
+                
+                const responseDiv = addMessage('', 'assistant');
+                const contentDiv = responseDiv.querySelector('.message-content');
                 let fullResponse = '';
 
-                // Stream response
                 for await (const part of response) {
                     if (part?.text) {
                         fullResponse += part.text;
-                        typingDiv.innerHTML = formatText(fullResponse);
-                        chat.scrollTop = chat.scrollHeight;
+                        contentDiv.innerHTML = formatText(fullResponse);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
                     }
                 }
 
-                // Add to history (text only for assistant)
-                conversationHistory.push({ role: 'assistant', content: fullResponse });
-                status.textContent = `✅ Response from ${selectedModel}`;
+                lastAnalysis = fullResponse;
+                statusText.textContent = `✅ Analysis complete`;
 
             } catch (error) {
-                console.error('Error:', error);
-                typingDiv.textContent = `❌ Error: ${error.message}\n\nTry a different model or smaller image.`;
-                typingDiv.classList.add('error');
-                typingDiv.classList.remove('typing');
-                status.textContent = `❌ Error occurred`;
+                hideTyping();
+                console.error(error);
+                addMessage(`❌ Error: ${error.message}`, 'assistant');
+                statusText.textContent = `Error occurred`;
             }
 
-            // Re-enable inputs
-            input.disabled = false;
+            chatInput.disabled = false;
             sendBtn.disabled = false;
-            input.focus();
+            chatInput.focus();
         }
 
-        // Model change
-        modelSelect.addEventListener('change', () => {
-            status.textContent = `Switched to ${modelSelect.value}`;
+        // ============ Results Panel ============
+        function openResults() {
+            resultsBody.innerHTML = formatText(lastAnalysis);
+            resultsPanel.classList.add('open');
+        }
+
+        function closeResults() {
+            resultsPanel.classList.remove('open');
+        }
+
+        function copyResults() {
+            navigator.clipboard.writeText(lastAnalysis);
+            statusText.textContent = '📋 Copied to clipboard!';
+        }
+
+        function downloadResults() {
+            const blob = new Blob([lastAnalysis], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `analysis-${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            statusText.textContent = '💾 Downloaded!';
+        }
+
+        // ============ Event Listeners ============
+        
+        // Upload zone
+        uploadZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        // Drag and drop
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        // Global paste
+        document.addEventListener('paste', (e) => {
+            const items = Array.from(e.clipboardData.items);
+            const imageItems = items.filter(item => item.type.startsWith('image/'));
+            if (imageItems.length > 0) {
+                e.preventDefault();
+                const files = imageItems.map(item => item.getAsFile());
+                handleFiles(files);
+            }
         });
 
         // Enter to send
-        input.addEventListener('keypress', (e) => {
+        chatInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 sendMessage();
             }
         });
 
-        input.focus();
+        // Model change
+        modelSelect.addEventListener('change', () => {
+            modelStatus.textContent = `Model: ${modelSelect.options[modelSelect.selectedIndex].text}`;
+        });
+
+        // Quick actions
+        document.querySelectorAll('.quick-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                chatInput.value = btn.dataset.prompt;
+                sendMessage();
+            });
+        });
+
+        // Escape to close modals
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeFullscreen();
+                closeResults();
+            }
+        });
+
+        // Initialize quick actions
+        updateQuickActions();
     </script>
 </body>
 </html>
