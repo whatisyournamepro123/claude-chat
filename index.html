@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Free Claude Opus 4.5 Chat</title>
+    <title>Free Claude Opus 4.5 Chat + Vision</title>
     <script src="https://js.puter.com/v2/"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -42,7 +42,7 @@
         #chat {
             background: #fff;
             border-radius: 15px;
-            height: 500px;
+            height: 450px;
             overflow-y: auto;
             padding: 20px;
             margin-bottom: 15px;
@@ -65,38 +65,128 @@
             background: #f0f0f0;
             color: #333;
         }
+        .message img {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 10px;
+            margin: 10px 0;
+            display: block;
+        }
+        
+        /* Image Preview Area */
+        #imagePreview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 10px;
+            min-height: 0;
+        }
+        #imagePreview:empty {
+            display: none;
+        }
+        .preview-item {
+            position: relative;
+            display: inline-block;
+        }
+        .preview-item img {
+            height: 80px;
+            width: 80px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #667eea;
+        }
+        .preview-item .remove-btn {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            line-height: 1;
+        }
+        .preview-item .remove-btn:hover {
+            background: #ff2234;
+        }
+
+        /* Input Area */
+        .input-container {
+            background: #fff;
+            border-radius: 15px;
+            padding: 15px;
+        }
         .input-area {
             display: flex;
             gap: 10px;
+            align-items: center;
         }
         #input {
             flex: 1;
-            padding: 18px;
-            border: none;
-            border-radius: 15px;
+            padding: 15px;
+            border: 2px solid #eee;
+            border-radius: 12px;
             font-size: 16px;
             outline: none;
+            transition: border-color 0.3s;
         }
         #input:focus {
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.5);
+            border-color: #667eea;
         }
-        button {
-            padding: 18px 35px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .btn {
+            padding: 15px 20px;
             border: none;
-            border-radius: 15px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 16px;
             font-weight: bold;
             transition: transform 0.2s, opacity 0.2s;
         }
-        button:hover { transform: scale(1.02); }
-        button:disabled { opacity: 0.5; transform: none; }
-        .typing {
-            color: #888;
-            font-style: italic;
+        .btn:hover { transform: scale(1.05); }
+        .btn:disabled { opacity: 0.5; transform: none; }
+        
+        .btn-send {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
         }
+        .btn-image {
+            background: #f0f0f0;
+            color: #333;
+        }
+        .btn-image:hover {
+            background: #e0e0e0;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+
+        /* Drop Zone */
+        .drop-zone {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 15px;
+            display: none;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        .drop-zone.active {
+            display: block;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .typing { color: #888; font-style: italic; }
         .status {
             text-align: center;
             color: #aaa;
@@ -126,12 +216,18 @@
             padding: 0;
             color: inherit;
         }
+        .hint {
+            color: #888;
+            font-size: 12px;
+            text-align: center;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🧠 Free Claude Opus 4.5 Chat</h1>
-        <p class="subtitle">Powered by Puter.js - No API Key Required!</p>
+        <h1>🧠 Free Claude Opus 4.5 + Vision</h1>
+        <p class="subtitle">Upload images, paste, or drag & drop!</p>
         
         <div class="model-selector">
             <select id="modelSelect">
@@ -146,15 +242,32 @@
 
         <div id="chat">
             <div class="message assistant">
-                👋 Hello! I'm Claude Opus 4.5. Ask me anything!
+                👋 Hello! I'm Claude with vision capabilities. You can:
+                <br>• 📎 Click the image button to upload
+                <br>• 📋 Paste images with Ctrl+V
+                <br>• 🖱️ Drag & drop images here
+                <br><br>Ask me anything or show me an image!
+            </div>
+        </div>
+
+        <div class="drop-zone" id="dropZone">
+            📁 Drop your images here!
+        </div>
+        
+        <div class="input-container">
+            <div id="imagePreview"></div>
+            
+            <div class="input-area">
+                <input type="file" id="fileInput" accept="image/*" multiple>
+                <button class="btn btn-image" onclick="document.getElementById('fileInput').click()">
+                    📷
+                </button>
+                <input type="text" id="input" placeholder="Type your message or paste an image...">
+                <button class="btn btn-send" id="sendBtn" onclick="sendMessage()">Send</button>
             </div>
         </div>
         
-        <div class="input-area">
-            <input type="text" id="input" placeholder="Type your message here...">
-            <button id="sendBtn" onclick="sendMessage()">Send</button>
-        </div>
-        
+        <p class="hint">💡 Tip: Paste images directly with Ctrl+V or Cmd+V</p>
         <div class="status" id="status">Ready to chat with Claude Opus 4.5</div>
     </div>
 
@@ -164,33 +277,135 @@
         const sendBtn = document.getElementById('sendBtn');
         const modelSelect = document.getElementById('modelSelect');
         const status = document.getElementById('status');
+        const fileInput = document.getElementById('fileInput');
+        const imagePreview = document.getElementById('imagePreview');
+        const dropZone = document.getElementById('dropZone');
 
         let conversationHistory = [];
+        let pendingImages = []; // Store base64 images
 
-        function addMessage(content, role) {
+        // Format text with markdown
+        function formatText(text) {
+            if (!text) return '';
+            text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            return text;
+        }
+
+        // Add message to chat
+        function addMessage(content, role, images = []) {
             const div = document.createElement('div');
             div.className = `message ${role}`;
-            div.innerHTML = formatText(content);
+            
+            let html = '';
+            
+            // Add images first
+            if (images.length > 0) {
+                images.forEach(img => {
+                    html += `<img src="${img}" alt="Uploaded image">`;
+                });
+            }
+            
+            // Add text content
+            html += formatText(content);
+            
+            div.innerHTML = html;
             chat.appendChild(div);
             chat.scrollTop = chat.scrollHeight;
             return div;
         }
 
-        function formatText(text) {
-            // Format code blocks
-            text = text.replace(/```(\w*)\n?([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-            // Format inline code
-            text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
-            // Format bold
-            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            // Format italic
-            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            return text;
+        // Convert file to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
         }
 
+        // Add image to preview
+        function addImagePreview(base64Data) {
+            pendingImages.push(base64Data);
+            
+            const previewItem = document.createElement('div');
+            previewItem.className = 'preview-item';
+            previewItem.innerHTML = `
+                <img src="${base64Data}" alt="Preview">
+                <button class="remove-btn" onclick="removeImage(this, ${pendingImages.length - 1})">×</button>
+            `;
+            imagePreview.appendChild(previewItem);
+        }
+
+        // Remove image from preview
+        function removeImage(btn, index) {
+            pendingImages.splice(index, 1);
+            btn.parentElement.remove();
+            // Update remaining remove buttons
+            document.querySelectorAll('.preview-item .remove-btn').forEach((b, i) => {
+                b.setAttribute('onclick', `removeImage(this, ${i})`);
+            });
+        }
+
+        // Handle file input
+        fileInput.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files);
+            for (const file of files) {
+                if (file.type.startsWith('image/')) {
+                    const base64 = await fileToBase64(file);
+                    addImagePreview(base64);
+                }
+            }
+            fileInput.value = ''; // Reset input
+        });
+
+        // Handle paste
+        document.addEventListener('paste', async (e) => {
+            const items = Array.from(e.clipboardData.items);
+            for (const item of items) {
+                if (item.type.startsWith('image/')) {
+                    e.preventDefault();
+                    const file = item.getAsFile();
+                    const base64 = await fileToBase64(file);
+                    addImagePreview(base64);
+                }
+            }
+        });
+
+        // Drag and drop
+        document.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('active');
+        });
+
+        document.addEventListener('dragleave', (e) => {
+            if (!e.relatedTarget) {
+                dropZone.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('active');
+            
+            const files = Array.from(e.dataTransfer.files);
+            for (const file of files) {
+                if (file.type.startsWith('image/')) {
+                    const base64 = await fileToBase64(file);
+                    addImagePreview(base64);
+                }
+            }
+        });
+
+        // Send message
         async function sendMessage() {
             const message = input.value.trim();
-            if (!message) return;
+            const images = [...pendingImages];
+            
+            if (!message && images.length === 0) return;
 
             const selectedModel = modelSelect.value;
             
@@ -199,30 +414,66 @@
             sendBtn.disabled = true;
             status.textContent = `⏳ Waiting for ${selectedModel}...`;
 
-            // Show user message
-            addMessage(message, 'user');
+            // Show user message with images
+            addMessage(message || '(Image)', 'user', images);
             input.value = '';
+            
+            // Clear preview
+            pendingImages = [];
+            imagePreview.innerHTML = '';
+
+            // Build content array for API
+            let userContent = [];
+            
+            // Add images
+            for (const img of images) {
+                // Extract base64 data and media type
+                const matches = img.match(/^data:(.+);base64,(.+)$/);
+                if (matches) {
+                    userContent.push({
+                        type: 'image',
+                        source: {
+                            type: 'base64',
+                            media_type: matches[1],
+                            data: matches[2]
+                        }
+                    });
+                }
+            }
+            
+            // Add text
+            if (message) {
+                userContent.push({
+                    type: 'text',
+                    text: message
+                });
+            } else if (images.length > 0) {
+                userContent.push({
+                    type: 'text',
+                    text: 'What do you see in this image?'
+                });
+            }
 
             // Add to history
-            conversationHistory.push({ role: 'user', content: message });
+            conversationHistory.push({ role: 'user', content: userContent });
 
             // Show typing indicator
             const typingDiv = addMessage('Thinking...', 'assistant typing');
 
             try {
-                // Call Puter AI with streaming
+                // Call Puter AI
                 const response = await puter.ai.chat(conversationHistory, {
                     model: selectedModel,
                     stream: true
                 });
 
-                // Clear typing indicator
+                // Clear typing
                 typingDiv.textContent = '';
                 typingDiv.classList.remove('typing');
 
                 let fullResponse = '';
 
-                // Stream the response
+                // Stream response
                 for await (const part of response) {
                     if (part?.text) {
                         fullResponse += part.text;
@@ -231,16 +482,16 @@
                     }
                 }
 
-                // Add to conversation history
+                // Add to history (text only for assistant)
                 conversationHistory.push({ role: 'assistant', content: fullResponse });
                 status.textContent = `✅ Response from ${selectedModel}`;
 
             } catch (error) {
                 console.error('Error:', error);
-                typingDiv.textContent = `❌ Error: ${error.message}\n\nTry selecting a different model.`;
+                typingDiv.textContent = `❌ Error: ${error.message}\n\nTry a different model or smaller image.`;
                 typingDiv.classList.add('error');
                 typingDiv.classList.remove('typing');
-                status.textContent = `❌ Error - Try a different model`;
+                status.textContent = `❌ Error occurred`;
             }
 
             // Re-enable inputs
@@ -249,15 +500,12 @@
             input.focus();
         }
 
-        // Update status when model changes
+        // Model change
         modelSelect.addEventListener('change', () => {
-            const model = modelSelect.value;
-            status.textContent = `Switched to ${model}`;
-            // Optionally clear history on model change
-            // conversationHistory = [];
+            status.textContent = `Switched to ${modelSelect.value}`;
         });
 
-        // Send on Enter key
+        // Enter to send
         input.addEventListener('keypress', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -265,7 +513,6 @@
             }
         });
 
-        // Focus input on load
         input.focus();
     </script>
 </body>
