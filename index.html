@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Free Claude Chat</title>
+    <script src="https://js.puter.com/v2/"></script>
+    <style>
+        body { font-family: Arial; max-width: 800px; margin: 50px auto; padding: 20px; }
+        #chat { border: 1px solid #ccc; height: 400px; overflow-y: auto; padding: 10px; margin-bottom: 10px; }
+        #input { width: 80%; padding: 10px; }
+        button { padding: 10px 20px; }
+        .user { color: blue; }
+        .ai { color: green; }
+    </style>
+</head>
+<body>
+    <h1>🤖 Free Claude 3.5 Sonnet Chat</h1>
+    <div id="chat"></div>
+    <input type="text" id="input" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const chat = document.getElementById('chat');
+        const input = document.getElementById('input');
+        let history = [];
+
+        async function sendMessage() {
+            const message = input.value.trim();
+            if (!message) return;
+            
+            // Display user message
+            chat.innerHTML += `<p class="user"><b>You:</b> ${message}</p>`;
+            input.value = '';
+            
+            // Add to history
+            history.push({ role: 'user', content: message });
+            
+            try {
+                chat.innerHTML += `<p class="ai"><b>Claude:</b> Thinking...</p>`;
+                
+                const response = await puter.ai.chat(message, {
+                    model: 'claude-3-5-sonnet',
+                    stream: false
+                });
+                
+                // Remove "Thinking..." and add response
+                chat.lastChild.innerHTML = `<b>Claude:</b> ${response}`;
+                history.push({ role: 'assistant', content: response });
+                
+            } catch (error) {
+                chat.lastChild.innerHTML = `<b>Error:</b> ${error.message}`;
+            }
+            
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
