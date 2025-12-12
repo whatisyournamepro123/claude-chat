@@ -3,532 +3,223 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Claude AI - Ultra Advanced</title>
+  <title>Claude AI</title>
   <script src="https://js.puter.com/v2/"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  
-  <!-- Highlight.js for syntax highlighting -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   
   <style>
     :root {
-      --bg-base: #09090b;
-      --bg-surface: #0f0f12;
-      --bg-elevated: #16161a;
-      --bg-hover: #1c1c21;
-      --bg-active: #232329;
-      
-      --border-subtle: rgba(255,255,255,0.06);
-      --border-default: rgba(255,255,255,0.08);
-      --border-strong: rgba(255,255,255,0.12);
-      
-      --text-primary: #fafafa;
-      --text-secondary: #a1a1aa;
-      --text-muted: #71717a;
-      --text-faint: #52525b;
-      
-      --accent-primary: #c9a87c;
-      --accent-secondary: #e8d5b7;
-      --accent-glow: rgba(201,168,124,0.15);
-      --accent-glow-strong: rgba(201,168,124,0.3);
-      
-      --code-bg: #0d1117;
-      --code-border: #30363d;
-      
-      --success: #4ade80;
-      --warning: #fbbf24;
-      --error: #f87171;
-      --info: #60a5fa;
+      --bg: #09090b;
+      --bg2: #0f0f12;
+      --bg3: #18181b;
+      --bg4: #1f1f23;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.12);
+      --text: #fafafa;
+      --text2: #a1a1aa;
+      --text3: #71717a;
+      --accent: #c9a87c;
+      --accent2: #a88a5c;
+      --glow: rgba(201,168,124,0.15);
       --purple: #a78bfa;
-      
-      --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
-      --shadow-lg: 0 8px 30px rgba(0,0,0,0.5);
-      --shadow-glow: 0 0 40px var(--accent-glow);
-      
-      --radius-sm: 8px;
-      --radius-md: 12px;
-      --radius-lg: 16px;
-      --radius-xl: 20px;
-      --radius-full: 9999px;
-      
-      --transition-fast: 0.15s ease;
-      --transition-normal: 0.25s ease;
+      --green: #4ade80;
+      --red: #f87171;
+      --radius: 12px;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { height: 100%; overflow: hidden; }
+    html, body { height: 100%; }
     
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-      background: var(--bg-base);
-      color: var(--text-primary);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      overflow: hidden;
     }
 
-    /* ===== Background ===== */
-    .bg-gradient {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      pointer-events: none;
-    }
-    
-    .bg-gradient::before {
-      content: '';
-      position: absolute;
-      top: -40%;
-      left: -20%;
-      width: 80%;
-      height: 80%;
-      background: radial-gradient(ellipse, rgba(201,168,124,0.07) 0%, transparent 70%);
-      animation: float1 25s ease-in-out infinite;
-    }
-    
-    .bg-gradient::after {
-      content: '';
-      position: absolute;
-      bottom: -30%;
-      right: -10%;
-      width: 70%;
-      height: 70%;
-      background: radial-gradient(ellipse, rgba(167,139,250,0.05) 0%, transparent 70%);
-      animation: float2 30s ease-in-out infinite;
-    }
-    
-    @keyframes float1 {
-      0%, 100% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(5%, 8%) scale(1.05); }
-    }
-    
-    @keyframes float2 {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(-8%, -5%); }
-    }
-
-    /* ===== Layout ===== */
+    /* Layout */
     .app {
       display: flex;
+      width: 100%;
       height: 100%;
     }
 
-    .main-panel {
+    .main {
       flex: 1;
       display: flex;
       flex-direction: column;
       min-width: 0;
     }
 
-    /* ===== Artifacts Panel ===== */
-    .artifacts-panel {
-      width: 0;
-      background: var(--bg-surface);
-      border-left: 1px solid var(--border-subtle);
-      display: flex;
-      flex-direction: column;
-      transition: width var(--transition-normal);
-      overflow: hidden;
-    }
-
-    .artifacts-panel.open {
-      width: 50%;
-      min-width: 400px;
-      max-width: 700px;
-    }
-
-    .artifacts-header {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--bg-elevated);
-    }
-
-    .artifacts-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .artifacts-title-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: var(--radius-sm);
-      background: linear-gradient(135deg, var(--purple), #7c3aed);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-    }
-
-    .artifacts-tabs {
-      display: flex;
-      gap: 4px;
-    }
-
-    .artifact-tab {
-      padding: 8px 14px;
-      background: transparent;
-      border: 1px solid transparent;
-      border-radius: var(--radius-sm);
-      color: var(--text-secondary);
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all var(--transition-fast);
-    }
-
-    .artifact-tab:hover {
-      background: var(--bg-hover);
-    }
-
-    .artifact-tab.active {
-      background: var(--bg-active);
-      border-color: var(--border-default);
-      color: var(--text-primary);
-    }
-
-    .artifacts-close {
-      width: 32px;
-      height: 32px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border-subtle);
-      background: transparent;
-      color: var(--text-muted);
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all var(--transition-fast);
-    }
-
-    .artifacts-close:hover {
-      background: var(--error);
-      border-color: var(--error);
-      color: white;
-    }
-
-    .artifacts-content {
-      flex: 1;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .artifact-code-view {
-      flex: 1;
-      overflow: auto;
-      padding: 0;
-      display: none;
-    }
-
-    .artifact-code-view.active {
-      display: block;
-    }
-
-    .artifact-code-view pre {
-      margin: 0;
-      padding: 20px;
-      background: var(--code-bg);
-      min-height: 100%;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      line-height: 1.6;
-    }
-
-    .artifact-preview-view {
-      flex: 1;
-      background: white;
-      display: none;
-    }
-
-    .artifact-preview-view.active {
-      display: block;
-    }
-
-    .artifact-preview-view iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    .artifacts-actions {
-      padding: 12px 20px;
-      border-top: 1px solid var(--border-subtle);
-      display: flex;
-      gap: 10px;
-      background: var(--bg-elevated);
-    }
-
-    .artifact-action-btn {
-      flex: 1;
-      padding: 10px 16px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border-default);
-      background: var(--bg-surface);
-      color: var(--text-primary);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all var(--transition-fast);
-    }
-
-    .artifact-action-btn:hover {
-      background: var(--bg-hover);
-      border-color: var(--accent-primary);
-    }
-
-    .artifact-action-btn.primary {
-      background: linear-gradient(135deg, var(--accent-primary), #a88a5c);
-      border: none;
-      color: var(--bg-base);
-    }
-
-    /* ===== Header ===== */
+    /* Header */
     .header {
-      padding: 14px 20px;
-      background: rgba(9,9,11,0.85);
-      backdrop-filter: blur(20px);
-      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      background: rgba(9,9,11,0.9);
+      backdrop-filter: blur(10px);
     }
 
-    .brand {
+    .logo {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 16px;
     }
 
-    .brand-logo {
-      width: 40px;
-      height: 40px;
-      border-radius: var(--radius-md);
-      background: linear-gradient(135deg, var(--accent-primary), #a88a5c);
+    .logo-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
-      font-weight: 800;
-      color: var(--bg-base);
-      box-shadow: var(--shadow-glow);
+      font-size: 18px;
+      color: #000;
     }
 
-    .brand-info {
+    .controls {
       display: flex;
-      flex-direction: column;
-      gap: 2px;
+      gap: 10px;
+      align-items: center;
     }
 
-    .brand-name {
-      font-size: 16px;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--text-primary), var(--accent-secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .brand-tag {
-      font-size: 10px;
+    .mode-badge {
+      padding: 6px 12px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 11px;
       font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .header-controls {
+      color: var(--text2);
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 6px;
     }
 
-    .mode-indicator {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 14px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-full);
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-secondary);
+    .mode-badge .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
     }
 
-    .mode-indicator .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: var(--radius-full);
-      background: var(--success);
-      box-shadow: 0 0 8px var(--success);
-    }
-
-    .mode-indicator.vision .dot {
+    .mode-badge.vision .dot {
       background: var(--purple);
-      box-shadow: 0 0 8px var(--purple);
     }
 
-    .model-select {
-      appearance: none;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-md);
-      padding: 10px 36px 10px 14px;
+    select {
+      padding: 8px 12px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
       font-size: 13px;
-      font-weight: 500;
-      color: var(--text-primary);
       cursor: pointer;
       outline: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2371717a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      transition: all var(--transition-fast);
     }
 
-    .model-select:hover {
-      border-color: var(--border-strong);
+    select:hover {
+      border-color: var(--border2);
     }
 
-    .model-select:focus {
-      border-color: var(--accent-primary);
-      box-shadow: 0 0 0 3px var(--accent-glow);
-    }
-
-    .model-select option {
-      background: var(--bg-elevated);
-    }
-
-    .new-chat-btn {
-      padding: 10px 16px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-md);
-      color: var(--text-secondary);
+    .btn {
+      padding: 8px 14px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text2);
       font-size: 13px;
-      font-weight: 500;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
-      transition: all var(--transition-fast);
+      gap: 6px;
+      transition: all 0.15s;
     }
 
-    .new-chat-btn:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
-      border-color: var(--accent-primary);
+    .btn:hover {
+      background: var(--bg4);
+      color: var(--text);
     }
 
-    /* ===== Chat ===== */
-    .chat-container {
+    /* Chat */
+    .chat {
       flex: 1;
       overflow-y: auto;
-      padding: 24px 20px;
-      max-width: 900px;
-      margin: 0 auto;
-      width: 100%;
+      padding: 20px;
     }
 
-    .chat-container::-webkit-scrollbar { width: 6px; }
-    .chat-container::-webkit-scrollbar-track { background: transparent; }
-    .chat-container::-webkit-scrollbar-thumb {
-      background: var(--border-default);
-      border-radius: var(--radius-full);
-    }
+    .chat::-webkit-scrollbar { width: 6px; }
+    .chat::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-    /* ===== Welcome ===== */
+    /* Welcome */
     .welcome {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       text-align: center;
       padding: 60px 20px;
-      animation: fadeIn 0.5s ease;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
+      max-width: 600px;
+      margin: 0 auto;
     }
 
     .welcome-icon {
-      width: 80px;
-      height: 80px;
-      border-radius: var(--radius-xl);
-      background: linear-gradient(135deg, var(--accent-primary), #a88a5c);
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 18px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 38px;
-      margin-bottom: 24px;
-      box-shadow: var(--shadow-glow), var(--shadow-lg);
-      animation: pulse 3s ease-in-out infinite;
+      font-size: 32px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 40px var(--glow);
     }
 
-    @keyframes pulse {
-      0%, 100% { box-shadow: var(--shadow-glow), var(--shadow-lg); }
-      50% { box-shadow: 0 0 50px var(--accent-glow-strong), var(--shadow-lg); }
-    }
-
-    .welcome-title {
-      font-size: 28px;
-      font-weight: 700;
+    .welcome h1 {
+      font-size: 24px;
       margin-bottom: 10px;
-      background: linear-gradient(135deg, var(--text-primary), var(--accent-secondary));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
     }
 
-    .welcome-subtitle {
-      font-size: 15px;
-      color: var(--text-secondary);
-      max-width: 480px;
-      line-height: 1.7;
-      margin-bottom: 36px;
+    .welcome p {
+      color: var(--text2);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 30px;
     }
 
-    .welcome-grid {
+    .welcome-cards {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 14px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
       width: 100%;
-      max-width: 560px;
     }
 
     .welcome-card {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-lg);
-      padding: 18px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
       text-align: left;
       cursor: pointer;
-      transition: all var(--transition-normal);
+      transition: all 0.2s;
     }
 
     .welcome-card:hover {
-      border-color: var(--accent-primary);
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-md), 0 0 25px var(--accent-glow);
+      border-color: var(--accent);
+      transform: translateY(-2px);
     }
 
     .welcome-card-icon {
-      font-size: 24px;
-      margin-bottom: 10px;
+      font-size: 22px;
+      margin-bottom: 8px;
     }
 
     .welcome-card-title {
@@ -539,236 +230,183 @@
 
     .welcome-card-desc {
       font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.5;
+      color: var(--text3);
     }
 
-    /* ===== Messages ===== */
-    .message {
+    /* Messages */
+    .msg {
       display: flex;
-      gap: 14px;
+      gap: 12px;
       margin-bottom: 24px;
-      animation: msgIn 0.35s ease;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      animation: fadeIn 0.3s ease;
     }
 
-    @keyframes msgIn {
-      from { opacity: 0; transform: translateY(10px); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .message-avatar {
-      width: 36px;
-      height: 36px;
-      border-radius: var(--radius-md);
+    .msg-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
-      font-weight: 700;
+      font-size: 14px;
       flex-shrink: 0;
     }
 
-    .message-avatar.user {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-default);
-      color: var(--text-secondary);
+    .msg-avatar.user {
+      background: var(--bg3);
+      border: 1px solid var(--border);
     }
 
-    .message-avatar.assistant {
-      background: linear-gradient(135deg, var(--accent-primary), #a88a5c);
-      color: var(--bg-base);
-      box-shadow: 0 0 15px var(--accent-glow);
+    .msg-avatar.assistant {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #000;
     }
 
-    .message-body {
+    .msg-body {
       flex: 1;
       min-width: 0;
     }
 
-    .message-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .msg-name {
+      font-size: 13px;
+      font-weight: 600;
       margin-bottom: 6px;
     }
 
-    .message-name {
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .message-time {
-      font-size: 11px;
-      color: var(--text-faint);
-    }
-
-    .message-content {
+    .msg-content {
       font-size: 14px;
-      line-height: 1.75;
+      line-height: 1.7;
+      word-wrap: break-word;
     }
 
-    .message-content strong {
-      color: var(--accent-secondary);
-    }
+    .msg-content p { margin-bottom: 10px; }
+    .msg-content p:last-child { margin-bottom: 0; }
 
-    .message-content p {
-      margin-bottom: 12px;
-    }
+    .msg-content strong { color: var(--accent); }
 
-    .message-content p:last-child {
-      margin-bottom: 0;
-    }
-
-    .message-content code:not(pre code) {
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-subtle);
-      padding: 2px 7px;
-      border-radius: var(--radius-sm);
+    .msg-content code:not(pre code) {
+      background: var(--bg3);
+      padding: 2px 6px;
+      border-radius: 4px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 12px;
       color: #f0abfc;
     }
 
-    .message-content pre {
-      margin: 14px 0;
-      border-radius: var(--radius-md);
+    .msg-content pre {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      margin: 12px 0;
       overflow: hidden;
-      border: 1px solid var(--code-border);
     }
 
-    .message-content pre code {
+    .msg-content pre code {
       display: block;
-      padding: 16px;
+      padding: 14px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
-      line-height: 1.6;
+      line-height: 1.5;
       overflow-x: auto;
     }
 
-    .message-images {
+    .msg-images {
       display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 12px;
     }
 
-    .message-image {
-      max-width: 260px;
-      max-height: 260px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border-default);
+    .msg-images img {
+      max-width: 250px;
+      max-height: 250px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
       cursor: pointer;
-      transition: all var(--transition-fast);
-      object-fit: cover;
     }
 
-    .message-image:hover {
-      border-color: var(--accent-primary);
-      transform: scale(1.02);
-    }
-
-    /* Artifact in message */
-    .message-artifact {
-      margin: 14px 0;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-lg);
+    /* Artifact */
+    .artifact-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin: 12px 0;
       overflow: hidden;
     }
 
-    .message-artifact-header {
-      padding: 12px 16px;
-      background: var(--bg-elevated);
-      border-bottom: 1px solid var(--border-subtle);
+    .artifact-header {
+      padding: 10px 14px;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
 
-    .message-artifact-title {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 13px;
-      font-weight: 600;
-    }
-
-    .message-artifact-title-icon {
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      background: linear-gradient(135deg, var(--purple), #7c3aed);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .artifact-title {
       font-size: 12px;
-    }
-
-    .message-artifact-actions {
+      font-weight: 600;
       display: flex;
+      align-items: center;
       gap: 8px;
     }
 
-    .message-artifact-btn {
-      padding: 6px 12px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      color: var(--text-secondary);
-      font-size: 11px;
-      font-weight: 500;
-      cursor: pointer;
+    .artifact-title-icon {
+      width: 22px;
+      height: 22px;
+      background: linear-gradient(135deg, var(--purple), #7c3aed);
+      border-radius: 6px;
       display: flex;
       align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+
+    .artifact-actions {
+      display: flex;
       gap: 6px;
-      transition: all var(--transition-fast);
     }
 
-    .message-artifact-btn:hover {
-      background: var(--bg-hover);
-      color: var(--text-primary);
+    .artifact-btn {
+      padding: 5px 10px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text2);
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
     }
 
-    .message-artifact-preview {
+    .artifact-btn:hover {
+      background: var(--bg4);
+      color: var(--text);
+    }
+
+    .artifact-preview {
       height: 200px;
       background: white;
-      position: relative;
     }
 
-    .message-artifact-preview iframe {
+    .artifact-preview iframe {
       width: 100%;
       height: 100%;
       border: none;
     }
 
-    .message-artifact-expand {
-      position: absolute;
-      bottom: 10px;
-      right: 10px;
-      padding: 8px 14px;
-      background: var(--bg-base);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-md);
-      color: var(--text-primary);
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all var(--transition-fast);
-    }
-
-    .message-artifact-expand:hover {
-      background: var(--accent-primary);
-      color: var(--bg-base);
-    }
-
     /* Typing */
-    .typing-indicator {
+    .typing {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .typing-dots {
@@ -777,89 +415,88 @@
     }
 
     .typing-dots span {
-      width: 7px;
-      height: 7px;
-      background: var(--accent-primary);
-      border-radius: var(--radius-full);
-      animation: typeBounce 1.2s ease-in-out infinite;
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
     }
 
-    .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
-    .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+    .typing-dots span:nth-child(2) { animation-delay: 0.1s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.2s; }
 
-    @keyframes typeBounce {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
-      30% { transform: translateY(-6px); opacity: 1; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); }
     }
 
     .typing-text {
       font-size: 13px;
-      color: var(--text-muted);
+      color: var(--text3);
     }
 
-    /* ===== Composer ===== */
+    /* Composer */
     .composer {
       padding: 16px 20px 20px;
-      background: linear-gradient(to top, var(--bg-base) 70%, transparent);
-      max-width: 900px;
+      border-top: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .composer-inner {
+      max-width: 800px;
       margin: 0 auto;
-      width: 100%;
     }
 
     .composer-box {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-xl);
-      padding: 14px;
-      transition: all var(--transition-fast);
-      box-shadow: var(--shadow-lg);
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      transition: all 0.15s;
     }
 
     .composer-box:focus-within {
-      border-color: var(--accent-primary);
-      box-shadow: var(--shadow-lg), 0 0 0 3px var(--accent-glow);
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--glow);
     }
 
-    .preview-area {
+    .preview-row {
       display: none;
-      flex-wrap: wrap;
-      gap: 10px;
-      padding-bottom: 14px;
-      margin-bottom: 14px;
-      border-bottom: 1px solid var(--border-subtle);
+      gap: 8px;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .preview-area.active {
+    .preview-row.active {
       display: flex;
     }
 
     .preview-item {
       position: relative;
-      width: 72px;
-      height: 72px;
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      border: 2px solid var(--border-default);
+      width: 64px;
+      height: 64px;
     }
 
     .preview-item img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid var(--border);
     }
 
     .preview-remove {
       position: absolute;
-      top: -7px;
-      right: -7px;
-      width: 22px;
-      height: 22px;
-      border-radius: var(--radius-full);
-      background: var(--error);
-      border: 2px solid var(--bg-surface);
+      top: -6px;
+      right: -6px;
+      width: 20px;
+      height: 20px;
+      background: var(--red);
+      border: none;
+      border-radius: 50%;
       color: white;
-      font-size: 11px;
-      font-weight: 700;
+      font-size: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -868,72 +505,70 @@
 
     .input-row {
       display: flex;
-      align-items: flex-end;
       gap: 10px;
+      align-items: flex-end;
     }
 
-    .text-input {
+    textarea {
       flex: 1;
       background: transparent;
       border: none;
       outline: none;
-      color: var(--text-primary);
+      color: var(--text);
       font-size: 14px;
       font-family: inherit;
-      line-height: 1.5;
       resize: none;
       min-height: 24px;
-      max-height: 180px;
+      max-height: 150px;
+      line-height: 1.5;
     }
 
-    .text-input::placeholder {
-      color: var(--text-faint);
+    textarea::placeholder {
+      color: var(--text3);
     }
 
-    .input-actions {
+    .input-btns {
       display: flex;
-      gap: 8px;
+      gap: 6px;
     }
 
-    .action-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--border-default);
-      background: var(--bg-elevated);
-      color: var(--text-secondary);
-      font-size: 18px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all var(--transition-fast);
-    }
-
-    .action-btn:hover {
-      border-color: var(--accent-primary);
-      color: var(--accent-primary);
-    }
-
-    .send-btn {
-      width: 42px;
-      height: 42px;
-      border-radius: var(--radius-md);
-      border: none;
-      background: linear-gradient(135deg, var(--accent-primary), #a88a5c);
-      color: var(--bg-base);
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg3);
+      color: var(--text2);
       font-size: 16px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all var(--transition-fast);
-      box-shadow: 0 4px 12px var(--accent-glow);
+      transition: all 0.15s;
+    }
+
+    .icon-btn:hover {
+      background: var(--bg4);
+      color: var(--text);
+    }
+
+    .send-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #000;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
     }
 
     .send-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px var(--accent-glow-strong);
+      transform: scale(1.05);
     }
 
     .send-btn:disabled {
@@ -942,52 +577,189 @@
       transform: none;
     }
 
-    /* ===== Hidden ===== */
+    /* Artifacts Panel */
+    .artifacts-panel {
+      width: 0;
+      background: var(--bg2);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transition: width 0.25s ease;
+    }
+
+    .artifacts-panel.open {
+      width: 50%;
+      min-width: 350px;
+    }
+
+    .panel-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg3);
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-tabs {
+      display: flex;
+      gap: 4px;
+    }
+
+    .panel-tab {
+      padding: 6px 12px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      color: var(--text2);
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .panel-tab:hover {
+      background: var(--bg4);
+    }
+
+    .panel-tab.active {
+      background: var(--bg4);
+      color: var(--text);
+    }
+
+    .panel-close {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--text2);
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .panel-close:hover {
+      background: var(--red);
+      color: white;
+    }
+
+    .panel-content {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .panel-code {
+      height: 100%;
+      overflow: auto;
+      display: none;
+    }
+
+    .panel-code.active {
+      display: block;
+    }
+
+    .panel-code pre {
+      margin: 0;
+      padding: 16px;
+      min-height: 100%;
+      background: #0d1117;
+    }
+
+    .panel-preview {
+      height: 100%;
+      background: white;
+      display: none;
+    }
+
+    .panel-preview.active {
+      display: block;
+    }
+
+    .panel-preview iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .panel-actions {
+      padding: 12px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      background: var(--bg3);
+    }
+
+    .panel-btn {
+      flex: 1;
+      padding: 10px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .panel-btn:hover {
+      background: var(--bg4);
+    }
+
+    .panel-btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+
+    /* Hidden */
     #fileInput { display: none; }
 
-    /* ===== Drop Overlay ===== */
+    /* Drop */
     .drop-overlay {
       position: fixed;
       inset: 0;
-      z-index: 500;
+      background: rgba(0,0,0,0.9);
       display: none;
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      gap: 14px;
-      background: rgba(9,9,11,0.95);
-      border: 3px dashed var(--accent-primary);
+      gap: 12px;
+      z-index: 999;
     }
 
     .drop-overlay.active {
       display: flex;
     }
 
-    .drop-icon {
-      font-size: 64px;
-      animation: dropFloat 1s ease-in-out infinite;
+    .drop-overlay .icon {
+      font-size: 60px;
     }
 
-    @keyframes dropFloat {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
-    }
-
-    .drop-text {
-      font-size: 20px;
+    .drop-overlay .text {
+      font-size: 18px;
       font-weight: 600;
     }
 
-    /* ===== Modal ===== */
+    /* Modal */
     .modal {
       position: fixed;
       inset: 0;
-      z-index: 600;
+      background: rgba(0,0,0,0.9);
       display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(0,0,0,0.92);
-      padding: 40px;
+      z-index: 1000;
+      padding: 30px;
     }
 
     .modal.active {
@@ -997,49 +769,40 @@
     .modal img {
       max-width: 100%;
       max-height: 100%;
-      border-radius: var(--radius-lg);
-      object-fit: contain;
+      border-radius: 8px;
     }
 
     .modal-close {
       position: absolute;
       top: 20px;
       right: 20px;
-      width: 46px;
-      height: 46px;
-      border-radius: var(--radius-full);
-      border: 1px solid var(--border-default);
-      background: var(--bg-elevated);
-      color: var(--text-primary);
-      font-size: 22px;
+      width: 40px;
+      height: 40px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      color: white;
+      font-size: 20px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
-    .modal-close:hover {
-      background: var(--error);
-      border-color: var(--error);
-    }
-
-    /* ===== Toast ===== */
+    /* Toast */
     .toast {
       position: fixed;
-      bottom: 90px;
+      bottom: 80px;
       left: 50%;
       transform: translateX(-50%) translateY(20px);
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-default);
-      border-radius: var(--radius-lg);
-      padding: 12px 22px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      border-radius: 10px;
       font-size: 13px;
-      font-weight: 500;
-      box-shadow: var(--shadow-lg);
       opacity: 0;
-      pointer-events: none;
-      transition: all var(--transition-normal);
-      z-index: 700;
+      transition: all 0.2s;
+      z-index: 1001;
     }
 
     .toast.show {
@@ -1047,85 +810,71 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    /* ===== Responsive ===== */
-    @media (max-width: 900px) {
+    @media (max-width: 800px) {
       .artifacts-panel.open {
         position: fixed;
         inset: 0;
         width: 100%;
-        max-width: none;
-        z-index: 400;
+        z-index: 500;
       }
-      
-      .brand-info { display: none; }
-      .mode-indicator span { display: none; }
+      .welcome-cards { grid-template-columns: 1fr; }
+      .controls .btn span { display: none; }
     }
   </style>
 </head>
 
 <body>
-  <div class="bg-gradient"></div>
-
   <div class="app">
-    <!-- Main Panel -->
-    <div class="main-panel">
+    <div class="main">
       <!-- Header -->
       <header class="header">
-        <div class="brand">
-          <div class="brand-logo">✦</div>
-          <div class="brand-info">
-            <div class="brand-name">Claude AI</div>
-            <div class="brand-tag">Ultra Advanced</div>
-          </div>
+        <div class="logo">
+          <div class="logo-icon">✦</div>
+          <span>Claude AI</span>
         </div>
-        
-        <div class="header-controls">
-          <div class="mode-indicator" id="modeIndicator">
+        <div class="controls">
+          <div class="mode-badge" id="modeBadge">
             <span class="dot"></span>
-            <span>Chat</span>
+            <span id="modeText">Chat</span>
           </div>
-          
-          <select class="model-select" id="modelSelect">
+          <select id="modelSelect">
+            <option value="claude-sonnet-4-5">Claude Sonnet 4.5</option>
             <option value="claude-opus-4-5">Claude Opus 4.5</option>
-            <option value="claude-sonnet-4-5" selected>Claude Sonnet 4.5</option>
             <option value="claude-haiku-4-5">Claude Haiku 4.5</option>
-            <option value="gpt-4o">GPT-4o (Backup)</option>
+            <option value="gpt-4o">GPT-4o</option>
           </select>
-          
-          <button class="new-chat-btn" id="newChatBtn">
-            <span>+</span> New
+          <button class="btn" onclick="newChat()">
+            <span>+</span> <span>New</span>
           </button>
         </div>
       </header>
 
       <!-- Chat -->
-      <div class="chat-container" id="chatContainer">
+      <div class="chat" id="chat">
         <div class="welcome" id="welcome">
           <div class="welcome-icon">✦</div>
-          <h1 class="welcome-title">How can I help you?</h1>
-          <p class="welcome-subtitle">
-            I can analyze images, write code with live previews, answer questions, and much more.
-          </p>
-          <div class="welcome-grid">
-            <div class="welcome-card" onclick="triggerUpload()">
+          <h1>How can I help?</h1>
+          <p>Upload images for analysis, ask questions, or have me write code with live previews.</p>
+          <div class="welcome-cards">
+            <div class="welcome-card" onclick="document.getElementById('fileInput').click()">
               <div class="welcome-card-icon">🖼️</div>
               <div class="welcome-card-title">Analyze Image</div>
-              <div class="welcome-card-desc">Ultra detailed vision</div>
+              <div class="welcome-card-desc">Detailed vision analysis</div>
             </div>
-            <div class="welcome-card" onclick="setPrompt('Create a beautiful landing page with HTML, CSS, and JS')">
+            <div class="welcome-card" onclick="setPrompt('Create a beautiful animated button')">
               <div class="welcome-card-icon">💻</div>
               <div class="welcome-card-title">Write Code</div>
               <div class="welcome-card-desc">With live preview</div>
             </div>
-            <div class="welcome-card" onclick="setPrompt('Explain quantum computing simply')">
+            <div class="welcome-card" onclick="setPrompt('Explain how neural networks work')">
               <div class="welcome-card-icon">🧠</div>
-              <div class="welcome-card-title">Explain Anything</div>
+              <div class="welcome-card-title">Explain</div>
               <div class="welcome-card-desc">Clear explanations</div>
             </div>
-            <div class="welcome-card" onclick="setPrompt('Help me brainstorm ideas for a mobile app')">
-              <div class="welcome-card-icon">💡</div>
-              <div class="welcome-card-title">Brainstorm</div>
-              <div class="welcome-card-desc">Creative ideas</div>
+            <div class="welcome-card" onclick="setPrompt('Write a short story about AI')">
+              <div class="welcome-card-icon">✍️</div>
+              <div class="welcome-card-title">Create</div>
+              <div class="welcome-card-desc">Stories & content</div>
             </div>
           </div>
         </div>
@@ -1133,19 +882,15 @@
 
       <!-- Composer -->
       <div class="composer">
-        <div class="composer-box">
-          <div class="preview-area" id="previewArea"></div>
-          
-          <div class="input-row">
-            <textarea 
-              class="text-input" 
-              id="textInput" 
-              placeholder="Message Claude..."
-              rows="1"
-            ></textarea>
-            <div class="input-actions">
-              <button class="action-btn" id="imageBtn" title="Upload Image">📷</button>
-              <button class="send-btn" id="sendBtn" title="Send">➤</button>
+        <div class="composer-inner">
+          <div class="composer-box">
+            <div class="preview-row" id="previewRow"></div>
+            <div class="input-row">
+              <textarea id="input" placeholder="Message Claude..." rows="1"></textarea>
+              <div class="input-btns">
+                <button class="icon-btn" onclick="document.getElementById('fileInput').click()" title="Upload image">📷</button>
+                <button class="send-btn" id="sendBtn" onclick="send()" title="Send">➤</button>
+              </div>
             </div>
           </div>
         </div>
@@ -1156,206 +901,190 @@
 
     <!-- Artifacts Panel -->
     <div class="artifacts-panel" id="artifactsPanel">
-      <div class="artifacts-header">
-        <div class="artifacts-title">
-          <span class="artifacts-title-icon">⚡</span>
-          <span id="artifactName">Artifact</span>
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>⚡</span>
+          <span id="panelTitle">Artifact</span>
         </div>
-        <div class="artifacts-tabs">
-          <button class="artifact-tab active" data-view="code" onclick="switchArtifactView('code')">Code</button>
-          <button class="artifact-tab" data-view="preview" onclick="switchArtifactView('preview')">Preview</button>
+        <div class="panel-tabs">
+          <button class="panel-tab active" onclick="showPanelView('code')">Code</button>
+          <button class="panel-tab" onclick="showPanelView('preview')">Preview</button>
         </div>
-        <button class="artifacts-close" onclick="closeArtifacts()">×</button>
+        <button class="panel-close" onclick="closePanel()">×</button>
       </div>
-      <div class="artifacts-content">
-        <div class="artifact-code-view active" id="artifactCodeView">
-          <pre><code id="artifactCode"></code></pre>
-        </div>
-        <div class="artifact-preview-view" id="artifactPreviewView">
-          <iframe id="artifactPreviewFrame" sandbox="allow-scripts"></iframe>
-        </div>
+      <div class="panel-content">
+        <div class="panel-code active" id="panelCode"><pre><code id="panelCodeContent"></code></pre></div>
+        <div class="panel-preview" id="panelPreview"><iframe id="panelFrame"></iframe></div>
       </div>
-      <div class="artifacts-actions">
-        <button class="artifact-action-btn" onclick="copyArtifact()">📋 Copy Code</button>
-        <button class="artifact-action-btn" onclick="downloadArtifact()">💾 Download</button>
-        <button class="artifact-action-btn primary" onclick="openInNewTab()">🚀 Open in New Tab</button>
+      <div class="panel-actions">
+        <button class="panel-btn" onclick="copyCode()">📋 Copy</button>
+        <button class="panel-btn" onclick="downloadCode()">💾 Download</button>
+        <button class="panel-btn primary" onclick="openNewTab()">🚀 Open</button>
       </div>
     </div>
   </div>
 
   <!-- Overlays -->
   <div class="drop-overlay" id="dropOverlay">
-    <div class="drop-icon">📷</div>
-    <div class="drop-text">Drop image here</div>
+    <div class="icon">📷</div>
+    <div class="text">Drop image here</div>
   </div>
 
-  <div class="modal" id="imageModal">
+  <div class="modal" id="modal">
     <button class="modal-close" onclick="closeModal()">×</button>
-    <img id="modalImage" />
+    <img id="modalImg" />
   </div>
 
   <div class="toast" id="toast"></div>
 
   <script>
-    // ==================== STATE ====================
-    const state = {
-      pendingFile: null,
-      pendingPreviewUrl: null,
-      currentArtifact: null,
-      conversationHistory: [],
-      busy: false
-    };
+    // ============ STATE ============
+    let pendingImage = null;
+    let pendingImageUrl = null;
+    let currentArtifact = null;
+    let chatHistory = [];
+    let busy = false;
 
-    // ==================== ELEMENTS ====================
-    const chatContainer = document.getElementById('chatContainer');
+    // ============ ELEMENTS ============
+    const chatEl = document.getElementById('chat');
     const welcomeEl = document.getElementById('welcome');
-    const previewArea = document.getElementById('previewArea');
-    const textInput = document.getElementById('textInput');
-    const imageBtn = document.getElementById('imageBtn');
-    const sendBtn = document.getElementById('sendBtn');
-    const fileInput = document.getElementById('fileInput');
-    const modelSelect = document.getElementById('modelSelect');
-    const modeIndicator = document.getElementById('modeIndicator');
-    const newChatBtn = document.getElementById('newChatBtn');
-    const dropOverlay = document.getElementById('dropOverlay');
-    const imageModal = document.getElementById('imageModal');
-    const modalImage = document.getElementById('modalImage');
-    const toast = document.getElementById('toast');
-    
-    // Artifacts
-    const artifactsPanel = document.getElementById('artifactsPanel');
-    const artifactName = document.getElementById('artifactName');
-    const artifactCode = document.getElementById('artifactCode');
-    const artifactCodeView = document.getElementById('artifactCodeView');
-    const artifactPreviewView = document.getElementById('artifactPreviewView');
-    const artifactPreviewFrame = document.getElementById('artifactPreviewFrame');
+    const previewRowEl = document.getElementById('previewRow');
+    const inputEl = document.getElementById('input');
+    const sendBtnEl = document.getElementById('sendBtn');
+    const fileInputEl = document.getElementById('fileInput');
+    const modelSelectEl = document.getElementById('modelSelect');
+    const modeBadgeEl = document.getElementById('modeBadge');
+    const modeTextEl = document.getElementById('modeText');
+    const dropOverlayEl = document.getElementById('dropOverlay');
+    const modalEl = document.getElementById('modal');
+    const modalImgEl = document.getElementById('modalImg');
+    const toastEl = document.getElementById('toast');
+    const artifactsPanelEl = document.getElementById('artifactsPanel');
+    const panelTitleEl = document.getElementById('panelTitle');
+    const panelCodeEl = document.getElementById('panelCode');
+    const panelCodeContentEl = document.getElementById('panelCodeContent');
+    const panelPreviewEl = document.getElementById('panelPreview');
+    const panelFrameEl = document.getElementById('panelFrame');
 
-    // ==================== PROMPTS ====================
-    const VISION_PROMPT = `You are an ultra-advanced vision AI. Analyze images with extreme precision.
+    // ============ PROMPTS ============
+    const VISION_PROMPT = `You are an advanced vision AI. Analyze images with precision.
 
-OUTPUT FORMAT:
-## 🎯 Identification
-[What this is]
+Format your response:
+## 🎯 What This Is
+[Identification]
 
-## 🔍 Detailed Analysis
-[Bullet points of everything observed]
+## 🔍 Details
+- [Observations]
 
 ## 📝 Text Found
-[Any text in the image]
+[Any visible text]
 
-## 💡 Key Insights
-[Notable observations]
+## 💡 Notes
+[Additional insights]`;
 
-Be thorough and precise.`;
+    const CODE_PROMPT = `You are an expert coder. When writing HTML/CSS/JS code that can be previewed, wrap it like this:
 
-    const CODE_PROMPT = `You are an elite coding assistant. When writing code:
-1. Always provide complete, working code
-2. Use modern best practices
-3. Include helpful comments
-4. Make it beautiful and functional
-
-When creating HTML/CSS/JS, wrap your code in a special artifact block like this:
 \`\`\`artifact:html
 <!DOCTYPE html>
 <html>
-...complete code here...
+<head>
+  <style>/* CSS here */</style>
+</head>
+<body>
+  <!-- HTML here -->
+  <script>/* JS here */<\/script>
+</body>
 </html>
 \`\`\`
 
-This will create a live preview for the user.`;
+This creates a live preview. Always write complete, working code.`;
 
-    // ==================== UTILITIES ====================
-    function showToast(msg) {
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2500);
+    // ============ UTILITIES ============
+    function toast(msg) {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      setTimeout(() => toastEl.classList.remove('show'), 2000);
     }
 
-    function updateMode(mode) {
-      modeIndicator.className = 'mode-indicator' + (mode === 'vision' ? ' vision' : '');
-      modeIndicator.querySelector('span:last-child').textContent = mode === 'vision' ? 'Vision' : 'Chat';
+    function setMode(mode) {
+      modeBadgeEl.className = 'mode-badge' + (mode === 'vision' ? ' vision' : '');
+      modeTextEl.textContent = mode === 'vision' ? 'Vision' : 'Chat';
     }
 
     function autoResize() {
-      textInput.style.height = 'auto';
-      textInput.style.height = Math.min(textInput.scrollHeight, 180) + 'px';
+      inputEl.style.height = 'auto';
+      inputEl.style.height = Math.min(inputEl.scrollHeight, 150) + 'px';
     }
 
-    function escapeHtml(str) {
-      return (str || '').replace(/[&<>"']/g, c => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      }[c]));
+    function escape(s) {
+      return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
     }
 
-    function getTime() {
-      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-
-    // ==================== MARKDOWN + ARTIFACTS ====================
-    function parseAndRender(text) {
+    // ============ MARKDOWN + ARTIFACTS ============
+    function render(text) {
       let html = '';
-      let remaining = text;
+      let t = text;
       
-      // Extract artifacts
-      const artifactRegex = /```artifact:(\w+)\n([\s\S]*?)```/g;
-      let match;
-      let lastIndex = 0;
+      // Find artifacts
+      const artifactRe = /```artifact:(\w+)\n([\s\S]*?)```/g;
+      let lastIdx = 0;
+      let m;
       
-      while ((match = artifactRegex.exec(text)) !== null) {
-        // Add text before artifact
-        const before = text.slice(lastIndex, match.index);
-        html += formatMarkdown(before);
+      while ((m = artifactRe.exec(text)) !== null) {
+        // Text before
+        html += formatMd(text.slice(lastIdx, m.index));
         
-        // Add artifact
-        const type = match[1];
-        const code = match[2].trim();
+        // Artifact
+        const type = m[1];
+        const code = m[2].trim();
+        currentArtifact = { type, code };
         
-        state.currentArtifact = { type, code, name: `${type.toUpperCase()} Code` };
+        const safeCode = code.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         
         html += `
-          <div class="message-artifact">
-            <div class="message-artifact-header">
-              <div class="message-artifact-title">
-                <span class="message-artifact-title-icon">⚡</span>
-                <span>${type.toUpperCase()} Artifact</span>
+          <div class="artifact-box">
+            <div class="artifact-header">
+              <div class="artifact-title">
+                <span class="artifact-title-icon">⚡</span>
+                ${type.toUpperCase()}
               </div>
-              <div class="message-artifact-actions">
-                <button class="message-artifact-btn" onclick="copyArtifact()">📋 Copy</button>
-                <button class="message-artifact-btn" onclick="openArtifacts()">🔍 Expand</button>
+              <div class="artifact-actions">
+                <button class="artifact-btn" onclick="copyCode()">📋 Copy</button>
+                <button class="artifact-btn" onclick="openPanel()">🔍 Expand</button>
               </div>
             </div>
-            <div class="message-artifact-preview">
-              <iframe id="inlinePreview" sandbox="allow-scripts" srcdoc="${escapeHtml(code)}"></iframe>
-              <button class="message-artifact-expand" onclick="openArtifacts()">⛶ Full View</button>
+            <div class="artifact-preview">
+              <iframe srcdoc="${safeCode.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"')}" sandbox="allow-scripts"></iframe>
             </div>
           </div>
         `;
         
-        lastIndex = match.index + match[0].length;
+        lastIdx = m.index + m[0].length;
       }
       
-      // Add remaining text
-      if (lastIndex < text.length) {
-        html += formatMarkdown(text.slice(lastIndex));
-      }
+      // Remaining text
+      html += formatMd(text.slice(lastIdx));
       
-      return html || formatMarkdown(text);
+      return html;
     }
 
-    function formatMarkdown(text) {
+    function formatMd(text) {
       if (!text) return '';
       
-      let t = escapeHtml(text);
+      let t = escape(text);
       
       // Headers
-      t = t.replace(/^### (.*$)/gm, '<strong style="color:var(--accent-secondary);display:block;margin:16px 0 8px;">$1</strong>');
-      t = t.replace(/^## (.*$)/gm, '<strong style="color:var(--accent-secondary);font-size:16px;display:block;margin:18px 0 10px;">$1</strong>');
-      t = t.replace(/^# (.*$)/gm, '<strong style="color:var(--accent-secondary);font-size:18px;display:block;margin:20px 0 12px;">$1</strong>');
+      t = t.replace(/^## (.*$)/gm, '<strong style="color:var(--accent);display:block;margin:14px 0 8px;">$1</strong>');
+      t = t.replace(/^# (.*$)/gm, '<strong style="color:var(--accent);font-size:16px;display:block;margin:16px 0 10px;">$1</strong>');
       
-      // Code blocks (not artifacts)
-      t = t.replace(/```(\w*)\n([\s\S]*?)```/g, (match, lang, code) => {
-        const highlighted = hljs.highlightAuto(code.trim()).value;
-        return `<pre><code class="hljs">${highlighted}</code></pre>`;
+      // Code blocks
+      t = t.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) => {
+        try {
+          const hl = hljs.highlightAuto(code.trim()).value;
+          return `<pre><code class="hljs">${hl}</code></pre>`;
+        } catch {
+          return `<pre><code>${escape(code.trim())}</code></pre>`;
+        }
       });
       
       // Inline code
@@ -1364,447 +1093,393 @@ This will create a live preview for the user.`;
       // Bold
       t = t.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
       
-      // Italic
-      t = t.replace(/\*(.*?)\*/g, '<em>$1</em>');
-      
-      // Lists
-      t = t.replace(/^- (.*$)/gm, '• $1');
-      
       // Line breaks
       t = t.replace(/\n/g, '<br>');
       
       return t;
     }
 
-    // ==================== ARTIFACTS PANEL ====================
-    function openArtifacts() {
-      if (!state.currentArtifact) return;
+    // ============ IMAGE HANDLING ============
+    async function loadImage(file) {
+      if (!file || !file.type.startsWith('image/')) return;
       
-      artifactName.textContent = state.currentArtifact.name;
-      artifactCode.textContent = state.currentArtifact.code;
-      hljs.highlightElement(artifactCode);
+      pendingImage = file;
+      pendingImageUrl = URL.createObjectURL(file);
       
-      if (state.currentArtifact.type === 'html') {
-        artifactPreviewFrame.srcdoc = state.currentArtifact.code;
-      }
-      
-      artifactsPanel.classList.add('open');
+      previewRowEl.innerHTML = `
+        <div class="preview-item">
+          <img src="${pendingImageUrl}" />
+          <button class="preview-remove" onclick="removeImage()">×</button>
+        </div>
+      `;
+      previewRowEl.classList.add('active');
+      setMode('vision');
+      toast('Image ready!');
     }
 
-    function closeArtifacts() {
-      artifactsPanel.classList.remove('open');
+    function removeImage() {
+      if (pendingImageUrl) URL.revokeObjectURL(pendingImageUrl);
+      pendingImage = null;
+      pendingImageUrl = null;
+      previewRowEl.innerHTML = '';
+      previewRowEl.classList.remove('active');
+      setMode('chat');
     }
 
-    function switchArtifactView(view) {
-      document.querySelectorAll('.artifact-tab').forEach(t => t.classList.remove('active'));
-      document.querySelector(`.artifact-tab[data-view="${view}"]`).classList.add('active');
-      
-      artifactCodeView.classList.toggle('active', view === 'code');
-      artifactPreviewView.classList.toggle('active', view === 'preview');
-    }
-
-    function copyArtifact() {
-      if (!state.currentArtifact) return;
-      navigator.clipboard.writeText(state.currentArtifact.code);
-      showToast('Code copied!');
-    }
-
-    function downloadArtifact() {
-      if (!state.currentArtifact) return;
-      const ext = state.currentArtifact.type === 'html' ? 'html' : state.currentArtifact.type;
-      const blob = new Blob([state.currentArtifact.code], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `artifact.${ext}`;
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast('Downloaded!');
-    }
-
-    function openInNewTab() {
-      if (!state.currentArtifact) return;
-      const win = window.open('', '_blank');
-      win.document.write(state.currentArtifact.code);
-      win.document.close();
-    }
-
-    // ==================== IMAGE PROCESSING ====================
-    async function fileToDataUrl(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(new Error('Failed to read file'));
-        reader.readAsDataURL(file);
+    async function toDataUrl(file) {
+      return new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = () => res(r.result);
+        r.onerror = rej;
+        r.readAsDataURL(file);
       });
     }
 
-    async function fileToBitmap(file) {
+    async function toBitmap(file) {
       try {
-        return await createImageBitmap(file, { imageOrientation: 'from-image' });
+        return await createImageBitmap(file);
       } catch {
-        const url = await fileToDataUrl(file);
-        return new Promise((resolve, reject) => {
+        const url = await toDataUrl(file);
+        return new Promise((res, rej) => {
           const img = new Image();
-          img.onload = () => resolve(img);
-          img.onerror = () => reject(new Error('Failed'));
+          img.onload = () => res(img);
+          img.onerror = rej;
           img.src = url;
         });
       }
     }
 
-    function canvasToJpeg(canvas, q = 0.95) {
+    function toJpeg(canvas, q = 0.92) {
       return canvas.toDataURL('image/jpeg', q);
     }
 
-    function resizeCanvas(drawable, max = 2400) {
-      const scale = Math.min(1, max / Math.max(drawable.width, drawable.height));
-      const w = Math.round(drawable.width * scale);
-      const h = Math.round(drawable.height * scale);
+    function resize(src, max = 1800) {
+      const scale = Math.min(1, max / Math.max(src.width, src.height));
+      const w = Math.round(src.width * scale);
+      const h = Math.round(src.height * scale);
       const c = document.createElement('canvas');
       c.width = w; c.height = h;
-      const ctx = c.getContext('2d', { alpha: false });
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(drawable, 0, 0, w, h);
+      const ctx = c.getContext('2d');
+      ctx.drawImage(src, 0, 0, w, h);
       return c;
     }
 
-    function cropCanvas(src, x, y, w, h) {
-      const c = document.createElement('canvas');
-      c.width = w; c.height = h;
-      const ctx = c.getContext('2d', { alpha: false });
-      ctx.drawImage(src, x, y, w, h, 0, 0, w, h);
-      return canvasToJpeg(c, 0.95);
-    }
-
-    async function buildVisionPack(file) {
-      const bmp = await fileToBitmap(file);
-      const base = resizeCanvas(bmp, 2400);
-      const full = canvasToJpeg(base, 0.95);
-      
-      const W = base.width, H = base.height;
-      const hW = Math.floor(W/2), hH = Math.floor(H/2);
-      
-      const crops = [
-        { label: 'TOP-LEFT', data: cropCanvas(base, 0, 0, hW, hH) },
-        { label: 'TOP-RIGHT', data: cropCanvas(base, hW, 0, W-hW, hH) },
-        { label: 'BOTTOM-LEFT', data: cropCanvas(base, 0, hH, hW, H-hH) },
-        { label: 'BOTTOM-RIGHT', data: cropCanvas(base, hW, hH, W-hW, H-hH) },
-        { label: 'CENTER', data: cropCanvas(base, Math.floor(W*0.25), Math.floor(H*0.25), Math.floor(W*0.5), Math.floor(H*0.5)) }
-      ];
-      
-      return { full, crops, displayUrl: URL.createObjectURL(file) };
-    }
-
-    function dataUrlToParts(url) {
-      const m = url.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
-      if (!m) throw new Error('Invalid');
+    async function buildImageData(file) {
+      const bmp = await toBitmap(file);
+      const canvas = resize(bmp, 1800);
+      const dataUrl = toJpeg(canvas, 0.92);
+      const m = dataUrl.match(/^data:(image\/\w+);base64,(.+)$/);
       return { media_type: m[1], data: m[2] };
     }
 
-    function makeImageBlock(url) {
-      const { media_type, data } = dataUrlToParts(url);
-      return { type: 'image', source: { type: 'base64', media_type, data } };
-    }
-
-    // ==================== CHAT UI ====================
-    function addMessage({ role, text, images = [] }) {
+    // ============ CHAT UI ============
+    function addMsg(role, text, imgUrl = null) {
       welcomeEl.style.display = 'none';
       
-      const msg = document.createElement('div');
-      msg.className = 'message';
+      const div = document.createElement('div');
+      div.className = 'msg';
       
-      const isAssistant = role === 'assistant';
+      const isAI = role === 'assistant';
       
-      let imagesHtml = '';
-      if (images.length) {
-        imagesHtml = `<div class="message-images">
-          ${images.map(u => `<img src="${u}" class="message-image" onclick="openImageModal('${u}')" />`).join('')}
-        </div>`;
+      let imgHtml = '';
+      if (imgUrl) {
+        imgHtml = `<div class="msg-images"><img src="${imgUrl}" onclick="openModal('${imgUrl}')" /></div>`;
       }
       
-      msg.innerHTML = `
-        <div class="message-avatar ${role}">${isAssistant ? '✦' : '👤'}</div>
-        <div class="message-body">
-          <div class="message-header">
-            <span class="message-name">${isAssistant ? 'Claude' : 'You'}</span>
-            <span class="message-time">${getTime()}</span>
-          </div>
-          ${imagesHtml}
-          <div class="message-content"></div>
+      div.innerHTML = `
+        <div class="msg-avatar ${role}">${isAI ? '✦' : '👤'}</div>
+        <div class="msg-body">
+          <div class="msg-name">${isAI ? 'Claude' : 'You'}</div>
+          ${imgHtml}
+          <div class="msg-content"></div>
         </div>
       `;
       
-      chatContainer.appendChild(msg);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+      chatEl.appendChild(div);
+      chatEl.scrollTop = chatEl.scrollHeight;
       
-      return msg.querySelector('.message-content');
+      return div.querySelector('.msg-content');
     }
 
     function addTyping() {
       welcomeEl.style.display = 'none';
       
-      const msg = document.createElement('div');
-      msg.className = 'message';
-      msg.id = 'typingMsg';
-      msg.innerHTML = `
-        <div class="message-avatar assistant">✦</div>
-        <div class="message-body">
-          <div class="message-header">
-            <span class="message-name">Claude</span>
-          </div>
-          <div class="typing-indicator">
+      const div = document.createElement('div');
+      div.className = 'msg';
+      div.id = 'typingMsg';
+      div.innerHTML = `
+        <div class="msg-avatar assistant">✦</div>
+        <div class="msg-body">
+          <div class="msg-name">Claude</div>
+          <div class="typing">
             <div class="typing-dots"><span></span><span></span><span></span></div>
             <span class="typing-text">Thinking...</span>
           </div>
         </div>
       `;
-      chatContainer.appendChild(msg);
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+      chatEl.appendChild(div);
+      chatEl.scrollTop = chatEl.scrollHeight;
     }
 
     function removeTyping() {
-      document.getElementById('typingMsg')?.remove();
+      const el = document.getElementById('typingMsg');
+      if (el) el.remove();
     }
 
-    // ==================== PREVIEW ====================
-    function renderPreview() {
-      if (state.pendingPreviewUrl) {
-        URL.revokeObjectURL(state.pendingPreviewUrl);
-        state.pendingPreviewUrl = null;
-      }
+    // ============ API ============
+    async function callVision(model, text, imageData) {
+      const content = [
+        {
+          type: 'image',
+          source: {
+            type: 'base64',
+            media_type: imageData.media_type,
+            data: imageData.data
+          }
+        },
+        {
+          type: 'text',
+          text: VISION_PROMPT + '\n\nUser: ' + (text || 'Analyze this image.')
+        }
+      ];
       
-      previewArea.innerHTML = '';
-      
-      if (!state.pendingFile) {
-        previewArea.classList.remove('active');
-        updateMode('chat');
-        return;
-      }
-      
-      previewArea.classList.add('active');
-      updateMode('vision');
-      
-      const url = URL.createObjectURL(state.pendingFile);
-      state.pendingPreviewUrl = url;
-      
-      previewArea.innerHTML = `
-        <div class="preview-item">
-          <img src="${url}" onclick="openImageModal('${url}')" />
-          <button class="preview-remove" onclick="removeImage()">×</button>
-        </div>
-      `;
+      return await puter.ai.chat([{ role: 'user', content }], { model, stream: true });
     }
 
-    function removeImage() {
-      state.pendingFile = null;
-      renderPreview();
-    }
-
-    // ==================== API CALLS ====================
-    async function callVision({ model, userText, pack }) {
-      const blocks = [];
+    async function callChat(model, text) {
+      // Add to history
+      chatHistory.push({ role: 'user', content: text });
       
-      blocks.push({ type: 'text', text: '[FULL IMAGE]' });
-      blocks.push(makeImageBlock(pack.full));
-      
-      for (const crop of pack.crops) {
-        blocks.push({ type: 'text', text: `[CROP: ${crop.label}]` });
-        blocks.push(makeImageBlock(crop.data));
-      }
-      
-      const prompt = `${VISION_PROMPT}\n\n---\n\nUSER: ${userText || 'Analyze this image thoroughly.'}`;
-      blocks.push({ type: 'text', text: prompt });
-      
-      return await puter.ai.chat([{ role: 'user', content: blocks }], { model, stream: true });
-    }
-
-    async function callChat({ model, userText }) {
-      state.conversationHistory.push({ role: 'user', content: userText });
-      
-      const systemMsg = { role: 'user', content: CODE_PROMPT };
-      const messages = [systemMsg, ...state.conversationHistory.slice(-20)];
+      // Build messages with system prompt
+      const messages = [
+        { role: 'user', content: CODE_PROMPT },
+        { role: 'assistant', content: 'Understood! I will create complete, working code with live previews using the artifact format.' },
+        ...chatHistory.slice(-20)
+      ];
       
       return await puter.ai.chat(messages, { model, stream: true });
     }
 
-    // ==================== SEND ====================
+    // ============ SEND ============
     async function send() {
-      if (state.busy) return;
+      if (busy) return;
       
-      const userText = textInput.value.trim();
-      const hasImage = !!state.pendingFile;
+      const text = inputEl.value.trim();
+      const hasImage = !!pendingImage;
       
-      if (!userText && !hasImage) return;
+      if (!text && !hasImage) return;
       
-      state.busy = true;
-      sendBtn.disabled = true;
+      busy = true;
+      sendBtnEl.disabled = true;
       
       try {
-        let pack = null;
+        const model = modelSelectEl.value;
         let displayUrl = null;
+        let imageData = null;
         
-        // If there's an image, process it (ONE TIME ONLY)
+        // Process image if present (ONE TIME ONLY)
         if (hasImage) {
-          pack = await buildVisionPack(state.pendingFile);
-          displayUrl = pack.displayUrl;
+          displayUrl = pendingImageUrl;
+          imageData = await buildImageData(pendingImage);
           
-          // CLEAR the image after use!
-          state.pendingFile = null;
-          renderPreview();
+          // Clear image immediately
+          pendingImage = null;
+          pendingImageUrl = null;
+          previewRowEl.innerHTML = '';
+          previewRowEl.classList.remove('active');
+          setMode('chat');
         }
         
         // Show user message
-        addMessage({
-          role: 'user',
-          text: userText || 'Analyze this image.',
-          images: displayUrl ? [displayUrl] : []
-        });
+        addMsg('user', text || 'Analyze this image.', displayUrl);
         
-        textInput.value = '';
+        // Clear input
+        inputEl.value = '';
         autoResize();
         
+        // Show typing
         addTyping();
         
-        const model = modelSelect.value;
-        
-        // Call appropriate API
+        // Call API
         let stream;
-        if (pack) {
-          stream = await callVision({ model, userText, pack });
+        if (imageData) {
+          stream = await callVision(model, text, imageData);
         } else {
-          stream = await callChat({ model, userText });
+          stream = await callChat(model, text);
         }
         
         removeTyping();
         
-        const contentEl = addMessage({ role: 'assistant', text: '' });
+        // Stream response
+        const contentEl = addMsg('assistant', '');
         let fullText = '';
         
-        for await (const part of stream) {
-          if (part?.text) {
-            fullText += part.text;
-            contentEl.innerHTML = parseAndRender(fullText);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
+        for await (const chunk of stream) {
+          if (chunk?.text) {
+            fullText += chunk.text;
+            contentEl.innerHTML = render(fullText);
+            chatEl.scrollTop = chatEl.scrollHeight;
           }
         }
         
-        // Add to history for context (text only, not images)
-        if (!pack) {
-          state.conversationHistory.push({ role: 'assistant', content: fullText });
+        // Save to history (text chat only)
+        if (!imageData && fullText) {
+          chatHistory.push({ role: 'assistant', content: fullText });
         }
         
-        if (!fullText.trim()) {
-          contentEl.innerHTML = '<em style="color:var(--text-muted)">No response received. Try again.</em>';
+        if (!fullText) {
+          contentEl.innerHTML = '<em style="color:var(--text3)">No response. Try again.</em>';
         }
         
       } catch (err) {
         removeTyping();
-        addMessage({
-          role: 'assistant',
-          text: `❌ Error: ${err?.message || err}\n\nTry switching models.`
-        });
+        addMsg('assistant', '❌ Error: ' + (err?.message || err));
         console.error(err);
-      } finally {
-        state.busy = false;
-        sendBtn.disabled = false;
-        textInput.focus();
       }
+      
+      busy = false;
+      sendBtnEl.disabled = false;
+      inputEl.focus();
     }
 
-    // ==================== HELPERS ====================
-    function triggerUpload() {
-      fileInput.click();
+    // ============ ARTIFACTS PANEL ============
+    function openPanel() {
+      if (!currentArtifact) return;
+      
+      panelTitleEl.textContent = currentArtifact.type.toUpperCase();
+      panelCodeContentEl.textContent = currentArtifact.code;
+      hljs.highlightElement(panelCodeContentEl);
+      
+      if (currentArtifact.type === 'html') {
+        panelFrameEl.srcdoc = currentArtifact.code;
+      }
+      
+      artifactsPanelEl.classList.add('open');
     }
 
+    function closePanel() {
+      artifactsPanelEl.classList.remove('open');
+    }
+
+    function showPanelView(view) {
+      document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      
+      panelCodeEl.classList.toggle('active', view === 'code');
+      panelPreviewEl.classList.toggle('active', view === 'preview');
+    }
+
+    function copyCode() {
+      if (!currentArtifact) return;
+      navigator.clipboard.writeText(currentArtifact.code);
+      toast('Copied!');
+    }
+
+    function downloadCode() {
+      if (!currentArtifact) return;
+      const blob = new Blob([currentArtifact.code], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'artifact.' + currentArtifact.type;
+      a.click();
+      toast('Downloaded!');
+    }
+
+    function openNewTab() {
+      if (!currentArtifact) return;
+      const w = window.open('', '_blank');
+      w.document.write(currentArtifact.code);
+      w.document.close();
+    }
+
+    // ============ HELPERS ============
     function setPrompt(text) {
-      textInput.value = text;
+      inputEl.value = text;
       autoResize();
-      textInput.focus();
-    }
-
-    function openImageModal(src) {
-      modalImage.src = src;
-      imageModal.classList.add('active');
-    }
-
-    function closeModal() {
-      imageModal.classList.remove('active');
+      inputEl.focus();
     }
 
     function newChat() {
-      state.conversationHistory = [];
-      state.currentArtifact = null;
-      state.pendingFile = null;
-      renderPreview();
-      closeArtifacts();
-      
-      chatContainer.innerHTML = '';
-      chatContainer.appendChild(welcomeEl);
+      chatHistory = [];
+      currentArtifact = null;
+      removeImage();
+      closePanel();
+      chatEl.innerHTML = '';
+      chatEl.appendChild(welcomeEl);
       welcomeEl.style.display = '';
-      
-      showToast('New chat started');
+      toast('New chat started');
     }
 
-    // ==================== EVENTS ====================
-    imageBtn.addEventListener('click', triggerUpload);
-    
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files?.[0];
-      if (file?.type.startsWith('image/')) {
-        state.pendingFile = file;
-        renderPreview();
-        showToast('Image ready!');
-      }
-      fileInput.value = '';
+    function openModal(src) {
+      modalImgEl.src = src;
+      modalEl.classList.add('active');
+    }
+
+    function closeModal() {
+      modalEl.classList.remove('active');
+    }
+
+    // ============ EVENTS ============
+    fileInputEl.addEventListener('change', e => {
+      loadImage(e.target.files?.[0]);
+      fileInputEl.value = '';
     });
+
+    inputEl.addEventListener('input', autoResize);
     
-    sendBtn.addEventListener('click', send);
-    newChatBtn.addEventListener('click', newChat);
-    
-    textInput.addEventListener('input', autoResize);
-    textInput.addEventListener('keydown', (e) => {
+    inputEl.addEventListener('keydown', e => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         send();
       }
     });
-    
+
     // Paste
-    document.addEventListener('paste', (e) => {
-      const item = Array.from(e.clipboardData?.items || []).find(i => i.type.startsWith('image/'));
+    document.addEventListener('paste', e => {
+      const item = [...(e.clipboardData?.items || [])].find(i => i.type.startsWith('image/'));
       if (item) {
         e.preventDefault();
-        state.pendingFile = item.getAsFile();
-        renderPreview();
-        showToast('Image pasted!');
+        loadImage(item.getAsFile());
       }
     });
+
+    // Drag & drop
+    let dragCount = 0;
     
-    // Drag & Drop
-    let dragCounter = 0;
-    document.addEventListener('dragenter', (e) => { e.preventDefault(); dragCounter++; dropOverlay.classList.add('active'); });
-    document.addEventListener('dragover', (e) => e.preventDefault());
-    document.addEventListener('dragleave', (e) => { e.preventDefault(); if (--dragCounter <= 0) dropOverlay.classList.remove('active'); });
-    document.addEventListener('drop', (e) => {
+    document.addEventListener('dragenter', e => {
       e.preventDefault();
-      dragCounter = 0;
-      dropOverlay.classList.remove('active');
-      const file = e.dataTransfer?.files?.[0];
-      if (file?.type.startsWith('image/')) {
-        state.pendingFile = file;
-        renderPreview();
-        showToast('Image dropped!');
-      }
+      dragCount++;
+      dropOverlayEl.classList.add('active');
     });
     
-    // Modal
-    imageModal.addEventListener('click', (e) => { if (e.target === imageModal) closeModal(); });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeModal(); closeArtifacts(); } });
+    document.addEventListener('dragover', e => e.preventDefault());
     
+    document.addEventListener('dragleave', e => {
+      e.preventDefault();
+      if (--dragCount <= 0) dropOverlayEl.classList.remove('active');
+    });
+    
+    document.addEventListener('drop', e => {
+      e.preventDefault();
+      dragCount = 0;
+      dropOverlayEl.classList.remove('active');
+      loadImage(e.dataTransfer?.files?.[0]);
+    });
+
+    // Modal
+    modalEl.addEventListener('click', e => {
+      if (e.target === modalEl) closeModal();
+    });
+    
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeModal();
+        closePanel();
+      }
+    });
+
     // Init
-    textInput.focus();
+    inputEl.focus();
   </script>
 </body>
 </html>
