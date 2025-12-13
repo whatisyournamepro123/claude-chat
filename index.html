@@ -3,16 +3,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Claude AI (Puter)</title>
+  <title>Claude AI (Puter) — Stable</title>
 
   <script src="https://js.puter.com/v2/"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
   <style>
     :root{
@@ -46,12 +43,8 @@
       overflow: hidden;
     }
 
-    .app{
-      height:100%;
-      display:flex;
-    }
+    .app{ height:100%; display:flex; }
 
-    /* ===== main ===== */
     .main{
       flex: 1;
       min-width: 0;
@@ -90,6 +83,7 @@
       color: #0b0b0d;
       box-shadow: 0 0 35px rgba(201,168,124,.18);
       font-weight: 900;
+      user-select: none;
     }
 
     .controls{
@@ -115,6 +109,8 @@
     }
     .dot{ width:8px; height:8px; border-radius:999px; background: var(--ok); box-shadow: 0 0 10px rgba(74,222,128,.45); }
     .dot.vision{ background: var(--purple); box-shadow: 0 0 10px rgba(167,139,250,.45); }
+    .dot.warn{ background: var(--warn); box-shadow: 0 0 10px rgba(251,191,36,.45); }
+    .dot.err{ background: var(--err); box-shadow: 0 0 10px rgba(251,113,133,.45); }
 
     select{
       appearance:none;
@@ -146,11 +142,30 @@
       color: var(--text);
     }
 
-    /* ===== chat ===== */
+    .btn.primary{
+      border: none;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #0b0b0d;
+      font-weight: 800;
+    }
+
+    .banner{
+      max-width: 860px;
+      margin: 12px auto 0;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      display:none;
+    }
+    .banner.show{ display:block; }
+    .banner strong{ color: var(--text); }
+
     .chat{
       flex:1;
       overflow:auto;
-      padding: 16px;
+      padding: 8px 16px 18px;
     }
 
     .chat::-webkit-scrollbar{ width: 8px; }
@@ -159,7 +174,7 @@
 
     .welcome{
       max-width: 860px;
-      margin: 42px auto 0;
+      margin: 24px auto 0;
       border: 1px solid var(--border);
       border-radius: 18px;
       padding: 22px;
@@ -196,10 +211,7 @@
       box-shadow: 0 0 18px rgba(201,168,124,.12);
     }
 
-    .bubble{
-      flex:1 1 auto;
-      min-width:0;
-    }
+    .bubble{ flex:1 1 auto; min-width:0; }
     .meta{
       display:flex;
       justify-content:space-between;
@@ -237,6 +249,7 @@
       line-height: 1.75;
       color: var(--text);
       word-break: break-word;
+      white-space: pre-wrap;
     }
     .text code{
       font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -252,13 +265,14 @@
       border-radius: 14px;
       overflow:auto;
       margin: 12px 0;
+      background: #0d1117;
     }
     .text pre code{
       display:block;
       padding: 14px;
       background: #0d1117;
       border: none;
-      color: inherit;
+      color: #e5e7eb;
     }
 
     .typing{
@@ -281,7 +295,6 @@
     .dots span:nth-child(3){ animation-delay: .24s; }
     @keyframes bounce{ 0%, 60%, 100%{ transform:none; opacity:.5 } 30%{ transform: translateY(-6px); opacity: 1 } }
 
-    /* ===== composer ===== */
     .composer{
       padding: 14px 16px 18px;
       border-top: 1px solid var(--border);
@@ -323,6 +336,7 @@
       height:100%;
       object-fit: cover;
       display:block;
+      cursor:pointer;
     }
     .preview-remove{
       position:absolute;
@@ -381,7 +395,51 @@
     .send:hover{ transform: translateY(-1px); }
     .send:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
 
-    /* ===== artifacts panel ===== */
+    /* Artifact card */
+    .artifactCard{
+      margin-top: 12px;
+      border: 1px solid rgba(255,255,255,.10);
+      border-radius: 14px;
+      overflow: hidden;
+      background: rgba(255,255,255,.03);
+    }
+    .artifactHead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+    .artifactName{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      font-size: 12px;
+    }
+    .bolt{
+      width:22px; height:22px;
+      border-radius:8px;
+      display:grid; place-items:center;
+      background: linear-gradient(135deg, var(--purple), #7c3aed);
+      color:#0b0b0d;
+      font-weight:900;
+      user-select:none;
+    }
+    .artifactBtns{
+      display:flex; gap: 8px; flex-wrap:wrap;
+    }
+    .artifactBody{
+      height: 230px;
+      background: #fff;
+    }
+    .artifactBody iframe{
+      width:100%; height:100%; border:none;
+    }
+
+    /* Side panel (artifacts) */
     .side{
       width: 0;
       border-left: 1px solid var(--border);
@@ -395,8 +453,7 @@
     .side.open{
       width: min(52vw, 620px);
     }
-
-    .side-head{
+    .sideHead{
       padding: 12px 14px;
       border-bottom: 1px solid var(--border);
       display:flex;
@@ -405,26 +462,14 @@
       gap:10px;
       background: rgba(21,21,27,.9);
     }
-    .side-title{
+    .sideTitle{
       font-weight: 700;
       font-size: 13px;
       display:flex;
       align-items:center;
       gap: 10px;
     }
-    .side-title .bolt{
-      width: 28px; height:28px;
-      border-radius: 10px;
-      display:grid; place-items:center;
-      background: linear-gradient(135deg, var(--purple), #7c3aed);
-      color: #0b0b0d;
-      font-weight: 900;
-    }
-    .side-tabs{
-      display:flex;
-      gap: 6px;
-      align-items:center;
-    }
+    .sideTabs{ display:flex; gap: 6px; align-items:center; }
     .tab{
       padding: 8px 10px;
       border-radius: 10px;
@@ -451,27 +496,22 @@
     }
     .xbtn:hover{ background: rgba(255,255,255,.06); color: var(--text); }
 
-    .side-body{
-      flex:1;
-      overflow:hidden;
-      display:flex;
-      flex-direction:column;
-    }
+    .sideBody{ flex:1; overflow:hidden; display:flex; flex-direction:column; }
     .codeview, .previewview{ flex:1; overflow:auto; display:none; }
     .codeview.active{ display:block; }
     .previewview.active{ display:block; background:#fff; }
     .codeview pre{ margin:0; min-height:100%; background:#0d1117; }
-    .codeview code{ display:block; padding: 14px; font-family:"JetBrains Mono", monospace; font-size: 13px; line-height: 1.6; }
+    .codeview code{ display:block; padding: 14px; font-family:"JetBrains Mono", monospace; font-size: 13px; line-height: 1.6; color:#e5e7eb; }
     .previewview iframe{ width:100%; height:100%; border:none; }
 
-    .side-actions{
+    .sideActions{
       padding: 12px 14px;
       border-top: 1px solid var(--border);
       display:flex;
       gap: 10px;
       background: rgba(21,21,27,.9);
     }
-    .side-actions button{
+    .sideActions button{
       flex:1;
       padding: 10px 12px;
       border-radius: 12px;
@@ -481,15 +521,41 @@
       cursor:pointer;
       font-size: 12px;
     }
-    .side-actions button:hover{ background: rgba(255,255,255,.08); border-color: var(--border2); }
-    .side-actions button.primary{
+    .sideActions button:hover{ background: rgba(255,255,255,.08); border-color: var(--border2); }
+    .sideActions button.primary{
       border:none;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       color: #0b0b0d;
       font-weight: 800;
     }
 
-    /* ===== modal ===== */
+    /* diagnostics panel */
+    .diag{
+      max-width: 860px;
+      margin: 10px auto 0;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      padding: 10px 12px;
+      display:none;
+    }
+    .diag.show{ display:block; }
+    .diag pre{
+      margin-top: 8px;
+      padding: 10px;
+      border-radius: 12px;
+      background: #0d1117;
+      border: 1px solid rgba(255,255,255,.10);
+      color: #e5e7eb;
+      overflow:auto;
+      max-height: 160px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 12px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    /* modal */
     .modal{
       position:fixed;
       inset:0;
@@ -520,7 +586,7 @@
       font-size: 18px;
     }
 
-    /* ===== drop overlay ===== */
+    /* drop overlay */
     .drop{
       position: fixed;
       inset: 0;
@@ -553,31 +619,47 @@
         </div>
 
         <div class="controls">
-          <div class="pill" id="modePill">
+          <div class="pill" id="statusPill" title="Status">
+            <span class="dot" id="statusDot"></span>
+            <span id="statusLabel">Ready</span>
+          </div>
+
+          <div class="pill" id="modePill" title="Mode">
             <span class="dot" id="modeDot"></span>
             <span id="modeLabel">Chat</span>
           </div>
 
-          <select id="modelSelect">
+          <select id="modelSelect" title="Model">
             <option value="claude-opus-4-5">Claude Opus 4.5</option>
             <option value="claude-sonnet-4-5" selected>Claude Sonnet 4.5</option>
             <option value="claude-haiku-4-5">Claude Haiku 4.5</option>
             <option value="gpt-4o">GPT-4o (backup)</option>
           </select>
 
-          <button class="btn" id="newBtn">New chat</button>
+          <button class="btn" id="connectBtn" type="button">Connect</button>
+          <button class="btn" id="repairBtn" type="button">Repair</button>
+          <button class="btn" id="diagBtn" type="button">Diagnostics</button>
+          <button class="btn" id="newBtn" type="button">New chat</button>
         </div>
+      </div>
+
+      <div class="banner" id="banner"></div>
+      <div class="diag" id="diag">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+          <div style="color:var(--muted);font-size:12px;">
+            <strong>Diagnostics</strong> (auto-captures errors; also auto-repairs stuck UI)
+          </div>
+          <button class="btn" id="clearLogsBtn" type="button" style="padding:8px 10px;">Clear</button>
+        </div>
+        <pre id="diagLog"></pre>
       </div>
 
       <div class="chat" id="chat">
         <div class="welcome" id="welcome">
-          <h1>Ask anything — upload an image if you want.</h1>
+          <h1>Send should always work in this build.</h1>
           <p>
-            Text chat has memory. Image questions use the image <b>one time</b> (it won’t keep reusing it).
-            If you ask for a website, I’ll try to return an <b>artifact</b> you can preview and download.
-          </p>
-          <p style="margin-top:10px;color:var(--muted2);font-size:13px;">
-            If you ever get stuck on “Thinking…”, it’s usually popups/adblock blocking Puter login. Allow popups for this site.
+            If you get stuck: click <b>Repair</b>. If it still fails: click <b>Connect</b> (forces Puter auth).
+            Popups/adblock can block Puter — this page will show the real error in Diagnostics.
           </p>
         </div>
       </div>
@@ -588,8 +670,8 @@
 
           <div class="row">
             <textarea id="input" rows="1" placeholder="Message Claude… (Enter to send, Shift+Enter newline)"></textarea>
-            <button class="iconbtn" id="imageBtn" title="Upload image">📷</button>
-            <button class="send" id="sendBtn" title="Send">➤</button>
+            <button class="iconbtn" id="imageBtn" type="button" title="Upload image">📷</button>
+            <button class="send" id="sendBtn" type="button" title="Send">➤</button>
           </div>
         </div>
 
@@ -599,24 +681,24 @@
 
     <!-- Artifacts side panel -->
     <aside class="side" id="side">
-      <div class="side-head">
-        <div class="side-title"><span class="bolt">⚡</span><span id="artifactTitle">Artifact</span></div>
-        <div class="side-tabs">
-          <button class="tab active" id="tabCode">Code</button>
-          <button class="tab" id="tabPrev">Preview</button>
+      <div class="sideHead">
+        <div class="sideTitle"><span class="bolt">⚡</span><span id="artifactTitle">Artifact</span></div>
+        <div class="sideTabs">
+          <button class="tab active" id="tabCode" type="button">Code</button>
+          <button class="tab" id="tabPrev" type="button">Preview</button>
         </div>
-        <button class="xbtn" id="closeSide">×</button>
+        <button class="xbtn" id="closeSide" type="button">×</button>
       </div>
 
-      <div class="side-body">
+      <div class="sideBody">
         <div class="codeview active" id="codeView"><pre><code id="artifactCode"></code></pre></div>
         <div class="previewview" id="prevView"><iframe id="artifactFrame" sandbox="allow-scripts"></iframe></div>
       </div>
 
-      <div class="side-actions">
-        <button id="copyArtifact">Copy</button>
-        <button id="downloadArtifact">Download</button>
-        <button class="primary" id="openArtifact">Open</button>
+      <div class="sideActions">
+        <button id="copyArtifact" type="button">Copy</button>
+        <button id="downloadArtifact" type="button">Download</button>
+        <button class="primary" id="openArtifact" type="button">Open</button>
       </div>
     </aside>
   </div>
@@ -627,7 +709,7 @@
   </div>
 
   <div class="modal" id="modal">
-    <button id="closeModal">×</button>
+    <button id="closeModal" type="button">×</button>
     <img id="modalImg" alt="image" />
   </div>
 
@@ -639,46 +721,63 @@
       busy: false,
       pendingFile: null,
       pendingPreviewUrl: null,
-      history: [], // {role:'user'|'assistant', content:string}
-      artifacts: new Map(), // id -> {type, code, name}
-      currentArtifactId: null
+      displayedUrls: [], // objectURLs we should revoke on New chat
+      history: [],       // {role:'user'|'assistant', content:string}
+      artifacts: new Map(),
+      currentArtifactId: null,
+      watchdog: null,
+      logs: []
     };
 
     // ---------------------------
     // Elements
     // ---------------------------
-    const chatEl = document.getElementById('chat');
-    const welcomeEl = document.getElementById('welcome');
-    const inputEl = document.getElementById('input');
-    const sendBtnEl = document.getElementById('sendBtn');
-    const imageBtnEl = document.getElementById('imageBtn');
-    const fileInputEl = document.getElementById('fileInput');
-    const previewEl = document.getElementById('preview');
-    const modelSelectEl = document.getElementById('modelSelect');
-    const newBtnEl = document.getElementById('newBtn');
+    const $ = (id) => document.getElementById(id);
 
-    const modePillEl = document.getElementById('modePill');
-    const modeDotEl = document.getElementById('modeDot');
-    const modeLabelEl = document.getElementById('modeLabel');
+    const chatEl = $('chat');
+    const welcomeEl = $('welcome');
+    const inputEl = $('input');
+    const sendBtnEl = $('sendBtn');
+    const imageBtnEl = $('imageBtn');
+    const fileInputEl = $('fileInput');
+    const previewEl = $('preview');
+    const modelSelectEl = $('modelSelect');
 
-    const sideEl = document.getElementById('side');
-    const artifactTitleEl = document.getElementById('artifactTitle');
-    const artifactCodeEl = document.getElementById('artifactCode');
-    const artifactFrameEl = document.getElementById('artifactFrame');
-    const codeViewEl = document.getElementById('codeView');
-    const prevViewEl = document.getElementById('prevView');
-    const tabCodeEl = document.getElementById('tabCode');
-    const tabPrevEl = document.getElementById('tabPrev');
-    const closeSideEl = document.getElementById('closeSide');
-    const copyArtifactEl = document.getElementById('copyArtifact');
-    const downloadArtifactEl = document.getElementById('downloadArtifact');
-    const openArtifactEl = document.getElementById('openArtifact');
+    const bannerEl = $('banner');
+    const statusPillEl = $('statusPill');
+    const statusDotEl = $('statusDot');
+    const statusLabelEl = $('statusLabel');
+    const modePillEl = $('modePill');
+    const modeDotEl = $('modeDot');
+    const modeLabelEl = $('modeLabel');
 
-    const dropEl = document.getElementById('drop');
+    const connectBtnEl = $('connectBtn');
+    const repairBtnEl = $('repairBtn');
+    const diagBtnEl = $('diagBtn');
+    const newBtnEl = $('newBtn');
 
-    const modalEl = document.getElementById('modal');
-    const modalImgEl = document.getElementById('modalImg');
-    const closeModalEl = document.getElementById('closeModal');
+    const diagEl = $('diag');
+    const diagLogEl = $('diagLog');
+    const clearLogsBtnEl = $('clearLogsBtn');
+
+    const sideEl = $('side');
+    const artifactTitleEl = $('artifactTitle');
+    const artifactCodeEl = $('artifactCode');
+    const artifactFrameEl = $('artifactFrame');
+    const codeViewEl = $('codeView');
+    const prevViewEl = $('prevView');
+    const tabCodeEl = $('tabCode');
+    const tabPrevEl = $('tabPrev');
+    const closeSideEl = $('closeSide');
+    const copyArtifactEl = $('copyArtifact');
+    const downloadArtifactEl = $('downloadArtifact');
+    const openArtifactEl = $('openArtifact');
+
+    const dropEl = $('drop');
+
+    const modalEl = $('modal');
+    const modalImgEl = $('modalImg');
+    const closeModalEl = $('closeModal');
 
     // ---------------------------
     // Prompts
@@ -691,17 +790,23 @@ Use this exact format:
 \`\`\`artifact:html
 <!doctype html>
 <html>
-<head>...CSS...</head>
-<body>...HTML...
-<script>...JS...</script>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>...</title>
+  <style>/* full CSS */</style>
+</head>
+<body>
+  <!-- full HTML -->
+  <script>/* full JS if needed */</script>
 </body>
 </html>
 \`\`\`
 
 Rules:
-- Always include full HTML (with CSS + JS if needed).
-- Make it polished, responsive, and modern.
-- Avoid placeholders like "..." in critical parts; output real code.
+- Always include full HTML (CSS + JS if needed).
+- Make it polished, responsive, modern.
+- Do NOT leave "..." in important parts.
 `.trim();
 
     const VISION_SYSTEM = `
@@ -712,73 +817,133 @@ If unsure, say what is unclear.
 `.trim();
 
     // ---------------------------
-    // Helpers
+    // Diagnostics + self healing
     // ---------------------------
-    function setMode(mode){
-      if (mode === 'vision'){
-        modeDotEl.classList.add('vision');
-        modeLabelEl.textContent = 'Vision';
-      } else {
-        modeDotEl.classList.remove('vision');
-        modeLabelEl.textContent = 'Chat';
-      }
+    function log(msg, obj) {
+      const line = `[${new Date().toISOString()}] ${msg}` + (obj ? `\n${safeStringify(obj)}` : '');
+      state.logs.push(line);
+      if (state.logs.length > 200) state.logs.shift();
+      diagLogEl.textContent = state.logs.join('\n\n');
     }
 
-    function scrollToBottom(){
-      chatEl.scrollTop = chatEl.scrollHeight;
+    function safeStringify(x) {
+      try { return typeof x === 'string' ? x : JSON.stringify(x, null, 2); }
+      catch { return String(x); }
     }
 
-    function autosize(){
+    function showBanner(html) {
+      bannerEl.innerHTML = html;
+      bannerEl.classList.add('show');
+    }
+    function hideBanner() {
+      bannerEl.classList.remove('show');
+      bannerEl.innerHTML = '';
+    }
+
+    function setStatus(kind, text) {
+      statusDotEl.className = 'dot';
+      if (kind === 'ok') statusDotEl.classList.add();
+      if (kind === 'warn') statusDotEl.classList.add('warn');
+      if (kind === 'err') statusDotEl.classList.add('err');
+      statusLabelEl.textContent = text;
+    }
+
+    function setMode(mode) {
+      modeDotEl.className = 'dot';
+      if (mode === 'vision') modeDotEl.classList.add('vision');
+      modeLabelEl.textContent = mode === 'vision' ? 'Vision' : 'Chat';
+    }
+
+    function autosize() {
       inputEl.style.height = 'auto';
       inputEl.style.height = Math.min(inputEl.scrollHeight, 160) + 'px';
     }
 
-    function escapeHtml(s){
+    function scrollToBottom() {
+      chatEl.scrollTop = chatEl.scrollHeight;
+    }
+
+    function escapeHtml(s) {
       return (s ?? '').replace(/[&<>"']/g, c => ({
         '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
       }[c]));
     }
 
-    function withTimeout(promise, ms = 45000){
+    function withTimeout(promise, ms = 45000) {
       return new Promise((resolve, reject) => {
-        const t = setTimeout(() => reject(new Error('Request timed out (try again / switch model).')), ms);
+        const t = setTimeout(() => reject(new Error('Request timed out. Click Repair or Connect.')), ms);
         promise.then(v => { clearTimeout(t); resolve(v); })
                .catch(e => { clearTimeout(t); reject(e); });
       });
     }
 
-    function extractTextFromPuterResponse(res){
+    function extractText(res) {
       if (res == null) return '';
       if (typeof res === 'string') return res;
-
       const c = res?.message?.content;
-      if (Array.isArray(c)){
+      if (Array.isArray(c)) {
         return c.filter(b => b?.type === 'text' && typeof b?.text === 'string')
                 .map(b => b.text).join('\n').trim();
       }
       if (typeof c === 'string') return c;
       if (typeof res?.text === 'string') return res.text;
       if (typeof res?.content === 'string') return res.content;
-
-      return JSON.stringify(res, null, 2);
+      return safeStringify(res);
     }
 
-    function nowTime(){
-      return new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    function heal(reason) {
+      log('HEAL invoked: ' + reason);
+      state.busy = false;
+      sendBtnEl.disabled = false;
+      removeTyping();
+      setStatus('warn', 'Recovered');
     }
+
+    function startWatchdog() {
+      stopWatchdog();
+      state.watchdog = setTimeout(() => {
+        // If we're still busy after 25s, auto-heal.
+        if (state.busy) {
+          heal('Watchdog timeout (stuck busy)');
+          showBanner(`<strong>Auto-repaired:</strong> request got stuck. Try again. If it keeps happening, click <b>Connect</b> and allow popups.`);
+        }
+      }, 25000);
+    }
+    function stopWatchdog() {
+      if (state.watchdog) clearTimeout(state.watchdog);
+      state.watchdog = null;
+    }
+
+    window.addEventListener('error', (e) => {
+      log('window.error: ' + (e.message || 'unknown'), e.error || e);
+      heal('window.error');
+      showBanner(`<strong>JS error:</strong> ${escapeHtml(e.message || 'unknown')} (open Diagnostics)`);
+      setStatus('err', 'Error');
+    });
+
+    window.addEventListener('unhandledrejection', (e) => {
+      log('unhandledrejection', e.reason || e);
+      heal('unhandledrejection');
+      showBanner(`<strong>Promise error:</strong> ${escapeHtml(String(e.reason || e))} (open Diagnostics)`);
+      setStatus('err', 'Error');
+    });
 
     // ---------------------------
     // Message UI
     // ---------------------------
-    function addMessage({role, name, avatarText, isAI, text, imageUrls=[]}){
+    function nowTime() {
+      return new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
+    }
+
+    function addMessage({ name, avatar, ai, text, imageUrls = [] }) {
       welcomeEl.style.display = 'none';
 
       const msg = document.createElement('div');
       msg.className = 'msg';
 
-      const avatar = document.createElement('div');
-      avatar.className = 'avatar' + (isAI ? ' ai' : '');
-      avatar.textContent = avatarText;
+      const av = document.createElement('div');
+      av.className = 'avatar' + (ai ? ' ai' : '');
+      av.textContent = avatar;
 
       const bubble = document.createElement('div');
       bubble.className = 'bubble';
@@ -789,8 +954,8 @@ If unsure, say what is unclear.
 
       const images = document.createElement('div');
       images.className = 'images';
-      if (imageUrls.length){
-        for (const url of imageUrls){
+      if (imageUrls.length) {
+        for (const url of imageUrls) {
           const img = document.createElement('img');
           img.src = url;
           img.alt = 'image';
@@ -801,12 +966,13 @@ If unsure, say what is unclear.
 
       const content = document.createElement('div');
       content.className = 'text';
+      content.textContent = text || '';
 
       bubble.appendChild(meta);
       if (imageUrls.length) bubble.appendChild(images);
       bubble.appendChild(content);
 
-      msg.appendChild(avatar);
+      msg.appendChild(av);
       msg.appendChild(bubble);
 
       chatEl.appendChild(msg);
@@ -814,170 +980,124 @@ If unsure, say what is unclear.
       return content;
     }
 
-    function addTyping(){
-      const content = addMessage({
-        role: 'assistant',
-        name: 'Claude',
-        avatarText: '✦',
-        isAI: true,
-        text: ''
-      });
-
-      content.dataset.typing = '1';
-      content.innerHTML = `
-        <div class="typing">
-          <div class="dots"><span></span><span></span><span></span></div>
-          <div>Thinking…</div>
-        </div>
-      `;
+    function addTyping() {
+      const el = addMessage({ name:'Claude', avatar:'✦', ai:true, text:'' });
+      el.dataset.typing = '1';
+      el.innerHTML = `<div class="typing"><div class="dots"><span></span><span></span><span></span></div><div>Thinking…</div></div>`;
     }
 
-    function removeTyping(){
+    function removeTyping() {
       const el = chatEl.querySelector('[data-typing="1"]');
       if (el) el.closest('.msg').remove();
     }
 
     // ---------------------------
-    // Rendering assistant output with artifacts
+    // Artifacts parsing/render
     // ---------------------------
-    function parseArtifacts(text){
-      const artifacts = [];
+    function splitArtifacts(text) {
+      const out = [];
       const re = /```artifact:(\w+)\n([\s\S]*?)```/g;
-      let last = 0;
-      let m;
-
-      while ((m = re.exec(text)) !== null){
-        artifacts.push({ kind:'text', value: text.slice(last, m.index) });
-
-        const type = m[1].toLowerCase();
-        const code = m[2].trim();
-        artifacts.push({ kind:'artifact', type, code });
-
-        last = m.index + m[0].length;
-      }
-
-      artifacts.push({ kind:'text', value: text.slice(last) });
-      return artifacts.filter(x => x.kind !== 'text' || x.value.trim() !== '');
-    }
-
-    function renderTextMarkdownToEl(el, text){
-      // minimal safe markdown: code fences + inline code + line breaks
-      // We build DOM nodes so highlight.js works reliably.
-      el.innerHTML = '';
-
-      const parts = [];
-      const re = /```(\w*)\n([\s\S]*?)```/g;
       let last = 0, m;
-
-      while ((m = re.exec(text)) !== null){
+      while ((m = re.exec(text)) !== null) {
         const before = text.slice(last, m.index);
-        if (before.trim() !== '') parts.push({type:'text', value: before});
-
-        const lang = (m[1] || '').trim();
-        const code = (m[2] || '').trim();
-        parts.push({type:'code', lang, value: code});
+        if (before.trim()) out.push({ kind:'text', value: before });
+        out.push({ kind:'artifact', type: (m[1] || '').toLowerCase(), code: (m[2] || '').trim() });
         last = m.index + m[0].length;
       }
       const rest = text.slice(last);
-      if (rest.trim() !== '') parts.push({type:'text', value: rest});
+      if (rest.trim()) out.push({ kind:'text', value: rest });
+      return out.length ? out : [{ kind:'text', value: text }];
+    }
 
-      for (const p of parts){
-        if (p.type === 'text'){
+    function renderText(el, text) {
+      // Simple safe formatting: code fences + inline backticks.
+      el.innerHTML = '';
+      const parts = [];
+      const re = /```(\w*)\n([\s\S]*?)```/g;
+      let last = 0, m;
+      while ((m = re.exec(text)) !== null) {
+        const before = text.slice(last, m.index);
+        if (before) parts.push({ type:'t', v: before });
+        parts.push({ type:'c', lang: (m[1]||'').trim(), v: (m[2]||'').trim() });
+        last = m.index + m[0].length;
+      }
+      const rest = text.slice(last);
+      if (rest) parts.push({ type:'t', v: rest });
+
+      for (const p of parts) {
+        if (p.type === 't') {
           const div = document.createElement('div');
-          // escape HTML then basic inline code with backticks
-          let safe = escapeHtml(p.value);
+          let safe = escapeHtml(p.v);
           safe = safe.replace(/`([^`]+)`/g, '<code>$1</code>');
           safe = safe.replace(/\n/g, '<br>');
           div.innerHTML = safe;
           el.appendChild(div);
         } else {
           const pre = document.createElement('pre');
-          const codeEl = document.createElement('code');
-          codeEl.textContent = p.value;
-          if (p.lang) codeEl.className = `language-${p.lang}`;
-          pre.appendChild(codeEl);
+          const code = document.createElement('code');
+          code.textContent = p.v;
+          pre.appendChild(code);
           el.appendChild(pre);
-          try { hljs.highlightElement(codeEl); } catch {}
         }
       }
     }
 
-    function renderAssistantResponse(el, fullText){
-      // Split on artifact blocks, render each segment into DOM.
-      el.innerHTML = '';
+    function renderAssistant(contentEl, fullText) {
+      contentEl.innerHTML = '';
+      const segs = splitArtifacts(fullText);
 
-      const segments = parseArtifacts(fullText);
-
-      for (const seg of segments){
-        if (seg.kind === 'text'){
+      for (const s of segs) {
+        if (s.kind === 'text') {
           const box = document.createElement('div');
-          renderTextMarkdownToEl(box, seg.value);
-          el.appendChild(box);
-        } else if (seg.kind === 'artifact'){
-          const id = crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random());
-          const name = `${seg.type.toUpperCase()} Artifact`;
-          state.artifacts.set(id, { id, type: seg.type, code: seg.code, name });
+          renderText(box, s.value);
+          contentEl.appendChild(box);
+        } else {
+          const id = (crypto?.randomUUID?.() ?? String(Date.now() + Math.random()));
+          const name = `${s.type.toUpperCase()} Artifact`;
+          state.artifacts.set(id, { id, type: s.type, code: s.code, name });
           state.currentArtifactId = id;
 
           const card = document.createElement('div');
-          card.style.marginTop = '12px';
-          card.style.border = '1px solid rgba(255,255,255,.10)';
-          card.style.borderRadius = '14px';
-          card.style.overflow = 'hidden';
-          card.style.background = 'rgba(255,255,255,.03)';
+          card.className = 'artifactCard';
 
           const head = document.createElement('div');
-          head.style.display = 'flex';
-          head.style.alignItems = 'center';
-          head.style.justifyContent = 'space-between';
-          head.style.gap = '10px';
-          head.style.padding = '10px 12px';
-          head.style.borderBottom = '1px solid rgba(255,255,255,.10)';
-          head.style.background = 'rgba(255,255,255,.03)';
+          head.className = 'artifactHead';
 
-          head.innerHTML = `
-            <div style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:12px;">
-              <span style="width:22px;height:22px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg, var(--purple), #7c3aed);color:#0b0b0d;font-weight:900;">⚡</span>
-              <span>${escapeHtml(name)}</span>
-            </div>
-            <div style="display:flex;gap:8px;">
-              <button class="btn" data-action="artifact-copy" data-id="${id}" style="padding:7px 10px;font-size:12px;">Copy</button>
-              <button class="btn" data-action="artifact-open" data-id="${id}" style="padding:7px 10px;font-size:12px;">Open</button>
-              <button class="btn" data-action="artifact-download" data-id="${id}" style="padding:7px 10px;font-size:12px;">Download</button>
-            </div>
+          const left = document.createElement('div');
+          left.className = 'artifactName';
+          left.innerHTML = `<span class="bolt">⚡</span><span>${escapeHtml(name)}</span>`;
+
+          const btns = document.createElement('div');
+          btns.className = 'artifactBtns';
+          btns.innerHTML = `
+            <button class="btn" type="button" data-action="artifact-open" data-id="${id}" style="padding:7px 10px;font-size:12px;">Open</button>
+            <button class="btn" type="button" data-action="artifact-copy" data-id="${id}" style="padding:7px 10px;font-size:12px;">Copy</button>
+            <button class="btn" type="button" data-action="artifact-download" data-id="${id}" style="padding:7px 10px;font-size:12px;">Download</button>
           `;
 
-          const body = document.createElement('div');
-          body.style.height = '220px';
-          body.style.background = '#fff';
+          head.appendChild(left);
+          head.appendChild(btns);
 
-          if (seg.type === 'html' || seg.type === 'htm'){
+          const body = document.createElement('div');
+          body.className = 'artifactBody';
+
+          if (s.type === 'html' || s.type === 'htm') {
             const iframe = document.createElement('iframe');
             iframe.sandbox = 'allow-scripts';
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.style.border = 'none';
-            iframe.srcdoc = seg.code;
+            iframe.srcdoc = s.code;
             body.appendChild(iframe);
           } else {
-            // non-html: show code snippet
             body.style.background = '#0d1117';
-            body.style.color = '#e5e7eb';
-            body.style.padding = '12px';
-            body.style.overflow = 'auto';
             const pre = document.createElement('pre');
-            pre.style.margin = '0';
             const code = document.createElement('code');
-            code.textContent = seg.code;
+            code.textContent = s.code;
             pre.appendChild(code);
             body.appendChild(pre);
-            try { hljs.highlightElement(code); } catch {}
           }
 
           card.appendChild(head);
           card.appendChild(body);
-
-          el.appendChild(card);
+          contentEl.appendChild(card);
         }
       }
     }
@@ -985,33 +1105,8 @@ If unsure, say what is unclear.
     // ---------------------------
     // Artifact side panel
     // ---------------------------
-    function openArtifact(id){
-      const a = state.artifacts.get(id);
-      if (!a) return;
-
-      state.currentArtifactId = id;
-      artifactTitleEl.textContent = a.name;
-
-      artifactCodeEl.textContent = a.code;
-      try { hljs.highlightElement(artifactCodeEl); } catch {}
-
-      // Preview only for html
-      if (a.type === 'html' || a.type === 'htm'){
-        artifactFrameEl.srcdoc = a.code;
-      } else {
-        artifactFrameEl.srcdoc = `<pre style="white-space:pre-wrap;padding:14px;font-family:ui-monospace,monospace;">${escapeHtml(a.code)}</pre>`;
-      }
-
-      sideEl.classList.add('open');
-      showTab('code');
-    }
-
-    function closeArtifactPanel(){
-      sideEl.classList.remove('open');
-    }
-
-    function showTab(tab){
-      if (tab === 'code'){
+    function showTab(which) {
+      if (which === 'code') {
         tabCodeEl.classList.add('active');
         tabPrevEl.classList.remove('active');
         codeViewEl.classList.add('active');
@@ -1024,17 +1119,41 @@ If unsure, say what is unclear.
       }
     }
 
-    async function copyCurrentArtifact(){
+    function openArtifact(id) {
+      const a = state.artifacts.get(id);
+      if (!a) return;
+      state.currentArtifactId = id;
+
+      artifactTitleEl.textContent = a.name;
+      artifactCodeEl.textContent = a.code;
+
+      if (a.type === 'html' || a.type === 'htm') {
+        artifactFrameEl.srcdoc = a.code;
+      } else {
+        artifactFrameEl.srcdoc = `<pre style="white-space:pre-wrap;padding:14px;font-family:ui-monospace,monospace;">${escapeHtml(a.code)}</pre>`;
+      }
+
+      sideEl.classList.add('open');
+      showTab('code');
+    }
+
+    function closeArtifactPanel() {
+      sideEl.classList.remove('open');
+    }
+
+    async function copyCurrentArtifact() {
       const a = state.artifacts.get(state.currentArtifactId);
       if (!a) return;
       await navigator.clipboard.writeText(a.code);
+      setStatus('ok', 'Copied');
+      setTimeout(() => setStatus('ok', 'Ready'), 700);
     }
 
-    function downloadCurrentArtifact(){
+    function downloadCurrentArtifact() {
       const a = state.artifacts.get(state.currentArtifactId);
       if (!a) return;
       const ext = a.type === 'html' ? 'html' : a.type;
-      const blob = new Blob([a.code], {type:'text/plain'});
+      const blob = new Blob([a.code], { type:'text/plain' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
@@ -1043,7 +1162,7 @@ If unsure, say what is unclear.
       URL.revokeObjectURL(url);
     }
 
-    function openCurrentArtifactNewTab(){
+    function openCurrentArtifactNewTab() {
       const a = state.artifacts.get(state.currentArtifactId);
       if (!a) return;
       const w = window.open('', '_blank', 'noopener,noreferrer');
@@ -1055,19 +1174,19 @@ If unsure, say what is unclear.
     // ---------------------------
     // Modal
     // ---------------------------
-    function openModal(src){
+    function openModal(src) {
       modalImgEl.src = src;
       modalEl.classList.add('active');
     }
-    function closeModal(){
+    function closeModal() {
       modalEl.classList.remove('active');
       modalImgEl.src = '';
     }
 
     // ---------------------------
-    // Image preview (one-time use)
+    // Images (one-time)
     // ---------------------------
-    function clearPendingImage(){
+    function clearPendingImage() {
       if (state.pendingPreviewUrl) {
         try { URL.revokeObjectURL(state.pendingPreviewUrl); } catch {}
       }
@@ -1078,8 +1197,8 @@ If unsure, say what is unclear.
       setMode('chat');
     }
 
-    function setPendingImage(file){
-      if (!file || !file.type.startsWith('image/')) return;
+    function setPendingImage(file) {
+      if (!file || !file.type || !file.type.startsWith('image/')) return;
 
       clearPendingImage();
       state.pendingFile = file;
@@ -1089,7 +1208,7 @@ If unsure, say what is unclear.
       previewEl.innerHTML = `
         <div class="preview-item">
           <img src="${state.pendingPreviewUrl}" alt="preview" />
-          <button class="preview-remove" title="remove">×</button>
+          <button class="preview-remove" type="button" title="remove">×</button>
         </div>
       `;
 
@@ -1098,7 +1217,7 @@ If unsure, say what is unclear.
       setMode('vision');
     }
 
-    async function fileToBase64Parts(file){
+    async function fileToBase64Parts(file) {
       const dataUrl = await new Promise((resolve, reject) => {
         const r = new FileReader();
         r.onload = () => resolve(r.result);
@@ -1112,32 +1231,31 @@ If unsure, say what is unclear.
     }
 
     // ---------------------------
-    // Calls (NO streaming)
+    // Puter calls (NO streaming)
     // ---------------------------
-    async function callText(model, userText){
-      // Keep lightweight memory by storing turns and sending last N as a transcript.
-      // This avoids weird “messages array shape” incompatibilities.
+    async function callText(model, userText) {
       state.history.push({ role:'user', content: userText });
 
-      const lastTurns = state.history.slice(-16).map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join('\n');
+      const recent = state.history.slice(-12)
+        .map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`)
+        .join('\n');
 
       const prompt =
 `${CODING_SYSTEM}
 
 Conversation (recent):
-${lastTurns}
+${recent}
 
 Now respond to the user's latest message.`;
 
       const res = await withTimeout(puter.ai.chat(prompt, { model, stream:false }), 45000);
-      const txt = extractTextFromPuterResponse(res);
+      const txt = extractText(res);
       state.history.push({ role:'assistant', content: txt });
       return txt;
     }
 
-    async function callVision(model, userText, file){
+    async function callVision(model, userText, file) {
       const parts = await fileToBase64Parts(file);
-
       const content = [
         {
           type: 'image',
@@ -1149,9 +1267,7 @@ Now respond to the user's latest message.`;
 `${VISION_SYSTEM}
 
 User request:
-${userText || 'Analyze this image.'}
-
-Be detailed. If there is text, transcribe it exactly.`
+${userText || 'Analyze this image.'}`
         }
       ];
 
@@ -1159,45 +1275,84 @@ Be detailed. If there is text, transcribe it exactly.`
         puter.ai.chat([{ role:'user', content }], { model, stream:false }),
         45000
       );
-
-      return extractTextFromPuterResponse(res);
+      return extractText(res);
     }
 
     // ---------------------------
-    // Send (FIXED: message always shows, typing always removed)
+    // Preflight / Connect (forces auth popup from click)
     // ---------------------------
-    async function send(){
-      if (state.busy) return;
+    async function connect() {
+      hideBanner();
+      setStatus('warn', 'Connecting…');
+      log('Connect clicked');
+
+      if (!window.puter || !puter.ai || !puter.ai.chat) {
+        setStatus('err', 'Puter missing');
+        showBanner(`<strong>Error:</strong> Puter.js did not load. Check network/adblock.`);
+        return;
+      }
+
+      try {
+        // Small call to force login popup if needed
+        const model = modelSelectEl.value || 'claude-haiku-4-5';
+        const res = await withTimeout(puter.ai.chat('Say "connected".', { model, stream:false }), 20000);
+        const txt = extractText(res);
+        log('Connect response', txt);
+        setStatus('ok', 'Ready');
+        hideBanner();
+      } catch (e) {
+        log('Connect failed', e);
+        setStatus('err', 'Connect failed');
+        showBanner(
+          `<strong>Connect failed:</strong> ${escapeHtml(e?.message || String(e))}<br>
+           If you're on Brave, disable Shields for this page. Allow popups for Puter login.`
+        );
+      }
+    }
+
+    // ---------------------------
+    // Send (self-healing)
+    // ---------------------------
+    async function send() {
+      hideBanner();
+
+      if (!window.puter || !puter.ai || !puter.ai.chat) {
+        showBanner(`<strong>Error:</strong> Puter.js is not available. Disable adblock/shields and reload.`);
+        setStatus('err', 'Puter missing');
+        return;
+      }
+
+      if (state.busy) {
+        showBanner(`<strong>Busy:</strong> already sending. Click <b>Repair</b> if it looks stuck.`);
+        return;
+      }
 
       const model = modelSelectEl.value;
-      const userText = inputEl.value.trim();
+      const text = inputEl.value.trim();
       const hasImage = !!state.pendingFile;
 
-      if (!userText && !hasImage) return;
+      if (!text && !hasImage) return;
 
       state.busy = true;
       sendBtnEl.disabled = true;
+      startWatchdog();
+      setStatus('warn', 'Sending…');
 
       // show user message immediately
-      const shownText = userText || (hasImage ? 'Analyze this image.' : '');
-      const imgUrl = state.pendingPreviewUrl ? [state.pendingPreviewUrl] : [];
-      addMessage({
-        role:'user',
-        name:'You',
-        avatarText:'👤',
-        isAI:false,
-        text: shownText,
-        imageUrls: imgUrl
-      }).innerHTML = escapeHtml(shownText);
+      const shownText = text || (hasImage ? 'Analyze this image.' : '');
+      const imgUrls = state.pendingPreviewUrl ? [state.pendingPreviewUrl] : [];
+      if (imgUrls.length) state.displayedUrls.push(imgUrls[0]); // keep for newChat cleanup
 
-      // clear input
+      const userEl = addMessage({ name:'You', avatar:'👤', ai:false, text: shownText, imageUrls: imgUrls });
+      userEl.textContent = shownText;
+
+      // clear input now
       inputEl.value = '';
       autosize();
 
-      // IMPORTANT: image should be used ONCE, then cleared
+      // one-time image: capture file then clear preview (but keep displayed image URL in chat)
       const fileForThisRequest = state.pendingFile;
       if (hasImage) {
-        // do NOT revoke objectURL yet (we still display it in the message)
         state.pendingFile = null;
         state.pendingPreviewUrl = null;
         previewEl.classList.remove('active');
@@ -1208,13 +1363,7 @@ Be detailed. If there is text, transcribe it exactly.`
       addTyping();
 
       try {
-        const assistantEl = addMessage({
-          role:'assistant',
-          name:'Claude',
-          avatarText:'✦',
-          isAI:true,
-          text:''
-        });
+        const assistantEl = addMessage({ name:'Claude', avatar:'✦', ai:true, text: '' });
 
         let answer = '';
         if (fileForThisRequest) {
@@ -1224,26 +1373,28 @@ Be detailed. If there is text, transcribe it exactly.`
         }
 
         removeTyping();
+        renderAssistant(assistantEl, answer || '(No text returned.)');
 
-        // render assistant answer + artifacts
-        renderAssistantResponse(assistantEl, answer || '(No text returned.)');
-        scrollToBottom();
+        setStatus('ok', 'Ready');
+        stopWatchdog();
+        state.busy = false;
+        sendBtnEl.disabled = false;
+        inputEl.focus();
       } catch (e) {
         removeTyping();
-        const errBox = addMessage({
-          role:'assistant',
-          name:'Claude',
-          avatarText:'✦',
-          isAI:true,
-          text:''
-        });
+        log('Send failed', e);
+        setStatus('err', 'Failed');
+        stopWatchdog();
 
-        errBox.innerHTML =
+        const errEl = addMessage({ name:'Claude', avatar:'✦', ai:true, text: '' });
+        errEl.innerHTML =
           `<div style="padding:10px;border:1px solid rgba(251,113,133,.35);border-radius:12px;background:rgba(251,113,133,.08);color:#fecdd3;">
             <b>Error:</b> ${escapeHtml(e?.message || String(e))}<br><br>
-            Fixes: allow popups / disable adblock for this site (Puter login), or switch model to GPT-4o.
+            Fixes: click <b>Connect</b> (auth), allow popups, disable adblock/shields, or switch model to GPT‑4o.
           </div>`;
-      } finally {
+
+        // auto-heal UI state
+        heal('send catch');
         state.busy = false;
         sendBtnEl.disabled = false;
         inputEl.focus();
@@ -1253,7 +1404,13 @@ Be detailed. If there is text, transcribe it exactly.`
     // ---------------------------
     // New chat
     // ---------------------------
-    function newChat(){
+    function newChat() {
+      // revoke all object URLs we created for display
+      for (const u of state.displayedUrls) {
+        try { URL.revokeObjectURL(u); } catch {}
+      }
+      state.displayedUrls = [];
+
       state.history = [];
       state.artifacts.clear();
       state.currentArtifactId = null;
@@ -1265,17 +1422,61 @@ Be detailed. If there is text, transcribe it exactly.`
       welcomeEl.style.display = '';
       inputEl.value = '';
       autosize();
+      hideBanner();
+      setStatus('ok', 'Ready');
       setMode('chat');
-      inputEl.focus();
+      log('New chat');
     }
 
     // ---------------------------
-    // Event wiring (stable, no inline onclick bugs)
+    // Diagnostics toggle
+    // ---------------------------
+    function toggleDiag() {
+      diagEl.classList.toggle('show');
+      if (diagEl.classList.contains('show')) log('Diagnostics opened');
+    }
+
+    function repair() {
+      hideBanner();
+      heal('manual repair');
+      setStatus('ok', 'Ready');
+      showBanner(`<strong>Repaired:</strong> UI reset. If send still fails, click <b>Connect</b> and allow popups.`);
+    }
+
+    // ---------------------------
+    // Event delegation for artifact buttons inside chat
+    // ---------------------------
+    chatEl.addEventListener('click', async (e) => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const id = btn.getAttribute('data-id');
+      const action = btn.getAttribute('data-action');
+
+      if (action === 'artifact-open') openArtifact(id);
+
+      if (action === 'artifact-copy') {
+        const a = state.artifacts.get(id);
+        if (!a) return;
+        await navigator.clipboard.writeText(a.code);
+        setStatus('ok', 'Copied');
+        setTimeout(() => setStatus('ok', 'Ready'), 700);
+      }
+
+      if (action === 'artifact-download') {
+        const a = state.artifacts.get(id);
+        if (!a) return;
+        state.currentArtifactId = id;
+        downloadCurrentArtifact();
+      }
+    });
+
+    // ---------------------------
+    // Wiring
     // ---------------------------
     sendBtnEl.addEventListener('click', send);
     inputEl.addEventListener('input', autosize);
     inputEl.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey){
+      if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         send();
       }
@@ -1288,7 +1489,7 @@ Be detailed. If there is text, transcribe it exactly.`
       fileInputEl.value = '';
     });
 
-    // paste images
+    // paste image
     document.addEventListener('paste', (e) => {
       const items = Array.from(e.clipboardData?.items || []);
       const img = items.find(it => it.type && it.type.startsWith('image/'));
@@ -1320,54 +1521,42 @@ Be detailed. If there is text, transcribe it exactly.`
 
     // modal
     closeModalEl.addEventListener('click', closeModal);
-    modalEl.addEventListener('click', (e) => {
-      if (e.target === modalEl) closeModal();
-    });
+    modalEl.addEventListener('click', (e) => { if (e.target === modalEl) closeModal(); });
 
-    // artifact panel
+    // artifact side
     closeSideEl.addEventListener('click', closeArtifactPanel);
     tabCodeEl.addEventListener('click', () => showTab('code'));
     tabPrevEl.addEventListener('click', () => showTab('preview'));
-    copyArtifactEl.addEventListener('click', async () => { await copyCurrentArtifact(); });
+    copyArtifactEl.addEventListener('click', copyCurrentArtifact);
     downloadArtifactEl.addEventListener('click', downloadCurrentArtifact);
     openArtifactEl.addEventListener('click', openCurrentArtifactNewTab);
 
-    // new chat
+    // top buttons
+    connectBtnEl.addEventListener('click', connect);
+    repairBtnEl.addEventListener('click', repair);
+    diagBtnEl.addEventListener('click', toggleDiag);
     newBtnEl.addEventListener('click', newChat);
-
-    // click handling for artifact buttons inside messages (event delegation)
-    chatEl.addEventListener('click', async (e) => {
-      const btn = e.target.closest('[data-action]');
-      if (!btn) return;
-      const id = btn.getAttribute('data-id');
-      const action = btn.getAttribute('data-action');
-
-      if (action === 'artifact-open') openArtifact(id);
-      if (action === 'artifact-copy') {
-        const a = state.artifacts.get(id);
-        if (!a) return;
-        await navigator.clipboard.writeText(a.code);
-      }
-      if (action === 'artifact-download') {
-        const a = state.artifacts.get(id);
-        if (!a) return;
-        state.currentArtifactId = id;
-        downloadCurrentArtifact();
-      }
-    });
+    clearLogsBtnEl.addEventListener('click', () => { state.logs = []; diagLogEl.textContent = ''; });
 
     // escape key
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape'){
+      if (e.key === 'Escape') {
         closeModal();
         closeArtifactPanel();
       }
     });
 
     // init
-    inputEl.focus();
     autosize();
+    setStatus('ok', 'Ready');
     setMode('chat');
+    inputEl.focus();
+    log('App loaded');
+    if (!window.puter) {
+      showBanner(`<strong>Warning:</strong> Puter.js not loaded yet (adblock?). Refresh or disable shields.`);
+      setStatus('warn', 'Waiting');
+      log('Puter missing at init');
+    }
   </script>
 </body>
         </html>
