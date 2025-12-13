@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Claude AI (Puter) — Stable</title>
 
+  <!-- Puter.js (we also auto-reload it in JS if blocked) -->
   <script src="https://js.puter.com/v2/"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -27,8 +28,8 @@
       --warn:#fbbf24;
       --err:#fb7185;
       --purple:#a78bfa;
-      --radius:14px;
       --shadow: 0 14px 50px rgba(0,0,0,.45);
+      --r:14px;
     }
 
     *{ box-sizing:border-box; margin:0; padding:0; }
@@ -44,13 +45,7 @@
     }
 
     .app{ height:100%; display:flex; }
-
-    .main{
-      flex: 1;
-      min-width: 0;
-      display:flex;
-      flex-direction:column;
-    }
+    .main{ flex:1; min-width:0; display:flex; flex-direction:column; }
 
     .header{
       position: sticky;
@@ -66,38 +61,23 @@
       gap: 12px;
     }
 
-    .brand{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      font-weight: 700;
-      letter-spacing: .2px;
-    }
-
+    .brand{ display:flex; align-items:center; gap: 10px; font-weight:700; }
     .badge{
-      width: 36px; height: 36px;
-      border-radius: 12px;
-      display:grid;
-      place-items:center;
+      width: 36px; height: 36px; border-radius: 12px;
+      display:grid; place-items:center;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       color: #0b0b0d;
       box-shadow: 0 0 35px rgba(201,168,124,.18);
       font-weight: 900;
-      user-select: none;
+      user-select:none;
     }
 
     .controls{
-      display:flex;
-      gap: 10px;
-      align-items:center;
-      flex-wrap: wrap;
-      justify-content:flex-end;
+      display:flex; gap:10px; align-items:center; flex-wrap: wrap; justify-content:flex-end;
     }
 
     .pill{
-      display:flex;
-      align-items:center;
-      gap: 8px;
+      display:flex; align-items:center; gap:8px;
       padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid var(--border);
@@ -136,22 +116,17 @@
       transition: .15s ease;
       user-select:none;
     }
-    .btn:hover{
-      background: rgba(255,255,255,.06);
-      border-color: var(--border2);
-      color: var(--text);
-    }
-
+    .btn:hover{ background: rgba(255,255,255,.06); border-color: var(--border2); color: var(--text); }
     .btn.primary{
-      border: none;
+      border:none;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #0b0b0d;
+      color:#0b0b0d;
       font-weight: 800;
     }
 
     .banner{
       max-width: 860px;
-      margin: 12px auto 0;
+      margin: 10px auto 0;
       padding: 10px 12px;
       border-radius: 14px;
       border: 1px solid var(--border);
@@ -162,15 +137,9 @@
     .banner.show{ display:block; }
     .banner strong{ color: var(--text); }
 
-    .chat{
-      flex:1;
-      overflow:auto;
-      padding: 8px 16px 18px;
-    }
-
-    .chat::-webkit-scrollbar{ width: 8px; }
-    .chat::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.10); border-radius: 999px; }
-    .chat::-webkit-scrollbar-thumb:hover{ background: rgba(255,255,255,.16); }
+    .chat{ flex:1; overflow:auto; padding: 8px 16px 18px; }
+    .chat::-webkit-scrollbar{ width:8px; }
+    .chat::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.10); border-radius:999px; }
 
     .welcome{
       max-width: 860px;
@@ -206,7 +175,7 @@
     }
     .avatar.ai{
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #0b0b0d;
+      color:#0b0b0d;
       border-color: rgba(201,168,124,.35);
       box-shadow: 0 0 18px rgba(201,168,124,.12);
     }
@@ -215,7 +184,7 @@
     .meta{
       display:flex;
       justify-content:space-between;
-      gap: 10px;
+      gap:10px;
       align-items:center;
       color: var(--muted2);
       font-size: 12px;
@@ -226,7 +195,7 @@
     .images{
       display:flex;
       flex-wrap:wrap;
-      gap: 10px;
+      gap:10px;
       margin: 10px 0 10px;
     }
     .images img{
@@ -239,10 +208,7 @@
       cursor: pointer;
       transition: .15s ease;
     }
-    .images img:hover{
-      transform: scale(1.01);
-      border-color: rgba(201,168,124,.55);
-    }
+    .images img:hover{ transform: scale(1.01); border-color: rgba(201,168,124,.55); }
 
     .text{
       font-size: 14px;
@@ -283,17 +249,17 @@
       font-size: 13px;
       user-select:none;
     }
-    .dots{ display:flex; gap: 4px; }
+    .dots{ display:flex; gap:4px; }
     .dots span{
-      width: 7px; height:7px;
+      width:7px; height:7px;
       background: var(--accent);
-      border-radius: 999px;
+      border-radius:999px;
       animation: bounce 1.1s infinite ease-in-out;
       opacity:.7;
     }
-    .dots span:nth-child(2){ animation-delay: .12s; }
-    .dots span:nth-child(3){ animation-delay: .24s; }
-    @keyframes bounce{ 0%, 60%, 100%{ transform:none; opacity:.5 } 30%{ transform: translateY(-6px); opacity: 1 } }
+    .dots span:nth-child(2){ animation-delay:.12s; }
+    .dots span:nth-child(3){ animation-delay:.24s; }
+    @keyframes bounce{ 0%,60%,100%{ transform:none; opacity:.5 } 30%{ transform: translateY(-6px); opacity:1 } }
 
     .composer{
       padding: 14px 16px 18px;
@@ -316,7 +282,7 @@
 
     .preview{
       display:none;
-      gap: 10px;
+      gap:10px;
       margin-bottom: 12px;
       padding-bottom: 12px;
       border-bottom: 1px solid var(--border);
@@ -325,36 +291,26 @@
     .preview.active{ display:flex; }
     .preview-item{
       position: relative;
-      width: 72px; height:72px;
-      border-radius: 14px;
+      width:72px; height:72px;
+      border-radius:14px;
       overflow:hidden;
       border: 1px solid var(--border);
       background: rgba(255,255,255,.04);
     }
-    .preview-item img{
-      width:100%;
-      height:100%;
-      object-fit: cover;
-      display:block;
-      cursor:pointer;
-    }
+    .preview-item img{ width:100%; height:100%; object-fit: cover; display:block; cursor:pointer; }
     .preview-remove{
       position:absolute;
       top:-8px; right:-8px;
-      width: 24px; height:24px;
-      border-radius: 999px;
+      width:24px; height:24px;
+      border-radius:999px;
       border: 2px solid rgba(11,11,13,.9);
       background: var(--err);
-      color: #0b0b0d;
-      font-weight: 900;
+      color:#0b0b0d;
+      font-weight:900;
       cursor:pointer;
     }
 
-    .row{
-      display:flex;
-      gap: 10px;
-      align-items:flex-end;
-    }
+    .row{ display:flex; gap:10px; align-items:flex-end; }
     textarea{
       flex:1;
       border:none;
@@ -383,41 +339,38 @@
     .iconbtn:hover{ background: rgba(255,255,255,.06); border-color: var(--border2); color: var(--text); }
 
     .send{
-      width: 42px; height:42px;
-      border-radius: 14px;
+      width:42px; height:42px;
+      border-radius:14px;
       border:none;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #0b0b0d;
-      font-weight: 900;
+      color:#0b0b0d;
+      font-weight:900;
       cursor:pointer;
-      transition: .15s ease;
+      transition:.15s ease;
     }
     .send:hover{ transform: translateY(-1px); }
     .send:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
 
-    /* Artifact card */
+    /* Artifacts card */
     .artifactCard{
-      margin-top: 12px;
+      margin-top:12px;
       border: 1px solid rgba(255,255,255,.10);
-      border-radius: 14px;
-      overflow: hidden;
+      border-radius:14px;
+      overflow:hidden;
       background: rgba(255,255,255,.03);
     }
     .artifactHead{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap: 10px;
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.10);
+      gap:10px;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.03);
     }
     .artifactName{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      font-weight:700;
-      font-size: 12px;
+      display:flex; align-items:center; gap:10px;
+      font-weight:700; font-size:12px;
     }
     .bolt{
       width:22px; height:22px;
@@ -428,18 +381,11 @@
       font-weight:900;
       user-select:none;
     }
-    .artifactBtns{
-      display:flex; gap: 8px; flex-wrap:wrap;
-    }
-    .artifactBody{
-      height: 230px;
-      background: #fff;
-    }
-    .artifactBody iframe{
-      width:100%; height:100%; border:none;
-    }
+    .artifactBtns{ display:flex; gap:8px; flex-wrap:wrap; }
+    .artifactBody{ height:230px; background:#fff; }
+    .artifactBody iframe{ width:100%; height:100%; border:none; }
 
-    /* Side panel (artifacts) */
+    /* Side panel */
     .side{
       width: 0;
       border-left: 1px solid var(--border);
@@ -450,9 +396,7 @@
       display:flex;
       flex-direction:column;
     }
-    .side.open{
-      width: min(52vw, 620px);
-    }
+    .side.open{ width: min(52vw, 620px); }
     .sideHead{
       padding: 12px 14px;
       border-bottom: 1px solid var(--border);
@@ -463,32 +407,26 @@
       background: rgba(21,21,27,.9);
     }
     .sideTitle{
-      font-weight: 700;
-      font-size: 13px;
-      display:flex;
-      align-items:center;
-      gap: 10px;
+      font-weight:700; font-size:13px;
+      display:flex; align-items:center; gap:10px;
     }
-    .sideTabs{ display:flex; gap: 6px; align-items:center; }
+    .sideTabs{ display:flex; gap:6px; align-items:center; }
     .tab{
       padding: 8px 10px;
-      border-radius: 10px;
-      border: 1px solid transparent;
+      border-radius:10px;
+      border:1px solid transparent;
       background: transparent;
       color: var(--muted);
       cursor:pointer;
       font-size: 12px;
     }
     .tab:hover{ background: rgba(255,255,255,.06); }
-    .tab.active{
-      background: rgba(255,255,255,.08);
-      border-color: var(--border);
-      color: var(--text);
-    }
+    .tab.active{ background: rgba(255,255,255,.08); border-color: var(--border); color: var(--text); }
+
     .xbtn{
-      width: 34px; height:34px;
-      border-radius: 12px;
-      border: 1px solid var(--border);
+      width:34px; height:34px;
+      border-radius:12px;
+      border:1px solid var(--border);
       background: transparent;
       color: var(--muted);
       cursor:pointer;
@@ -501,14 +439,14 @@
     .codeview.active{ display:block; }
     .previewview.active{ display:block; background:#fff; }
     .codeview pre{ margin:0; min-height:100%; background:#0d1117; }
-    .codeview code{ display:block; padding: 14px; font-family:"JetBrains Mono", monospace; font-size: 13px; line-height: 1.6; color:#e5e7eb; }
+    .codeview code{ display:block; padding:14px; font-family:"JetBrains Mono", monospace; font-size:13px; line-height:1.6; color:#e5e7eb; white-space: pre; }
     .previewview iframe{ width:100%; height:100%; border:none; }
 
     .sideActions{
       padding: 12px 14px;
       border-top: 1px solid var(--border);
       display:flex;
-      gap: 10px;
+      gap:10px;
       background: rgba(21,21,27,.9);
     }
     .sideActions button{
@@ -525,11 +463,11 @@
     .sideActions button.primary{
       border:none;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
-      color: #0b0b0d;
-      font-weight: 800;
+      color:#0b0b0d;
+      font-weight:800;
     }
 
-    /* diagnostics panel */
+    /* Diagnostics */
     .diag{
       max-width: 860px;
       margin: 10px auto 0;
@@ -548,22 +486,19 @@
       border: 1px solid rgba(255,255,255,.10);
       color: #e5e7eb;
       overflow:auto;
-      max-height: 160px;
+      max-height: 180px;
       font-family: "JetBrains Mono", monospace;
       font-size: 12px;
       line-height: 1.5;
       white-space: pre-wrap;
     }
 
-    /* modal */
+    /* Modal */
     .modal{
-      position:fixed;
-      inset:0;
-      display:none;
-      align-items:center;
-      justify-content:center;
+      position:fixed; inset:0;
+      display:none; align-items:center; justify-content:center;
       background: rgba(0,0,0,.92);
-      z-index: 999;
+      z-index:999;
       padding: 30px;
     }
     .modal.active{ display:flex; }
@@ -586,7 +521,7 @@
       font-size: 18px;
     }
 
-    /* drop overlay */
+    /* Drop overlay */
     .drop{
       position: fixed;
       inset: 0;
@@ -597,7 +532,7 @@
       gap: 10px;
       background: rgba(11,11,13,.92);
       border: 2px dashed rgba(201,168,124,.5);
-      z-index: 900;
+      z-index:900;
     }
     .drop.active{ display:flex; }
     .drop .big{ font-size: 44px; }
@@ -619,12 +554,12 @@
         </div>
 
         <div class="controls">
-          <div class="pill" id="statusPill" title="Status">
+          <div class="pill" title="Status">
             <span class="dot" id="statusDot"></span>
             <span id="statusLabel">Ready</span>
           </div>
 
-          <div class="pill" id="modePill" title="Mode">
+          <div class="pill" title="Mode">
             <span class="dot" id="modeDot"></span>
             <span id="modeLabel">Chat</span>
           </div>
@@ -636,19 +571,15 @@
             <option value="gpt-4o">GPT-4o (backup)</option>
           </select>
 
-          <button class="btn" id="connectBtn" type="button">Connect</button>
-          <button class="btn" id="repairBtn" type="button">Repair</button>
-          <button class="btn" id="diagBtn" type="button">Diagnostics</button>
-          <button class="btn" id="newBtn" type="button">New chat</button>
+          <button class="btn" id="newBtn" type="button">New</button>
         </div>
       </div>
 
       <div class="banner" id="banner"></div>
+
       <div class="diag" id="diag">
         <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
-          <div style="color:var(--muted);font-size:12px;">
-            <strong>Diagnostics</strong> (auto-captures errors; also auto-repairs stuck UI)
-          </div>
+          <div style="color:var(--muted);font-size:12px;"><strong>Diagnostics</strong></div>
           <button class="btn" id="clearLogsBtn" type="button" style="padding:8px 10px;">Clear</button>
         </div>
         <pre id="diagLog"></pre>
@@ -656,30 +587,30 @@
 
       <div class="chat" id="chat">
         <div class="welcome" id="welcome">
-          <h1>Send should always work in this build.</h1>
+          <h1>Fixed build — no placeholders, no syntax traps.</h1>
           <p>
-            If you get stuck: click <b>Repair</b>. If it still fails: click <b>Connect</b> (forces Puter auth).
-            Popups/adblock can block Puter — this page will show the real error in Diagnostics.
+            If Send ever “does nothing”, it’s almost always Puter auth blocked by popups/shields.
+            The page will auto-detect and show a banner.
+          </p>
+          <p style="margin-top:8px;color:var(--muted2);font-size:13px;">
+            Tip: try model <b>GPT-4o (backup)</b> if a Claude model is flaky.
           </p>
         </div>
       </div>
 
       <div class="composer">
-        <div class="composer-inner">
+        <div class="composer-inner" id="composerBox">
           <div class="preview" id="preview"></div>
-
           <div class="row">
             <textarea id="input" rows="1" placeholder="Message Claude… (Enter to send, Shift+Enter newline)"></textarea>
             <button class="iconbtn" id="imageBtn" type="button" title="Upload image">📷</button>
             <button class="send" id="sendBtn" type="button" title="Send">➤</button>
           </div>
         </div>
-
         <input id="fileInput" type="file" accept="image/*" hidden />
       </div>
     </div>
 
-    <!-- Artifacts side panel -->
     <aside class="side" id="side">
       <div class="sideHead">
         <div class="sideTitle"><span class="bolt">⚡</span><span id="artifactTitle">Artifact</span></div>
@@ -714,74 +645,65 @@
   </div>
 
   <script>
-    // ---------------------------
-    // State
-    // ---------------------------
+    // ======================
+    // Self-healing core
+    // ======================
     const state = {
       busy: false,
       pendingFile: null,
-      pendingPreviewUrl: null,
-      displayedUrls: [], // objectURLs we should revoke on New chat
-      history: [],       // {role:'user'|'assistant', content:string}
+      pendingUrl: null,
+      displayedUrls: [],
+      history: [],
       artifacts: new Map(),
       currentArtifactId: null,
-      watchdog: null,
-      logs: []
+      logs: [],
+      lastSendAt: 0,
+      requestId: 0,
+      firstGestureArmed: true,
+      puterInjected: false
     };
 
-    // ---------------------------
-    // Elements
-    // ---------------------------
     const $ = (id) => document.getElementById(id);
 
     const chatEl = $('chat');
     const welcomeEl = $('welcome');
     const inputEl = $('input');
-    const sendBtnEl = $('sendBtn');
-    const imageBtnEl = $('imageBtn');
-    const fileInputEl = $('fileInput');
+    const sendBtn = $('sendBtn');
+    const imageBtn = $('imageBtn');
+    const fileInput = $('fileInput');
     const previewEl = $('preview');
-    const modelSelectEl = $('modelSelect');
+    const modelSelect = $('modelSelect');
 
-    const bannerEl = $('banner');
-    const statusPillEl = $('statusPill');
-    const statusDotEl = $('statusDot');
-    const statusLabelEl = $('statusLabel');
-    const modePillEl = $('modePill');
-    const modeDotEl = $('modeDot');
-    const modeLabelEl = $('modeLabel');
+    const statusDot = $('statusDot');
+    const statusLabel = $('statusLabel');
+    const modeDot = $('modeDot');
+    const modeLabel = $('modeLabel');
 
-    const connectBtnEl = $('connectBtn');
-    const repairBtnEl = $('repairBtn');
-    const diagBtnEl = $('diagBtn');
-    const newBtnEl = $('newBtn');
+    const banner = $('banner');
+    const diag = $('diag');
+    const diagLog = $('diagLog');
+    const clearLogsBtn = $('clearLogsBtn');
 
-    const diagEl = $('diag');
-    const diagLogEl = $('diagLog');
-    const clearLogsBtnEl = $('clearLogsBtn');
+    const side = $('side');
+    const artifactTitle = $('artifactTitle');
+    const artifactCode = $('artifactCode');
+    const artifactFrame = $('artifactFrame');
+    const codeView = $('codeView');
+    const prevView = $('prevView');
+    const tabCode = $('tabCode');
+    const tabPrev = $('tabPrev');
+    const closeSide = $('closeSide');
+    const copyArtifact = $('copyArtifact');
+    const downloadArtifact = $('downloadArtifact');
+    const openArtifact = $('openArtifact');
 
-    const sideEl = $('side');
-    const artifactTitleEl = $('artifactTitle');
-    const artifactCodeEl = $('artifactCode');
-    const artifactFrameEl = $('artifactFrame');
-    const codeViewEl = $('codeView');
-    const prevViewEl = $('prevView');
-    const tabCodeEl = $('tabCode');
-    const tabPrevEl = $('tabPrev');
-    const closeSideEl = $('closeSide');
-    const copyArtifactEl = $('copyArtifact');
-    const downloadArtifactEl = $('downloadArtifact');
-    const openArtifactEl = $('openArtifact');
+    const drop = $('drop');
+    const modal = $('modal');
+    const modalImg = $('modalImg');
+    const closeModal = $('closeModal');
 
-    const dropEl = $('drop');
+    const newBtn = $('newBtn');
 
-    const modalEl = $('modal');
-    const modalImgEl = $('modalImg');
-    const closeModalEl = $('closeModal');
-
-    // ---------------------------
-    // Prompts
-    // ---------------------------
     const CODING_SYSTEM = `
 You are a top-tier coding assistant.
 If the user asks for a website/app UI/code, respond with a complete working artifact.
@@ -816,42 +738,37 @@ If there is text, transcribe it exactly.
 If unsure, say what is unclear.
 `.trim();
 
-    // ---------------------------
-    // Diagnostics + self healing
-    // ---------------------------
     function log(msg, obj) {
       const line = `[${new Date().toISOString()}] ${msg}` + (obj ? `\n${safeStringify(obj)}` : '');
       state.logs.push(line);
       if (state.logs.length > 200) state.logs.shift();
-      diagLogEl.textContent = state.logs.join('\n\n');
+      diagLog.textContent = state.logs.join('\n\n');
     }
-
     function safeStringify(x) {
       try { return typeof x === 'string' ? x : JSON.stringify(x, null, 2); }
       catch { return String(x); }
     }
 
     function showBanner(html) {
-      bannerEl.innerHTML = html;
-      bannerEl.classList.add('show');
+      banner.innerHTML = html;
+      banner.classList.add('show');
     }
     function hideBanner() {
-      bannerEl.classList.remove('show');
-      bannerEl.innerHTML = '';
+      banner.classList.remove('show');
+      banner.innerHTML = '';
     }
 
     function setStatus(kind, text) {
-      statusDotEl.className = 'dot';
-      if (kind === 'ok') statusDotEl.classList.add();
-      if (kind === 'warn') statusDotEl.classList.add('warn');
-      if (kind === 'err') statusDotEl.classList.add('err');
-      statusLabelEl.textContent = text;
+      statusDot.className = 'dot';
+      if (kind === 'warn') statusDot.classList.add('warn');
+      if (kind === 'err') statusDot.classList.add('err');
+      statusLabel.textContent = text;
     }
 
     function setMode(mode) {
-      modeDotEl.className = 'dot';
-      if (mode === 'vision') modeDotEl.classList.add('vision');
-      modeLabelEl.textContent = mode === 'vision' ? 'Vision' : 'Chat';
+      modeDot.className = 'dot';
+      if (mode === 'vision') modeDot.classList.add('vision');
+      modeLabel.textContent = mode === 'vision' ? 'Vision' : 'Chat';
     }
 
     function autosize() {
@@ -859,9 +776,7 @@ If unsure, say what is unclear.
       inputEl.style.height = Math.min(inputEl.scrollHeight, 160) + 'px';
     }
 
-    function scrollToBottom() {
-      chatEl.scrollTop = chatEl.scrollHeight;
-    }
+    function scrollToBottom() { chatEl.scrollTop = chatEl.scrollHeight; }
 
     function escapeHtml(s) {
       return (s ?? '').replace(/[&<>"']/g, c => ({
@@ -869,9 +784,9 @@ If unsure, say what is unclear.
       }[c]));
     }
 
-    function withTimeout(promise, ms = 45000) {
+    function withTimeout(promise, ms) {
       return new Promise((resolve, reject) => {
-        const t = setTimeout(() => reject(new Error('Request timed out. Click Repair or Connect.')), ms);
+        const t = setTimeout(() => reject(new Error('Request timed out. Check popups/shields.')), ms);
         promise.then(v => { clearTimeout(t); resolve(v); })
                .catch(e => { clearTimeout(t); reject(e); });
       });
@@ -891,46 +806,6 @@ If unsure, say what is unclear.
       return safeStringify(res);
     }
 
-    function heal(reason) {
-      log('HEAL invoked: ' + reason);
-      state.busy = false;
-      sendBtnEl.disabled = false;
-      removeTyping();
-      setStatus('warn', 'Recovered');
-    }
-
-    function startWatchdog() {
-      stopWatchdog();
-      state.watchdog = setTimeout(() => {
-        // If we're still busy after 25s, auto-heal.
-        if (state.busy) {
-          heal('Watchdog timeout (stuck busy)');
-          showBanner(`<strong>Auto-repaired:</strong> request got stuck. Try again. If it keeps happening, click <b>Connect</b> and allow popups.`);
-        }
-      }, 25000);
-    }
-    function stopWatchdog() {
-      if (state.watchdog) clearTimeout(state.watchdog);
-      state.watchdog = null;
-    }
-
-    window.addEventListener('error', (e) => {
-      log('window.error: ' + (e.message || 'unknown'), e.error || e);
-      heal('window.error');
-      showBanner(`<strong>JS error:</strong> ${escapeHtml(e.message || 'unknown')} (open Diagnostics)`);
-      setStatus('err', 'Error');
-    });
-
-    window.addEventListener('unhandledrejection', (e) => {
-      log('unhandledrejection', e.reason || e);
-      heal('unhandledrejection');
-      showBanner(`<strong>Promise error:</strong> ${escapeHtml(String(e.reason || e))} (open Diagnostics)`);
-      setStatus('err', 'Error');
-    });
-
-    // ---------------------------
-    // Message UI
-    // ---------------------------
     function nowTime() {
       return new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' });
     }
@@ -991,9 +866,7 @@ If unsure, say what is unclear.
       if (el) el.closest('.msg').remove();
     }
 
-    // ---------------------------
-    // Artifacts parsing/render
-    // ---------------------------
+    // ===== Artifacts =====
     function splitArtifacts(text) {
       const out = [];
       const re = /```artifact:(\w+)\n([\s\S]*?)```/g;
@@ -1001,7 +874,8 @@ If unsure, say what is unclear.
       while ((m = re.exec(text)) !== null) {
         const before = text.slice(last, m.index);
         if (before.trim()) out.push({ kind:'text', value: before });
-        out.push({ kind:'artifact', type: (m[1] || '').toLowerCase(), code: (m[2] || '').trim() });
+
+        out.push({ kind:'artifact', type: (m[1]||'').toLowerCase(), code: (m[2]||'').trim() });
         last = m.index + m[0].length;
       }
       const rest = text.slice(last);
@@ -1009,48 +883,17 @@ If unsure, say what is unclear.
       return out.length ? out : [{ kind:'text', value: text }];
     }
 
-    function renderText(el, text) {
-      // Simple safe formatting: code fences + inline backticks.
+    function renderAssistant(el, fullText) {
       el.innerHTML = '';
-      const parts = [];
-      const re = /```(\w*)\n([\s\S]*?)```/g;
-      let last = 0, m;
-      while ((m = re.exec(text)) !== null) {
-        const before = text.slice(last, m.index);
-        if (before) parts.push({ type:'t', v: before });
-        parts.push({ type:'c', lang: (m[1]||'').trim(), v: (m[2]||'').trim() });
-        last = m.index + m[0].length;
-      }
-      const rest = text.slice(last);
-      if (rest) parts.push({ type:'t', v: rest });
-
-      for (const p of parts) {
-        if (p.type === 't') {
-          const div = document.createElement('div');
-          let safe = escapeHtml(p.v);
-          safe = safe.replace(/`([^`]+)`/g, '<code>$1</code>');
-          safe = safe.replace(/\n/g, '<br>');
-          div.innerHTML = safe;
-          el.appendChild(div);
-        } else {
-          const pre = document.createElement('pre');
-          const code = document.createElement('code');
-          code.textContent = p.v;
-          pre.appendChild(code);
-          el.appendChild(pre);
-        }
-      }
-    }
-
-    function renderAssistant(contentEl, fullText) {
-      contentEl.innerHTML = '';
-      const segs = splitArtifacts(fullText);
+      const segs = splitArtifacts(fullText || '');
 
       for (const s of segs) {
         if (s.kind === 'text') {
-          const box = document.createElement('div');
-          renderText(box, s.value);
-          contentEl.appendChild(box);
+          const div = document.createElement('div');
+          // safe inline-code formatting
+          const safe = escapeHtml(s.value).replace(/`([^`]+)`/g, '<code>$1</code>').replace(/\n/g, '<br>');
+          div.innerHTML = safe;
+          el.appendChild(div);
         } else {
           const id = (crypto?.randomUUID?.() ?? String(Date.now() + Math.random()));
           const name = `${s.type.toUpperCase()} Artifact`;
@@ -1081,65 +924,50 @@ If unsure, say what is unclear.
           const body = document.createElement('div');
           body.className = 'artifactBody';
 
-          if (s.type === 'html' || s.type === 'htm') {
-            const iframe = document.createElement('iframe');
-            iframe.sandbox = 'allow-scripts';
-            iframe.srcdoc = s.code;
-            body.appendChild(iframe);
-          } else {
-            body.style.background = '#0d1117';
-            const pre = document.createElement('pre');
-            const code = document.createElement('code');
-            code.textContent = s.code;
-            pre.appendChild(code);
-            body.appendChild(pre);
-          }
+          const iframe = document.createElement('iframe');
+          iframe.sandbox = 'allow-scripts';
+          iframe.srcdoc = (s.type === 'html' || s.type === 'htm')
+            ? s.code
+            : `<pre style="white-space:pre-wrap;padding:14px;font-family:ui-monospace,monospace;">${escapeHtml(s.code)}</pre>`;
+          body.appendChild(iframe);
 
           card.appendChild(head);
           card.appendChild(body);
-          contentEl.appendChild(card);
+          el.appendChild(card);
         }
       }
     }
 
-    // ---------------------------
-    // Artifact side panel
-    // ---------------------------
     function showTab(which) {
       if (which === 'code') {
-        tabCodeEl.classList.add('active');
-        tabPrevEl.classList.remove('active');
-        codeViewEl.classList.add('active');
-        prevViewEl.classList.remove('active');
+        tabCode.classList.add('active');
+        tabPrev.classList.remove('active');
+        codeView.classList.add('active');
+        prevView.classList.remove('active');
       } else {
-        tabCodeEl.classList.remove('active');
-        tabPrevEl.classList.add('active');
-        codeViewEl.classList.remove('active');
-        prevViewEl.classList.add('active');
+        tabCode.classList.remove('active');
+        tabPrev.classList.add('active');
+        codeView.classList.remove('active');
+        prevView.classList.add('active');
       }
     }
 
-    function openArtifact(id) {
+    function openArtifactPanel(id) {
       const a = state.artifacts.get(id);
       if (!a) return;
       state.currentArtifactId = id;
 
-      artifactTitleEl.textContent = a.name;
-      artifactCodeEl.textContent = a.code;
+      artifactTitle.textContent = a.name;
+      artifactCode.textContent = a.code;
+      artifactFrame.srcdoc = (a.type === 'html' || a.type === 'htm')
+        ? a.code
+        : `<pre style="white-space:pre-wrap;padding:14px;font-family:ui-monospace,monospace;">${escapeHtml(a.code)}</pre>`;
 
-      if (a.type === 'html' || a.type === 'htm') {
-        artifactFrameEl.srcdoc = a.code;
-      } else {
-        artifactFrameEl.srcdoc = `<pre style="white-space:pre-wrap;padding:14px;font-family:ui-monospace,monospace;">${escapeHtml(a.code)}</pre>`;
-      }
-
-      sideEl.classList.add('open');
+      side.classList.add('open');
       showTab('code');
     }
 
-    function closeArtifactPanel() {
-      sideEl.classList.remove('open');
-    }
+    function closeArtifactPanel() { side.classList.remove('open'); }
 
     async function copyCurrentArtifact() {
       const a = state.artifacts.get(state.currentArtifactId);
@@ -1171,27 +999,35 @@ If unsure, say what is unclear.
       w.document.close();
     }
 
-    // ---------------------------
-    // Modal
-    // ---------------------------
-    function openModal(src) {
-      modalImgEl.src = src;
-      modalEl.classList.add('active');
-    }
-    function closeModal() {
-      modalEl.classList.remove('active');
-      modalImgEl.src = '';
+    // ===== Modal =====
+    function openModal(src) { modalImg.src = src; modal.classList.add('active'); }
+    function closeModalFn() { modal.classList.remove('active'); modalImg.src = ''; }
+
+    // ===== Puter loader (auto-repair if blocked) =====
+    function ensurePuterLoaded() {
+      if (window.puter && puter.ai && typeof puter.ai.chat === 'function') return true;
+
+      // try re-inject once (adblock/shields might still block)
+      if (!state.puterInjected) {
+        state.puterInjected = true;
+        const s = document.createElement('script');
+        s.src = 'https://js.puter.com/v2/';
+        s.async = true;
+        s.onload = () => log('Re-injected Puter.js loaded');
+        s.onerror = () => log('Re-injected Puter.js failed to load');
+        document.head.appendChild(s);
+      }
+
+      return false;
     }
 
-    // ---------------------------
-    // Images (one-time)
-    // ---------------------------
+    // ===== One-time image attach =====
     function clearPendingImage() {
-      if (state.pendingPreviewUrl) {
-        try { URL.revokeObjectURL(state.pendingPreviewUrl); } catch {}
+      if (state.pendingUrl) {
+        try { URL.revokeObjectURL(state.pendingUrl); } catch {}
       }
       state.pendingFile = null;
-      state.pendingPreviewUrl = null;
+      state.pendingUrl = null;
       previewEl.classList.remove('active');
       previewEl.innerHTML = '';
       setMode('chat');
@@ -1202,18 +1038,29 @@ If unsure, say what is unclear.
 
       clearPendingImage();
       state.pendingFile = file;
-      state.pendingPreviewUrl = URL.createObjectURL(file);
+      state.pendingUrl = URL.createObjectURL(file);
 
       previewEl.classList.add('active');
-      previewEl.innerHTML = `
-        <div class="preview-item">
-          <img src="${state.pendingPreviewUrl}" alt="preview" />
-          <button class="preview-remove" type="button" title="remove">×</button>
-        </div>
-      `;
+      previewEl.innerHTML = '';
 
-      previewEl.querySelector('.preview-remove').addEventListener('click', clearPendingImage);
-      previewEl.querySelector('img').addEventListener('click', () => openModal(state.pendingPreviewUrl));
+      const item = document.createElement('div');
+      item.className = 'preview-item';
+
+      const img = document.createElement('img');
+      img.src = state.pendingUrl;
+      img.alt = 'preview';
+      img.addEventListener('click', () => openModal(state.pendingUrl));
+
+      const rm = document.createElement('button');
+      rm.className = 'preview-remove';
+      rm.type = 'button';
+      rm.textContent = '×';
+      rm.addEventListener('click', clearPendingImage);
+
+      item.appendChild(img);
+      item.appendChild(rm);
+      previewEl.appendChild(item);
+
       setMode('vision');
     }
 
@@ -1230,9 +1077,7 @@ If unsure, say what is unclear.
       return { media_type: m[1], data: m[2] };
     }
 
-    // ---------------------------
-    // Puter calls (NO streaming)
-    // ---------------------------
+    // ===== Calls (non-stream) =====
     async function callText(model, userText) {
       state.history.push({ role:'user', content: userText });
 
@@ -1263,11 +1108,7 @@ Now respond to the user's latest message.`;
         },
         {
           type: 'text',
-          text:
-`${VISION_SYSTEM}
-
-User request:
-${userText || 'Analyze this image.'}`
+          text: `${VISION_SYSTEM}\n\nUser request:\n${userText || 'Analyze this image.'}`
         }
       ];
 
@@ -1278,83 +1119,100 @@ ${userText || 'Analyze this image.'}`
       return extractText(res);
     }
 
-    // ---------------------------
-    // Preflight / Connect (forces auth popup from click)
-    // ---------------------------
-    async function connect() {
-      hideBanner();
-      setStatus('warn', 'Connecting…');
-      log('Connect clicked');
+    // ===== Auto-heal watchdog =====
+    function heal(reason) {
+      log('HEAL: ' + reason);
+      state.busy = false;
+      sendBtn.disabled = false;
+      removeTyping();
+      setStatus('warn', 'Recovered');
+    }
 
-      if (!window.puter || !puter.ai || !puter.ai.chat) {
-        setStatus('err', 'Puter missing');
-        showBanner(`<strong>Error:</strong> Puter.js did not load. Check network/adblock.`);
+    setInterval(() => {
+      if (state.busy && Date.now() - state.lastSendAt > 25000) {
+        heal('auto watchdog (stuck busy)');
+        showBanner(`<strong>Auto repaired:</strong> the request got stuck. If it keeps happening, popups/shields are blocking Puter login.`);
+      }
+    }, 2000);
+
+    // ===== First user gesture auto-connect attempt =====
+    function firstGestureConnect() {
+      if (!state.firstGestureArmed) return;
+      state.firstGestureArmed = false;
+
+      // Only attempt if Puter exists; if not, banner will show
+      if (!ensurePuterLoaded()) {
+        showBanner(`<strong>Puter.js blocked:</strong> disable adblock/shields for this site, then reload.`);
+        setStatus('err', 'Blocked');
+        log('Puter missing on first gesture');
         return;
       }
 
-      try {
-        // Small call to force login popup if needed
-        const model = modelSelectEl.value || 'claude-haiku-4-5';
-        const res = await withTimeout(puter.ai.chat('Say "connected".', { model, stream:false }), 20000);
-        const txt = extractText(res);
-        log('Connect response', txt);
-        setStatus('ok', 'Ready');
-        hideBanner();
-      } catch (e) {
-        log('Connect failed', e);
-        setStatus('err', 'Connect failed');
-        showBanner(
-          `<strong>Connect failed:</strong> ${escapeHtml(e?.message || String(e))}<br>
-           If you're on Brave, disable Shields for this page. Allow popups for Puter login.`
-        );
-      }
+      // Small call to trigger login if needed
+      const model = modelSelect.value || 'claude-haiku-4-5';
+      log('Auto-connect attempt via first gesture');
+      setStatus('warn', 'Connecting…');
+
+      withTimeout(puter.ai.chat('Say "connected".', { model, stream:false }), 20000)
+        .then(res => {
+          log('Auto-connect ok', extractText(res));
+          setStatus('ok', 'Ready');
+          hideBanner();
+        })
+        .catch(e => {
+          log('Auto-connect failed', e);
+          setStatus('err', 'Auth blocked');
+          showBanner(`<strong>Auth blocked:</strong> allow popups for Puter login / disable Brave Shields, then try Send again.`);
+        });
     }
 
-    // ---------------------------
-    // Send (self-healing)
-    // ---------------------------
+    window.addEventListener('pointerdown', firstGestureConnect, { once: true });
+
+    // ===== Send =====
     async function send() {
       hideBanner();
 
-      if (!window.puter || !puter.ai || !puter.ai.chat) {
-        showBanner(`<strong>Error:</strong> Puter.js is not available. Disable adblock/shields and reload.`);
-        setStatus('err', 'Puter missing');
+      if (!ensurePuterLoaded()) {
+        setStatus('err', 'Blocked');
+        showBanner(`<strong>Puter.js blocked:</strong> disable adblock/shields and reload. (Open Diagnostics for details.)`);
+        log('Send failed: Puter missing');
         return;
       }
 
       if (state.busy) {
-        showBanner(`<strong>Busy:</strong> already sending. Click <b>Repair</b> if it looks stuck.`);
+        showBanner(`<strong>Busy:</strong> already sending. If it looks stuck, it will auto-repair.`);
         return;
       }
 
-      const model = modelSelectEl.value;
+      const model = modelSelect.value;
       const text = inputEl.value.trim();
       const hasImage = !!state.pendingFile;
 
       if (!text && !hasImage) return;
 
       state.busy = true;
-      sendBtnEl.disabled = true;
-      startWatchdog();
+      sendBtn.disabled = true;
+      state.lastSendAt = Date.now();
+      const myReq = ++state.requestId;
+
       setStatus('warn', 'Sending…');
 
       // show user message immediately
       const shownText = text || (hasImage ? 'Analyze this image.' : '');
-      const imgUrls = state.pendingPreviewUrl ? [state.pendingPreviewUrl] : [];
-      if (imgUrls.length) state.displayedUrls.push(imgUrls[0]); // keep for newChat cleanup
+      const imgUrls = state.pendingUrl ? [state.pendingUrl] : [];
+      if (imgUrls.length) state.displayedUrls.push(imgUrls[0]);
 
-      const userEl = addMessage({ name:'You', avatar:'👤', ai:false, text: shownText, imageUrls: imgUrls });
-      userEl.textContent = shownText;
+      addMessage({ name:'You', avatar:'👤', ai:false, text: shownText, imageUrls: imgUrls });
 
-      // clear input now
+      // clear input
       inputEl.value = '';
       autosize();
 
-      // one-time image: capture file then clear preview (but keep displayed image URL in chat)
+      // one-time image: capture file then clear attach UI
       const fileForThisRequest = state.pendingFile;
       if (hasImage) {
         state.pendingFile = null;
-        state.pendingPreviewUrl = null;
+        state.pendingUrl = null;
         previewEl.classList.remove('active');
         previewEl.innerHTML = '';
         setMode('chat');
@@ -1363,54 +1221,48 @@ ${userText || 'Analyze this image.'}`
       addTyping();
 
       try {
-        const assistantEl = addMessage({ name:'Claude', avatar:'✦', ai:true, text: '' });
+        const assistantEl = addMessage({ name:'Claude', avatar:'✦', ai:true, text:'' });
 
         let answer = '';
-        if (fileForThisRequest) {
-          answer = await callVision(model, shownText, fileForThisRequest);
-        } else {
-          answer = await callText(model, shownText);
+        if (fileForThisRequest) answer = await callVision(model, shownText, fileForThisRequest);
+        else answer = await callText(model, shownText);
+
+        // ignore if a newer request started
+        if (myReq !== state.requestId) {
+          log('Ignored late response for request ' + myReq);
+          return;
         }
 
         removeTyping();
         renderAssistant(assistantEl, answer || '(No text returned.)');
 
         setStatus('ok', 'Ready');
-        stopWatchdog();
-        state.busy = false;
-        sendBtnEl.disabled = false;
-        inputEl.focus();
       } catch (e) {
-        removeTyping();
-        log('Send failed', e);
-        setStatus('err', 'Failed');
-        stopWatchdog();
+        if (myReq !== state.requestId) return;
 
-        const errEl = addMessage({ name:'Claude', avatar:'✦', ai:true, text: '' });
+        removeTyping();
+        log('Send error', e);
+
+        const errEl = addMessage({ name:'Claude', avatar:'✦', ai:true, text:'' });
         errEl.innerHTML =
           `<div style="padding:10px;border:1px solid rgba(251,113,133,.35);border-radius:12px;background:rgba(251,113,133,.08);color:#fecdd3;">
             <b>Error:</b> ${escapeHtml(e?.message || String(e))}<br><br>
-            Fixes: click <b>Connect</b> (auth), allow popups, disable adblock/shields, or switch model to GPT‑4o.
+            Most common fix: allow popups for Puter login / disable Brave Shields.
           </div>`;
 
-        // auto-heal UI state
+        setStatus('err', 'Failed');
         heal('send catch');
+      } finally {
         state.busy = false;
-        sendBtnEl.disabled = false;
+        sendBtn.disabled = false;
         inputEl.focus();
       }
     }
 
-    // ---------------------------
-    // New chat
-    // ---------------------------
+    // ===== New chat =====
     function newChat() {
-      // revoke all object URLs we created for display
-      for (const u of state.displayedUrls) {
-        try { URL.revokeObjectURL(u); } catch {}
-      }
+      for (const u of state.displayedUrls) { try { URL.revokeObjectURL(u); } catch {} }
       state.displayedUrls = [];
-
       state.history = [];
       state.artifacts.clear();
       state.currentArtifactId = null;
@@ -1422,71 +1274,30 @@ ${userText || 'Analyze this image.'}`
       welcomeEl.style.display = '';
       inputEl.value = '';
       autosize();
+
       hideBanner();
       setStatus('ok', 'Ready');
       setMode('chat');
       log('New chat');
     }
 
-    // ---------------------------
-    // Diagnostics toggle
-    // ---------------------------
-    function toggleDiag() {
-      diagEl.classList.toggle('show');
-      if (diagEl.classList.contains('show')) log('Diagnostics opened');
-    }
+    // ===== Diagnostics toggle =====
+    function toggleDiag() { diag.classList.toggle('show'); }
 
-    function repair() {
-      hideBanner();
-      heal('manual repair');
-      setStatus('ok', 'Ready');
-      showBanner(`<strong>Repaired:</strong> UI reset. If send still fails, click <b>Connect</b> and allow popups.`);
-    }
-
-    // ---------------------------
-    // Event delegation for artifact buttons inside chat
-    // ---------------------------
-    chatEl.addEventListener('click', async (e) => {
-      const btn = e.target.closest('[data-action]');
-      if (!btn) return;
-      const id = btn.getAttribute('data-id');
-      const action = btn.getAttribute('data-action');
-
-      if (action === 'artifact-open') openArtifact(id);
-
-      if (action === 'artifact-copy') {
-        const a = state.artifacts.get(id);
-        if (!a) return;
-        await navigator.clipboard.writeText(a.code);
-        setStatus('ok', 'Copied');
-        setTimeout(() => setStatus('ok', 'Ready'), 700);
-      }
-
-      if (action === 'artifact-download') {
-        const a = state.artifacts.get(id);
-        if (!a) return;
-        state.currentArtifactId = id;
-        downloadCurrentArtifact();
-      }
-    });
-
-    // ---------------------------
-    // Wiring
-    // ---------------------------
-    sendBtnEl.addEventListener('click', send);
+    // ======================
+    // Event wiring
+    // ======================
+    sendBtn.addEventListener('click', send);
     inputEl.addEventListener('input', autosize);
     inputEl.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        send();
-      }
+      if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send(); }
     });
 
-    imageBtnEl.addEventListener('click', () => fileInputEl.click());
-    fileInputEl.addEventListener('change', (e) => {
+    imageBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
       const f = e.target.files?.[0];
       if (f) setPendingImage(f);
-      fileInputEl.value = '';
+      fileInput.value = '';
     });
 
     // paste image
@@ -1500,62 +1311,73 @@ ${userText || 'Analyze this image.'}`
 
     // drag drop
     let dragCounter = 0;
-    document.addEventListener('dragenter', (e) => {
-      e.preventDefault();
-      dragCounter++;
-      dropEl.classList.add('active');
-    });
+    document.addEventListener('dragenter', (e) => { e.preventDefault(); dragCounter++; drop.classList.add('active'); });
     document.addEventListener('dragover', (e) => e.preventDefault());
-    document.addEventListener('dragleave', (e) => {
-      e.preventDefault();
-      dragCounter = Math.max(0, dragCounter - 1);
-      if (dragCounter === 0) dropEl.classList.remove('active');
-    });
+    document.addEventListener('dragleave', (e) => { e.preventDefault(); dragCounter = Math.max(0, dragCounter - 1); if (!dragCounter) drop.classList.remove('active'); });
     document.addEventListener('drop', (e) => {
       e.preventDefault();
       dragCounter = 0;
-      dropEl.classList.remove('active');
+      drop.classList.remove('active');
       const f = e.dataTransfer?.files?.[0];
       if (f) setPendingImage(f);
     });
 
-    // modal
-    closeModalEl.addEventListener('click', closeModal);
-    modalEl.addEventListener('click', (e) => { if (e.target === modalEl) closeModal(); });
+    // artifacts click (delegation)
+    chatEl.addEventListener('click', async (e) => {
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const id = btn.getAttribute('data-id');
+      const action = btn.getAttribute('data-action');
+      if (!id) return;
 
-    // artifact side
-    closeSideEl.addEventListener('click', closeArtifactPanel);
-    tabCodeEl.addEventListener('click', () => showTab('code'));
-    tabPrevEl.addEventListener('click', () => showTab('preview'));
-    copyArtifactEl.addEventListener('click', copyCurrentArtifact);
-    downloadArtifactEl.addEventListener('click', downloadCurrentArtifact);
-    openArtifactEl.addEventListener('click', openCurrentArtifactNewTab);
-
-    // top buttons
-    connectBtnEl.addEventListener('click', connect);
-    repairBtnEl.addEventListener('click', repair);
-    diagBtnEl.addEventListener('click', toggleDiag);
-    newBtnEl.addEventListener('click', newChat);
-    clearLogsBtnEl.addEventListener('click', () => { state.logs = []; diagLogEl.textContent = ''; });
-
-    // escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeModal();
-        closeArtifactPanel();
+      if (action === 'artifact-open') openArtifactPanel(id);
+      if (action === 'artifact-copy') {
+        const a = state.artifacts.get(id);
+        if (!a) return;
+        await navigator.clipboard.writeText(a.code);
+        setStatus('ok', 'Copied');
+        setTimeout(() => setStatus('ok', 'Ready'), 700);
+      }
+      if (action === 'artifact-download') {
+        state.currentArtifactId = id;
+        downloadCurrentArtifact();
       }
     });
+
+    closeSide.addEventListener('click', closeArtifactPanel);
+    tabCode.addEventListener('click', () => showTab('code'));
+    tabPrev.addEventListener('click', () => showTab('preview'));
+    copyArtifact.addEventListener('click', copyCurrentArtifact);
+    downloadArtifact.addEventListener('click', downloadCurrentArtifact);
+    openArtifact.addEventListener('click', openCurrentArtifactNewTab);
+
+    closeModal.addEventListener('click', closeModalFn);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModalFn(); });
+
+    clearLogsBtn.addEventListener('click', () => { state.logs = []; diagLog.textContent = ''; });
+
+    $('diagLog').addEventListener?.('dblclick', toggleDiag);
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeModalFn(); closeArtifactPanel(); } });
+
+    $('diagLog'); // keep linter calm
+
+    $('diagBtn')?.addEventListener?.('click', toggleDiag); // if you add a diag button later
+
+    newBtn.addEventListener('click', newChat);
 
     // init
     autosize();
     setStatus('ok', 'Ready');
     setMode('chat');
     inputEl.focus();
-    log('App loaded');
-    if (!window.puter) {
-      showBanner(`<strong>Warning:</strong> Puter.js not loaded yet (adblock?). Refresh or disable shields.`);
+
+    // If Puter is blocked, tell user immediately
+    if (!ensurePuterLoaded()) {
       setStatus('warn', 'Waiting');
+      showBanner(`<strong>Puter.js not available:</strong> likely blocked by adblock/shields. Disable it for this site and reload.`);
       log('Puter missing at init');
+    } else {
+      log('App loaded');
     }
   </script>
 </body>
